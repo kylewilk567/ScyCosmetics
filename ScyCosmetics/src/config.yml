@@ -1,0 +1,8 @@
+datastorage:
+  dirty_seconds: 5
+  days_clear_after_inactive: 180 #Clear this player's cosmetics data if they have not logged on in this many days
+  
+  
+  
+messages:
+  prefix: '&8[&bCosmetics&8]'

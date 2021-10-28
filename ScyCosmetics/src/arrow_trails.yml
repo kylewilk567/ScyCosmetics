@@ -1,0 +1,16 @@
+banned_particles: #TO BE REMOVED LATER
+  - BLOCK_CRACK
+  - BLOCK_DUST
+  - ITEM_CRACK
+  - LEGACY_BLOCK_CRACK
+  - LEGACY_BLOCK_DUST
+  - LEGACY_FALLING_DUST
+  
+  
+particles:
+  AR_ASH: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    particle: ASH #Particle enum
+    display_name: '&8Ash' #Name displayed in inventory
+    display_item: 'FIRE_CHARGE'
+    display_lore:
+      - '&bLigma'
