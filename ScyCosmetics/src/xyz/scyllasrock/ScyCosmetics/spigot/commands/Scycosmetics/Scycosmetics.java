@@ -19,6 +19,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.ArrowTrail;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
+import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
 
 public class Scycosmetics implements CommandExecutor, TabCompleter {
 	
@@ -34,25 +35,22 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 		
 		
 		if(args.length == 0) {
-			Inventory inv = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cTest Title"));
-			int slot = 0;
-			for(Cosmetic cos : plugin.getCosmetics().values()) {
-				if(slot < 54) {
-				ItemStack item = new ItemStack(Material.BLUE_WOOL);
-				if(cos.getType().equals(CosmeticType.ARROW_TRAIL)) {
-					ItemMeta meta = item.getItemMeta();
-					ArrowTrail trail = (ArrowTrail) cos;
-					meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', trail.getParticle().toString()));
-					item.setItemMeta(meta);
-				}
-
-				inv.setItem(slot, item);
-				++slot;
-				}
-			}
-			Player player = (Player) sender;
-			player.openInventory(inv);
+			new BaseCommand().onCommand(sender, cmd, label, args);
+			return true;
 		}
+		
+		if(args[0].equalsIgnoreCase("test")) {
+			ItemStack item = ItemUtils.getHead(args[1]);
+			Player player = (Player) sender;
+			player.getInventory().addItem(item);
+		}
+		
+		if(args[0].equalsIgnoreCase("give")) {
+			new GiveCommand().onCommand(sender, cmd, label, args);
+			return true;
+		}
+		
+
 		
 		return false;
 	}
@@ -81,13 +79,14 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 				searching = args[0].toLowerCase();
 			}
 
-			if ("create".startsWith(searching) && player.hasPermission("scycosmetics")) {
-				help.add("create");
+			if ("give".startsWith(searching) && player.hasPermission("scycosmetics")) {
+				help.add("give");
 			}
-			
+			return help;
+		default:
+			return help;
 		}
 			
-			return help;
 	}
 
 }

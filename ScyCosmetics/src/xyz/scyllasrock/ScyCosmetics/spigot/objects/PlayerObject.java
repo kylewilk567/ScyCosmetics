@@ -47,13 +47,25 @@ public class PlayerObject {
 	
 	
 	/**
-	 * Returns active cosmetic of specified type
+	 * Returns active cosmetic id of specified type
 	 * @param type
 	 * @return
 	 */
-	public String getActiveCosmetic(CosmeticType type) {
+	public String getActiveCosmeticId(CosmeticType type) {
 		for(String cos: activeCosmetics) {
 			if(plugin.getCosmetics().get(cos).getType().equals(type)) return cos;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns active cosmetic object of specified type
+	 * @param type
+	 * @return
+	 */
+	public Cosmetic getActiveCosmetic(CosmeticType type) {
+		for(String cos: activeCosmetics) {
+			if(plugin.getCosmetics().get(cos).getType().equals(type)) return plugin.getCosmetics().get(cos);
 		}
 		return null;
 	}
@@ -65,7 +77,7 @@ public class PlayerObject {
 	public void setActiveCosmetic(Cosmetic cos) {
 		boolean dirty = false;
 		if(hasActiveCosmeticType(cos.getType())) {
-			if(activeCosmetics.remove(getActiveCosmetic(cos.getType())) || activeCosmetics.add(cos.getId())) {
+			if(activeCosmetics.remove(getActiveCosmeticId(cos.getType())) || activeCosmetics.add(cos.getId())) {
 				dirty = true;
 			}
 		}
@@ -84,6 +96,13 @@ public class PlayerObject {
 	public boolean hasCosmeticUnlocked(Cosmetic cos) {
 		if(unlockedCosmetics.contains(cos.getId())) return true;
 		return false;
+	}
+	
+	public boolean addUnlockedCosmetic(String id) {
+		if(unlockedCosmetics.contains(id)) return false;
+		unlockedCosmetics.add(id);
+		dirtyData.add(DirtyDataType.UNLOCKED_COSMETICS);
+		return true;
 	}
 	
 }

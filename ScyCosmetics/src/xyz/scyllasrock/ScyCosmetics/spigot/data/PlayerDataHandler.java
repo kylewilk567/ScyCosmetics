@@ -30,7 +30,7 @@ public class PlayerDataHandler {
 	
 	
 	/*
-	 * gets the instance of CosmeticDataHandler used in this plugin
+	 * gets the instance of PlayerDataHandler used in this plugin
 	 */
 	public static PlayerDataHandler getPlayerHandler() {
 		if(playerHandler == null) {
@@ -51,7 +51,7 @@ public class PlayerDataHandler {
 	}
 	
 	private File createPlayerDataFile(UUID uuid) {
-		File f = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + uuid.toString());
+		File f = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + uuid.toString() + ".yml");
 		try {
 			f.createNewFile();
 		} catch (IOException e) {
@@ -61,7 +61,7 @@ public class PlayerDataHandler {
 	}
 	
 	private boolean playerFileExists(UUID uuid) {
-		File f = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + uuid.toString());
+		File f = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + uuid.toString() + ".yml");
 		if(f.exists()) return true;
 		return false;
 	}
@@ -69,22 +69,19 @@ public class PlayerDataHandler {
 	public void initializePlayerObjects() {
 		//Initialize using only players who are already online. Rest init on PlayerJoinEvent
 		for(Player player : Bukkit.getOnlinePlayers()) {
-			File playerFile = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + player.getUniqueId().toString());
-			YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-			playerObjects.put(UUID.fromString(config.getString("uuid")),
-					new PlayerObject(player.getUniqueId(), config.getStringList("unlocked_cosmetics"), config.getStringList("active_cosmetics")));
+			addPlayerObject(player.getUniqueId());
 		}
 	}
 	
 	
 	/**
-	 * Returns PlayerObject corresponding to uuid. Returns null if no PlayerObject found.
+	 * Returns PlayerObject corresponding to uuid. If none exists, creates a new object
 	 * @param uuid
 	 * @return
 	 */
 	public PlayerObject getPlayerObjectByUUID(UUID uuid) {
-		if(playerObjects.containsKey(uuid))	return playerObjects.get(uuid);
-		return null;
+		if(!playerObjects.containsKey(uuid)) addPlayerObject(uuid);
+		return playerObjects.get(uuid);
 	}
 	
 	public static HashMap<UUID, PlayerObject> getPlayerObjects(){
@@ -97,13 +94,14 @@ public class PlayerDataHandler {
 	 */
 	public void addPlayerObject(UUID uuid) {
 		if(playerFileExists(uuid)) {
-			File playerFile = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + uuid.toString());
+			File playerFile = createPlayerDataFile(uuid);
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
 			playerObjects.put(uuid,
 					new PlayerObject(uuid, config.getStringList("unlocked_cosmetics"), config.getStringList("active_cosmetics")));
 		}
 		else playerObjects.put(uuid, new PlayerObject(uuid, new ArrayList<String>(), new ArrayList<String>()));
 	}
+	
 	
 	public void updateUnlockedCosmetics(UUID uuid) {
 		File f = createPlayerDataFile(uuid); //Create file if not exists
@@ -112,8 +110,11 @@ public class PlayerDataHandler {
 		config.set("unlocked_cosmetics", playerObjects.get(uuid).getUnlockedCosmetics());
 		try {
 			config.save(f);
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+	
 	
 	public void updateActiveCosmetics(UUID uuid) {
 		File f = createPlayerDataFile(uuid); //Create file if not exists
@@ -122,12 +123,10 @@ public class PlayerDataHandler {
 		config.set("active_cosmetics", playerObjects.get(uuid).getActiveCosmetics());
 		try {
 			config.save(f);
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	
-	public PlayerObject getPlayerObjectFromUUID(UUID uuid) {
-		return playerObjects.get(uuid);
-	}
 
 }

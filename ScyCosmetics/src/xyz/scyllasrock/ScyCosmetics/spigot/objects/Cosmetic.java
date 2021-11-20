@@ -1,23 +1,32 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+
+import net.md_5.bungee.api.ChatColor;
 
 public abstract class Cosmetic {
 	
-	private String id;
-	private CosmeticType type;
-	private String displayName;
-	private ItemStack displayItem;
+	private final String id;
+	private final CosmeticType type;
+	private final CosmeticTier tier;
+	private final String displayName;
+	private final Material displayItem;
 	private List<String> displayLore;
 	
-	public Cosmetic(String id, CosmeticType type, String displayName, ItemStack displayItem, List<String> displayLore) {
+	public Cosmetic(String id, CosmeticType type, CosmeticTier tier, String displayName, Material displayItem, List<String> displayLore) {
 		this.id = id;
 		this.type = type;
-		this.displayName = displayName;
+		this.tier = tier;
+		this.displayName = ChatColor.translateAlternateColorCodes('&', displayName);
 		this.displayItem = displayItem;
-		this.displayLore = displayLore;
+		this.displayLore = new ArrayList<String>();
+		for(String s : displayLore) {
+			this.displayLore.add(ChatColor.translateAlternateColorCodes('&', s));
+		}
 	}
 	
 	public String getId() {
@@ -28,11 +37,15 @@ public abstract class Cosmetic {
 		return type;
 	}
 	
+	public CosmeticTier getTier() {
+		return tier;
+	}
+	
 	public String getDisplayName() {
 		return displayName;
 	}
 	
-	public ItemStack getDisplayItem() {
+	public Material getDisplayItem() {
 		return displayItem;
 	}
 	

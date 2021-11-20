@@ -2,7 +2,34 @@ datastorage:
   dirty_seconds: 5
   days_clear_after_inactive: 180 #Clear this player's cosmetics data if they have not logged on in this many days
   
+permissions:
+  scycosmetics_give: scycosmetics.give
   
+  
+  
+inventory_settings:
+  base_inventory:
+    title: '&cScyCosmetics Menu'
+    size: 54
+    items:
+      arrow_trail:
+        material: SPECTRAL_ARROW #To make this a head, use "head;VALUE". Get value from here: https://minecraft-heads.com/
+        display_name: '&bArrow Trails'
+        lore:
+          - '&3Make your shots sexy'
+        slot: 22 #Slot between 0-53 (inclusive)
+      info: #YET TO BE IMPLEMENTED
+        material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWMwZTkxNDQ3NmUxYjE1ZGEyYTkxZjQ1Njk2ZGQyMTc2NjlkNGRhYzRmYTYyMTY1MDkyOWJhY2UwM2RlMjI1NCJ9fX0='
+        display_name: '&cInfo'
+        lore:
+          - '&dSum lore'
+        slot: 53
+        enabled: true
   
 messages:
   prefix: '&8[&bCosmetics&8]'
+  no_permission: '&cYou do not have permission for this command.'
+  scycos_give_success: '&aSuccessfully gave player &2{player} &aaccess to the cosmetic &2{cosmetic}&a.'
+  
+  error_player_not_found: '&cThe player &4{player} &cis not online or does not exist.'
+  error_invalid_cosmetic_id: '&cThe specified cosmetic id does not exist.'

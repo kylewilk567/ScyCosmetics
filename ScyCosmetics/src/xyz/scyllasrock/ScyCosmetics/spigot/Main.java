@@ -10,6 +10,9 @@ import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.CosmeticDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.DirtyDataTimer;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.ArrowTrailListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.CosInventoryListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.PlayerDataListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 
 public class Main extends JavaPlugin {
@@ -22,6 +25,11 @@ public class Main extends JavaPlugin {
 		
 		//Set command executors
 		Bukkit.getPluginCommand("scycosmetics").setExecutor(new Scycosmetics());
+		
+		//Set listeners
+		Bukkit.getPluginManager().registerEvents(new PlayerDataListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new ArrowTrailListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new CosInventoryListeners(), this);
 		
 		//Set up files
 		ConfigManager configMang = ConfigManager.getConfigMang();

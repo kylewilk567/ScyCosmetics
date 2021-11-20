@@ -26,7 +26,7 @@ public class DirtyDataTimer implements Runnable {
 	public void run() {
 		Long start_time = System.currentTimeMillis();
 		this.saveDirtyData();
-		Bukkit.getConsoleSender().sendMessage("ScyCosmetics db save time: " + (System.currentTimeMillis() - start_time) / 1000.0 + " seconds");
+//		Bukkit.getConsoleSender().sendMessage("ScyCosmetics db save time: " + (System.currentTimeMillis() - start_time) / 1000.0 + " seconds");
 		
 	}
 	
@@ -62,6 +62,7 @@ public class DirtyDataTimer implements Runnable {
     				
     			case UNLOCKED_COSMETICS:
     				playerHandler.updateUnlockedCosmetics(playerObject.getUUID());
+    				
     			case LAST_LOGIN:
     				
     			

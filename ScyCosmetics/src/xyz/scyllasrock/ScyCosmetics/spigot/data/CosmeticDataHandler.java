@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.ArrowTrail;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticTier;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
 
 public class CosmeticDataHandler {
@@ -83,9 +85,10 @@ public class CosmeticDataHandler {
 		//Initialize arrow trails
 		YamlConfiguration trailConfig = getConfigFile("Cosmetics" + File.separator + "arrow_trails.yml");
 		for(String id : trailConfig.getConfigurationSection("particles").getKeys(false)) {
-			cosmetics.put(id, (Cosmetic) new ArrowTrail(id, Particle.valueOf(trailConfig.getString("particles." + id + ".particle")),
+			cosmetics.put(id, (Cosmetic) new ArrowTrail(id, CosmeticTier.valueOf(trailConfig.getString("particles." + id + ".tier")), 
+					Particle.valueOf(trailConfig.getString("particles." + id + ".particle")),
 					trailConfig.getString("particles." + id + ".display_name"),
-					new ItemStack(Material.valueOf(trailConfig.getString("particles." + id + ".display_item"))),
+					Material.valueOf(trailConfig.getString("particles." + id + ".display_item")),
 					trailConfig.getStringList("particles." + id + ".display_lore")));
 		}
 		

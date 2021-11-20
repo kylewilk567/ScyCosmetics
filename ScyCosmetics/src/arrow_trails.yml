@@ -9,6 +9,7 @@ banned_particles: #TO BE REMOVED LATER
   
 particles:
   AR_ASH: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: COMMON #MUST be in all caps
     particle: ASH #Particle enum
     display_name: '&8Ash' #Name displayed in inventory
     display_item: 'FIRE_CHARGE'
