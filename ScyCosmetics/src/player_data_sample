@@ -1,6 +1,7 @@
-uuid: afaefkj;afe
-last_login:
+last_login: 92139412
 active_cosmetics:
   - AR_ASH
 unlocked_cosmetics:
   - AR_ASH
+cosmetic_filter: NAME
+show_locked: true

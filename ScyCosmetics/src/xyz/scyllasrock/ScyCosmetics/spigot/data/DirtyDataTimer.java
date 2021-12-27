@@ -65,7 +65,10 @@ public class DirtyDataTimer implements Runnable {
     				
     			case LAST_LOGIN:
     				
-    			
+    			case ITEM_FILTER:
+    				playerHandler.updateItemFilter(playerObject.getUUID());
+    			case SHOW_LOCKED_COSMETICS:
+    				playerHandler.updateShowLockedCosmetics(playerObject.getUUID());
     			
     			}
     		}

@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -172,6 +173,9 @@ public class CosmeticDataHandler {
 		PersistentDataContainer data = meta.getPersistentDataContainer();
 		data.set(new NamespacedKey(plugin, "ScyCos_data"), PersistentDataType.STRING, config.getString(configSection + "." + key + ".custom_data"));
 		}
+		//Remove attributes from showing
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
 		itemStack.setItemMeta(meta);
 		return itemStack;
 	}

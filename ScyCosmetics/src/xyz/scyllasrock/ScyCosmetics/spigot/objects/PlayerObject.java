@@ -129,10 +129,33 @@ public class PlayerObject {
 	
 	public void setItemFilter(ItemFilter filter) {
 		this.itemFilter = filter;
+		dirtyData.add(DirtyDataType.ITEM_FILTER);
+	}
+	
+	public void toggleItemFilter() {
+		switch(itemFilter) {
+		case NAME:
+			itemFilter = ItemFilter.RARITY_ASCENDING;
+			break;
+		case RARITY_ASCENDING:
+			itemFilter = ItemFilter.RARITY_DESCENDING;
+			break;
+		case RARITY_DESCENDING:
+			itemFilter = ItemFilter.LEAST_RECENT;
+			break;
+		case LEAST_RECENT:
+			itemFilter = ItemFilter.MOST_RECENT;
+			break;
+		case MOST_RECENT:
+			itemFilter = ItemFilter.NAME;
+			break;
+		}
+		dirtyData.add(DirtyDataType.ITEM_FILTER);
 	}
 	
 	public void setShowLockedCosmetics(boolean show) {
 		this.showLockedCosmetics = show;
+		dirtyData.add(DirtyDataType.SHOW_LOCKED_COSMETICS);
 	}
 	
 }

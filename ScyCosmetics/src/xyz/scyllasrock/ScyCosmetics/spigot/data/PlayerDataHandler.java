@@ -54,11 +54,12 @@ public class PlayerDataHandler {
 	private File createPlayerDataFile(UUID uuid) {
 		File f = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + uuid.toString() + ".yml");
 		try {
-			f.createNewFile();
+			if(f.createNewFile()) {
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
 			config.set("cosmetic_filter", "NAME");
-			config.set("show_locked", "true");
+			config.set("show_locked", true);
 			config.save(f);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
