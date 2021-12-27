@@ -12,16 +12,42 @@ import xyz.scyllasrock.ScyCosmetics.spigot.data.DirtyDataTimer;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.ArrowTrailListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.CosInventoryListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.LastWordsListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.PlayerDataListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.PlayerTrailListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 
 public class Main extends JavaPlugin {
 	
 	private HashMap<String, Cosmetic> cosmetics;
 	DirtyDataTimer dirtyTimer;
+	private static Main instance;
+	private boolean premiumVanishSupportEnabled = false;
 
 	@Override
 	public void onEnable() {
+		
+		instance = this;
+		
+		//Load dependencies
+		
+		//PremiumVanish
+		if(Bukkit.getPluginManager().getPlugin("PremiumVanish") != null) {
+			premiumVanishSupportEnabled = true;
+		}
+		
+		
+		//Set up files
+		ConfigManager configMang = ConfigManager.getConfigMang();
+		configMang.setupConfig();
+		
+		// initialize cosmetics
+		CosmeticDataHandler cosmeticHandler = CosmeticDataHandler.getCosmeticHandler();
+		cosmetics = cosmeticHandler.initializeCosmetics();
+		
+		// initialize playerobjects of currently online players
+		PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
+		playerHandler.initializePlayerObjects();
 		
 		//Set command executors
 		Bukkit.getPluginCommand("scycosmetics").setExecutor(new Scycosmetics());
@@ -30,20 +56,8 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new PlayerDataListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new ArrowTrailListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new CosInventoryListeners(), this);
-		
-		//Set up files
-		ConfigManager configMang = ConfigManager.getConfigMang();
-		configMang.setupConfig();
-		
-		CosmeticDataHandler cosmeticHandler = CosmeticDataHandler.getCosmeticHandler();
-
-		// initialize cosmetics
-		cosmetics = cosmeticHandler.initializeCosmetics();
-		
-		// initialize playerobjects of currently online players
-		PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
-		playerHandler.initializePlayerObjects();
-		
+		Bukkit.getPluginManager().registerEvents(new LastWordsListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new PlayerTrailListeners(), this);
 		
 		//Start dirty data timer
 		dirtyTimer = new DirtyDataTimer();
@@ -58,10 +72,16 @@ public class Main extends JavaPlugin {
 		dirtyTimer.stopTimer();
 	}
 
+	public static Main getInstance() {
+		return instance;
+	}
+	
+	public boolean premVanishEnabled() {
+		return premiumVanishSupportEnabled;
+	}
 	
 	public Cosmetic getCosmeticFromId(String id) {
-		if(cosmetics.containsKey(id)) return cosmetics.get(id);
-		return null;
+		return cosmetics.get(id);
 	}
 	
 	public HashMap<String, Cosmetic> getCosmetics(){

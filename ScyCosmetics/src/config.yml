@@ -17,6 +17,18 @@ inventory_settings:
         display_name: '&bArrow Trails'
         lore:
           - '&3Make your shots sexy'
+        slot: 29 #Slot between 0-53 (inclusive)
+      last_words:
+        material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGU4MWY1Zjg3YjNhNjc4ZGRhYjk2ZDQwOTM3YmFjNTg3ZDcwNjVkNTI2Yzg1MzhhMjdhYTVmMzVkZmFjYmRjMCJ9fX0='
+        display_name: '&2Last Words'
+        lore:
+          - '&aCurse your enemies in your final breath <3'
+        slot: 33
+      player_trail:
+        material: EMERALD
+        display_name: '&aPlayer Trails'
+        lore:
+          - '&3Moves like jagger'
         slot: 22 #Slot between 0-53 (inclusive)
       info: #YET TO BE IMPLEMENTED
         material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWMwZTkxNDQ3NmUxYjE1ZGEyYTkxZjQ1Njk2ZGQyMTc2NjlkNGRhYzRmYTYyMTY1MDkyOWJhY2UwM2RlMjI1NCJ9fX0='
@@ -26,6 +38,9 @@ inventory_settings:
         slot: 53
         enabled: true
   
+misc:
+  special_feature_error_cooldown: 5 #in seconds
+  
 messages:
   prefix: '&8[&bCosmetics&8]'
   no_permission: '&cYou do not have permission for this command.'
@@ -33,3 +48,4 @@ messages:
   
   error_player_not_found: '&cThe player &4{player} &cis not online or does not exist.'
   error_invalid_cosmetic_id: '&cThe specified cosmetic id does not exist.'
+  error_particle_data: '&cError! Unable to do special effect. Custom data does not match particle type. Please report to staff, this is a bug.'

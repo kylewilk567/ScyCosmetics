@@ -2,11 +2,16 @@ banned_particles: #TO BE REMOVED LATER
   - BLOCK_CRACK
   - BLOCK_DUST
   - ITEM_CRACK
+  - FALLING_DUST
+  - VIBRATION
   - LEGACY_BLOCK_CRACK
   - LEGACY_BLOCK_DUST
   - LEGACY_FALLING_DUST
   
   
+#Particles that can change color: REDSTONE, NOTE, SPELL_MOB, SPELL_MOB_AMBIENT
+#Custom_data - do NOT change the values. These are special effects that must hold certain values to work.
+#Valid values for custom data: 
 particles:
   AR_ASH: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
     tier: COMMON #MUST be in all caps
@@ -15,3 +20,33 @@ particles:
     display_item: 'FIRE_CHARGE'
     display_lore:
       - '&bLigma'
+  AR_REDSTONE:
+    tier: EPIC #MUST be in all caps
+    particle: REDSTONE #Particle enum - this particle CAN change color!
+    display_name: '&4Redstone' #Name displayed in inventory
+    display_item: 'REDSTONE' #redstone dust
+    display_lore:
+      - '&cYou can change my color uwu'
+  AR_NOTE:
+    tier: UNCOMMON #MUST be in all caps
+    particle: NOTE #Particle enum
+    display_name: '&aNote' #Name displayed in inventory
+    display_item: 'JUKEBOX'
+    display_lore:
+      - '&bNice!'
+  AR_RAINBOW_NOTE:
+    tier: EPIC #MUST be in all caps
+    particle: NOTE #Particle enum
+    display_name: '&2Rainbow Note' #Name displayed in inventory
+    display_item: 'JUKEBOX'
+    display_lore:
+      - '&bPretty!'
+    custom_data: 'rainbow'
+  AR_CHRISTMAS_NOTE:
+    tier: SEASONAL #MUST be in all caps
+    particle: NOTE #Particle enum
+    display_name: '&2Christmas Note' #Name displayed in inventory
+    display_item: 'JUKEBOX'
+    display_lore:
+      - '&cHo &fHo &cHo!'
+    custom_data: 'christmas'

@@ -18,12 +18,10 @@ public class ItemUtils {
 	
 	
 	// some reflection stuff to be used when setting a skull's profile
-	private static Field blockProfileField;
 	private static Method metaSetProfileMethod;
 	private static Field metaProfileField;
 	
 	
-	@SuppressWarnings("deprecation")
 	public static ItemStack getHead(String value) {
 		ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         if(!(skull.getItemMeta() instanceof SkullMeta)) return skull;
@@ -32,10 +30,6 @@ public class ItemUtils {
 		mutateItemMeta(meta, value);
 		skull.setItemMeta(meta);
 		return skull;
-  //      UUID hashAsId = new UUID(value.hashCode(), value.hashCode());
-  //      return Bukkit.getUnsafe().modifyItemStack(skull,
-  //              "{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + value + "\"}]}}}"
- //       );
     }
 	
 	
@@ -72,5 +66,32 @@ public class ItemUtils {
 		profile.getProperties().put("textures", new Property("textures", b64));
 		return profile;
 	}
+	
+	/**
+	 * 
+	 * @param item1
+	 * @param item2
+	 * @return whether the two items are equal. If one or both items are null, returns false.
+	 */
+	public static boolean itemEquals(ItemStack item1, ItemStack item2) {
+		if(item1 == null || item2 == null) return false;
+		
+		//If one does and the other does not have something, return false
+		boolean bool1 = item1.hasItemMeta();
+		boolean bool2 = item2.hasItemMeta();
+		if(bool1 != bool2) return false;
+		bool1 = item1.getItemMeta().hasDisplayName();
+		bool2 = item2.getItemMeta().hasDisplayName();
+		if(bool1 != bool2) return false;
+		bool1 = item1.getItemMeta().hasLore();
+		bool2 = item2.getItemMeta().hasLore();
+		if(bool1 != bool2) return false;
+		if(!item1.getItemMeta().getDisplayName().equals(item2.getItemMeta().getDisplayName())) return false;
+		if(!item1.getItemMeta().getLore().equals(item2.getItemMeta().getLore())) return false;
+		
+		return true;
+	}
+	
+	
 
 }

@@ -16,14 +16,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import net.md_5.bungee.api.ChatColor;
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
+import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.ArrowTrail;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
+import xyz.scyllasrock.ScyCosmetics.util.InventoryUtils;
 import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
 
 public class Scycosmetics implements CommandExecutor, TabCompleter {
 	
 	Main plugin = Main.getPlugin(Main.class);
+	private static ConfigManager configMang = ConfigManager.getConfigMang();
 
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -40,9 +43,9 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 		}
 		
 		if(args[0].equalsIgnoreCase("test")) {
-			ItemStack item = ItemUtils.getHead(args[1]);
 			Player player = (Player) sender;
-			player.getInventory().addItem(item);
+			player.openInventory(InventoryUtils.getColorPickerInv());
+			return true;
 		}
 		
 		if(args[0].equalsIgnoreCase("give")) {
@@ -66,14 +69,13 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 		if(!player.isOp()) return null;
 		
 		List<String> help = new ArrayList<>();
-		//First argument
+		String searching = "";
 		switch(args.length) {
+
 		case 0:
 			return help;
-		
+		//First argument
 		case 1:
-
-			String searching = "";
 
 			if (args[0] != null) {
 				searching = args[0].toLowerCase();
@@ -83,6 +85,36 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 				help.add("give");
 			}
 			return help;
+			
+		case 2:
+			searching = "";
+			if(args[1] != null) searching = args[1].toLowerCase();
+			
+			//Give command - player argument
+			if(args[0].equalsIgnoreCase("give") && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
+				for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+					help.add(onlinePlayer.getName());
+				}
+				return help;
+			}
+			
+
+		
+		case 3:
+			searching = "";
+			if(args[2] != null) searching = args[2].toLowerCase();
+			
+			//Give command
+			if(args[0].equalsIgnoreCase("give") && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
+				
+				//Cosmetic ids
+				for(String id : plugin.getCosmetics().keySet()) {
+					if(id.toLowerCase().startsWith(searching)) help.add(id);
+				}
+				return help;
+
+			}
+
 		default:
 			return help;
 		}

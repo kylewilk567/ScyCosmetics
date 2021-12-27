@@ -54,7 +54,7 @@ public class GiveCommand implements CommandExecutor {
 		playerHandler.getPlayerObjectByUUID(player.getUniqueId()).addUnlockedCosmetic(args[2]);
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', 
 				configMang.getMessageNoColor("scycos_give_success").replace("{player}", args[1])
-				.replace("{cosmetic}", cos.getDisplayName())));
+				.replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
 		
 		return false;
 	}

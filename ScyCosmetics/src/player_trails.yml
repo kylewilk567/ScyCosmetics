@@ -1,0 +1,152 @@
+#Special particles: REDSTONE, SPELL_MOB, SPELL_MOB_AMBIENT, NOTE and DUST_COLOR_TRANSITION
+
+#Custom data types:
+#random - REDSTONE, SPELL_MOB, SPELL_MOB_AMBIENT, NOTE and DUST_COLOR_TRANSITION
+#christmas - REDSTONE, SPELL_MOB, SPELL_MOB_AMBIENT, and DUST_COLOR_TRANSITION
+#RGB;{R};{G};{B} - REDSTONE, SPELL_MOB, and SPELL_MOB_AMBIENT. Ex: custom_data: 'RGB;75;75;75' R G B are values between 0-255
+#color;{Color} - NOTE. {Color} is an integer between 0-24. 6 represents red
+#Custom data notes:
+#ONLY USE ONE SPECIAL PARTICLE AND ONE CUSTOM DATA FOR EACH TRAIL
+#DUST_COLOR_TRANSITION REQUIRES a value for custom data.
+#DUST_COLOR_TRANSITION, SPELL_MOB, SPELL_MOB_AMBIENT, REDSTONE, and NOTE particles CANNOT be mixed with other particle types
+trails:
+  PT_DUST_TRANS_CHRISTMAS: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: EPIC #MUST be in all caps
+    particles: #Has support for multiple particles. It is recommended with more particles to reduce count
+      - DUST_COLOR_TRANSITION
+    count: 1 #How many particles to spawn - INTEGER
+    display_name: '&4Christmas dust' #Name displayed in inventory
+    display_item: 'PARROT_SPAWN_EGG'
+    display_lore:
+      - '&cRedstone dust that transitions from red to green'
+    offsets: #Allowed ranges from player's feet where particles can spawn
+      x: 0.25
+      y: 0
+      z: 0.25
+    custom_data: 'christmas'
+  PT_SPELL_MOB_RANDOM: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: UNCOMMON #MUST be in all caps
+    particles: #Has support for multiple particles. It is recommended with more particles to reduce count
+      - SPELL_MOB
+    count: 1 #How many particles to spawn - INTEGER
+    display_name: '&4Random Spell Mob' #Name displayed in inventory
+    display_item: 'POTION'
+    display_lore:
+      - '&aWitchy'
+    offsets: #Allowed ranges from player's feet where particles can spawn
+      x: 0.25
+      y: 0
+      z: 0.25
+    custom_data: 'random'
+  PT_SPELL_MOB_AMBIENT_PURPLE:
+    tier: UNCOMMON #MUST be in all caps
+    particles: #Has support for multiple particles. It is recommended with more particles to reduce count
+      - SPELL_MOB_AMBIENT
+    count: 1 #How many particles to spawn - INTEGER
+    display_name: '&4Random Spell Mob Ambient' #Name displayed in inventory
+    display_item: 'SPLASH_POTION'
+    display_lore:
+      - '&aWitchy2'
+    offsets: #Allowed ranges from player's feet where particles can spawn
+      x: 0.25
+      y: 1.0
+      z: 0.25
+    custom_data: 'RGB;255;0;255'
+  PT_SPELL_MOB_RGB:
+    tier: UNCOMMON #MUST be in all caps
+    particles: #Has support for multiple particles. It is recommended with more particles to reduce count
+      - SPELL_MOB
+    count: 1 #How many particles to spawn - INTEGER
+    display_name: '&4Random Spell Mob' #Name displayed in inventory
+    display_item: 'POTION'
+    display_lore:
+      - '&aWitchy'
+    offsets: #Allowed ranges from player's feet where particles can spawn
+      x: 0.25
+      y: 0
+      z: 0.25
+    custom_data: 'RGB;0;0;255'
+  PT_SPICY:
+    tier: EPIC
+    particles: #Has support for multiple particles. It is recommended with more particles to reduce count
+      - SOUL_FIRE_FLAME
+      - FLAME
+    count: 1
+    offsets:
+      x: 0.25
+      y: 0
+      z: 0.25
+    display_name: '&cSpicy'
+    display_item: 'BLAZE_POWDER'
+    display_lore:
+      - "&cThat's HOT"
+  PT_REDSTONE_RANDOM:
+    tier: COMMON
+    particles: #Do NOT use multiple particle types if redstone is included!
+      - REDSTONE
+    count: 1
+    display_name: '&4Random Redstone'
+    display_item: 'FIRE_CHARGE'
+    display_lore:
+      - '&bLigma'
+    offsets:
+      x: 0.25
+      y: 0
+      z: 0.25
+    custom_data: 'random'
+  PT_REDSTONE:
+    tier: COMMON
+    particles: #Do NOT use multiple particle types if redstone is included!
+      - REDSTONE
+    count: 1
+    display_name: '&4Reg Redstone'
+    display_item: 'FIRE_CHARGE'
+    display_lore:
+      - '&bLigma'
+    offsets:
+      x: 0.25
+      y: 0
+      z: 0.25
+  PT_REDSTONE_WHITE:
+    tier: COMMON
+    particles: #Do NOT use multiple particle types if redstone is included!
+      - REDSTONE
+    count: 1
+    display_name: '&4Redstone White'
+    display_item: 'FIRE_CHARGE'
+    display_lore:
+      - '&bLigma'
+    offsets:
+      x: 0.25
+      y: 0
+      z: 0.25
+    custom_data: 'RGB;255;255;255'
+  PT_NOTE_GREEN:
+    tier: COMMON
+    particles: #Do NOT use multiple particle types if redstone is included!
+      - NOTE
+    count: 1
+    display_name: '&aNote Green'
+    display_item: 'JUKEBOX'
+    display_lore:
+      - '&2Yum'
+    offsets:
+      x: 0.25
+      y: 0
+      z: 0.25
+    custom_data: 'color;0'
+  PT_NOTE_RED_WITH_FLAME: #You can mix special particles with non-special particles, but not special with special
+    tier: UNCOMMON
+    particles: #Do NOT use multiple particle types if redstone is included!
+      - NOTE
+      - FLAME
+    count: 1
+    display_name: '&aNote Red with Flame'
+    display_item: 'JUKEBOX'
+    display_lore:
+      - '&2Hot music'
+    offsets:
+      x: 0.5
+      y: 0
+      z: 0.5
+    custom_data: 'color;6'

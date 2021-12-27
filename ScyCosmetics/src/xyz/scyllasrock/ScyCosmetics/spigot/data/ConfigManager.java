@@ -50,8 +50,6 @@ public class ConfigManager {
 	 * get config file
 	 */
 	public YamlConfiguration getConfig() {
-		configFile = new File(plugin.getDataFolder(), "config.yml");
-		config = YamlConfiguration.loadConfiguration(configFile);
 		return (YamlConfiguration) config;
 	}
 	

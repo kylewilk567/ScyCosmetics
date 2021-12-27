@@ -11,19 +11,29 @@ public class PlayerObject {
 	Main plugin = Main.getPlugin(Main.class);
 	
 	private UUID uuid;
+	
+	//Inventory information
+	private ItemFilter itemFilter;
+	private boolean showLockedCosmetics;
 
 	private List<String> unlockedCosmetics = new ArrayList<String>();
 	private List<String> activeCosmetics = new ArrayList<String>();
 	private List<DirtyDataType> dirtyData = new ArrayList<DirtyDataType>();
 	
+
 	
-	public PlayerObject(UUID uuid, List<String> unlockedCosmetics) {
+	
+	public PlayerObject(UUID uuid, ItemFilter itemFilter, boolean showLockedCosmetics, List<String> unlockedCosmetics) {
 		this.uuid = uuid;
+		this.itemFilter = itemFilter;
+		this.showLockedCosmetics = showLockedCosmetics;
 		this.unlockedCosmetics = unlockedCosmetics;
 	}
 	
-	public PlayerObject(UUID uuid, List<String> unlockedCosmetics, List<String> activeCosmetics) {
+	public PlayerObject(UUID uuid, ItemFilter itemFilter, boolean showLockedCosmetics, List<String> unlockedCosmetics, List<String> activeCosmetics) {
 		this.uuid = uuid;
+		this.itemFilter = itemFilter;
+		this.showLockedCosmetics = showLockedCosmetics;
 		this.unlockedCosmetics = unlockedCosmetics;
 		this.activeCosmetics = activeCosmetics;
 	}
@@ -43,6 +53,14 @@ public class PlayerObject {
 	
 	public List<String> getActiveCosmetics(){
 		return activeCosmetics;
+	}
+	
+	public ItemFilter getItemFilter() {
+		return itemFilter;
+	}
+	
+	public boolean showLockedCosmetics() {
+		return showLockedCosmetics;
 	}
 	
 	
@@ -77,13 +95,17 @@ public class PlayerObject {
 	public void setActiveCosmetic(Cosmetic cos) {
 		boolean dirty = false;
 		if(hasActiveCosmeticType(cos.getType())) {
-			if(activeCosmetics.remove(getActiveCosmeticId(cos.getType())) || activeCosmetics.add(cos.getId())) {
-				dirty = true;
-			}
+			activeCosmetics.remove(getActiveCosmeticId(cos.getType()));
+			activeCosmetics.add(cos.getId());
+			dirty = true;
 		}
 		else dirty = activeCosmetics.add(cos.getId());
 		
 		if(dirty) dirtyData.add(DirtyDataType.ACTIVE_COSMETICS);
+	}
+	
+	public void removeActiveCosmetic(CosmeticType type) {
+		activeCosmetics.remove(getActiveCosmeticId(type));
 	}
 	
 	public boolean hasActiveCosmeticType(CosmeticType type) {
@@ -103,6 +125,14 @@ public class PlayerObject {
 		unlockedCosmetics.add(id);
 		dirtyData.add(DirtyDataType.UNLOCKED_COSMETICS);
 		return true;
+	}
+	
+	public void setItemFilter(ItemFilter filter) {
+		this.itemFilter = filter;
+	}
+	
+	public void setShowLockedCosmetics(boolean show) {
+		this.showLockedCosmetics = show;
 	}
 	
 }

@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.ItemFilter;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
 
 public class PlayerDataHandler {
@@ -54,6 +55,10 @@ public class PlayerDataHandler {
 		File f = new File(plugin.getDataFolder() + File.separator + "Player_data" + File.separator + uuid.toString() + ".yml");
 		try {
 			f.createNewFile();
+			YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
+			config.set("cosmetic_filter", "NAME");
+			config.set("show_locked", "true");
+			config.save(f);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -97,9 +102,10 @@ public class PlayerDataHandler {
 			File playerFile = createPlayerDataFile(uuid);
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
 			playerObjects.put(uuid,
-					new PlayerObject(uuid, config.getStringList("unlocked_cosmetics"), config.getStringList("active_cosmetics")));
+					new PlayerObject(uuid, ItemFilter.valueOf(config.getString("cosmetic_filter")), config.getBoolean("show_locked"),
+							config.getStringList("unlocked_cosmetics"), config.getStringList("active_cosmetics")));
 		}
-		else playerObjects.put(uuid, new PlayerObject(uuid, new ArrayList<String>(), new ArrayList<String>()));
+		else playerObjects.put(uuid, new PlayerObject(uuid, ItemFilter.valueOf("NAME"), true, new ArrayList<String>(), new ArrayList<String>()));
 	}
 	
 	
@@ -128,5 +134,28 @@ public class PlayerDataHandler {
 		}
 	}
 	
+	public void updateShowLockedCosmetics(UUID uuid) {
+		File f = createPlayerDataFile(uuid); //Create file if not exists
+		
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
+		config.set("show_locked", playerObjects.get(uuid).showLockedCosmetics());
+		try {
+			config.save(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateItemFilter(UUID uuid) {
+		File f = createPlayerDataFile(uuid); //Create file if not exists
+		
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
+		config.set("cosmetic_filter", playerObjects.get(uuid).getItemFilter().toString());
+		try {
+			config.save(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

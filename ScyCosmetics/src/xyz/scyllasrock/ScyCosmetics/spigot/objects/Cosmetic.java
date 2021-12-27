@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -13,20 +14,14 @@ public abstract class Cosmetic {
 	private final String id;
 	private final CosmeticType type;
 	private final CosmeticTier tier;
-	private final String displayName;
-	private final Material displayItem;
-	private List<String> displayLore;
+	private final ItemStack displayItem;
 	
-	public Cosmetic(String id, CosmeticType type, CosmeticTier tier, String displayName, Material displayItem, List<String> displayLore) {
+	public Cosmetic(String id, CosmeticType type, CosmeticTier tier, ItemStack displayItem) {
 		this.id = id;
 		this.type = type;
 		this.tier = tier;
-		this.displayName = ChatColor.translateAlternateColorCodes('&', displayName);
 		this.displayItem = displayItem;
-		this.displayLore = new ArrayList<String>();
-		for(String s : displayLore) {
-			this.displayLore.add(ChatColor.translateAlternateColorCodes('&', s));
-		}
+
 	}
 	
 	public String getId() {
@@ -41,17 +36,12 @@ public abstract class Cosmetic {
 		return tier;
 	}
 	
-	public String getDisplayName() {
-		return displayName;
-	}
-	
-	public Material getDisplayItem() {
+	public ItemStack getDisplayItem() {
 		return displayItem;
 	}
 	
-	public List<String> getDisplayLore() {
-		return displayLore;
-	}
+	public abstract String[] getCosData();
+	
 	
 	
 
