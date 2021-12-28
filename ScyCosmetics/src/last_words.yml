@@ -1,3 +1,6 @@
+
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+
 last_words:
   LW_GLAD: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
     tier: COMMON #MUST be in all caps
@@ -5,11 +8,13 @@ last_words:
     display_name: '&8Glad' #Name displayed in inventory
     display_item: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmMyYjliOWFlNjIyYmQ2OGFkZmY3MTgwZjgyMDZlYzQ0OTRhYmJmYTEzMGU5NGE1ODRlYzY5MmU4OTg0YWIyIn19fQ=='
     display_lore:
-      - "&aGlad that's over"
+      - "&eText: &aGlad that's over"
+      - '&eTier: &fCOMMON'
   LW_WELP: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
     tier: UNCOMMON #MUST be in all caps
     text: "&aWelp..." #Final message
     display_name: '&8Welp' #Name displayed in inventory
     display_item: "head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGU4MWY1Zjg3YjNhNjc4ZGRhYjk2ZDQwOTM3YmFjNTg3ZDcwNjVkNTI2Yzg1MzhhMjdhYTVmMzVkZmFjYmRjMCJ9fX0="
     display_lore:
-      - "&aWelp..."
+      - "&eText: &aWelp..."
+      - '&eTier: &7UNCOMMON'

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
+import xyz.scyllasrock.ScyCosmetics.util.PrefixColorTimer;
 
 public class PlayerObject {
 	
@@ -20,7 +21,8 @@ public class PlayerObject {
 	private List<String> activeCosmetics = new ArrayList<String>();
 	private List<DirtyDataType> dirtyData = new ArrayList<DirtyDataType>();
 	
-
+	//Prefix timer
+	PrefixColorTimer prefixTimer;
 	
 	
 	public PlayerObject(UUID uuid, ItemFilter itemFilter, boolean showLockedCosmetics, List<String> unlockedCosmetics) {
@@ -36,6 +38,13 @@ public class PlayerObject {
 		this.showLockedCosmetics = showLockedCosmetics;
 		this.unlockedCosmetics = unlockedCosmetics;
 		this.activeCosmetics = activeCosmetics;
+		
+		//Start prefix timer if one is active
+		if(this.hasActiveCosmeticType(CosmeticType.PREFIX)) {
+			prefixTimer = new PrefixColorTimer(uuid, (Prefix) getActiveCosmetic(CosmeticType.PREFIX));
+			prefixTimer.scheduleTimer();
+
+		}
 	}
 	
 	
@@ -83,7 +92,10 @@ public class PlayerObject {
 	 */
 	public Cosmetic getActiveCosmetic(CosmeticType type) {
 		for(String cos: activeCosmetics) {
-			if(plugin.getCosmetics().get(cos).getType().equals(type)) return plugin.getCosmetics().get(cos);
+			if(plugin.getCosmetics().get(cos).getType().equals(type)) {
+				if(type.equals(CosmeticType.PREFIX) && prefixTimer != null) return prefixTimer.getPrefix();
+				else return plugin.getCosmetics().get(cos);
+			}
 		}
 		return null;
 	}
@@ -95,17 +107,33 @@ public class PlayerObject {
 	public void setActiveCosmetic(Cosmetic cos) {
 		boolean dirty = false;
 		if(hasActiveCosmeticType(cos.getType())) {
-			activeCosmetics.remove(getActiveCosmeticId(cos.getType()));
-			activeCosmetics.add(cos.getId());
+			removeActiveCosmetic(cos.getType());
+			addActiveCosmetic(cos);
 			dirty = true;
 		}
-		else dirty = activeCosmetics.add(cos.getId());
+		else dirty = addActiveCosmetic(cos);
 		
 		if(dirty) dirtyData.add(DirtyDataType.ACTIVE_COSMETICS);
 	}
 	
 	public void removeActiveCosmetic(CosmeticType type) {
+		//If removing a prefix - cancel color change runnable
+		if(type.equals(CosmeticType.PREFIX) && prefixTimer != null) {
+			prefixTimer.stopTimer();
+			prefixTimer = null;
+		}
+
 		activeCosmetics.remove(getActiveCosmeticId(type));
+	}
+	
+	public boolean addActiveCosmetic(Cosmetic cos) {
+		//If adding a prefix - set prefix timer
+		if(cos.getType().equals(CosmeticType.PREFIX)) {
+			if(prefixTimer != null) prefixTimer.stopTimer(); //Extra line to make sure timer is stopped
+			prefixTimer = new PrefixColorTimer(getUUID(), (Prefix) cos);
+			prefixTimer.scheduleTimer();
+		}
+		return activeCosmetics.add(cos.getId());
 	}
 	
 	public boolean hasActiveCosmeticType(CosmeticType type) {

@@ -1,0 +1,38 @@
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+#Prefixes only supports characters! No strings! All prefixes must be from UTF encoding characters
+
+prefixes:
+  PR_PICKAXE_RAINBOW: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: EPIC #MUST be in all caps
+    prefix: '\u26CF' #Must be in UTF encoding as shown here. Not all encodings work. Try this website: https://en.wikipedia.org/wiki/List_of_Unicode_characters
+    color_codes: #If you specify a list here, you should also specify a "color_change_ticks" to denote how fast to switch colors
+      - "&4"
+      - "&c"
+      - "&6"
+      - "&e"
+      - "&9"
+      - "&1"
+      - "&5"
+    color_change_ticks: 10 #Should not be a number below 10
+    display_name: '&fPickaxe &7(&4R&ca&6i&en&9b&1o&5w&7)' #Name displayed in inventory
+    display_item: 'IRON_PICKAXE'
+    display_lore:
+      - '&eTier: &5EPIC'
+  PR_PICKAXE_WHITE: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: UNCOMMON #MUST be in all caps
+    prefix: '\u26CF'
+    color_codes:
+      - "&f"
+    display_name: '&fPickaxe &7(&fWhite&7)' #Name displayed in inventory
+    display_item: 'STONE_PICKAXE'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+  PR_SKULL_GREEN:
+    tier: UNCOMMON
+    prefix: '\u2620'
+    color_codes:
+      - "&a"
+    display_name: '&7Skull &7(&aGreen&7)'
+    display_item: 'BONE'
+    display_lore:
+      - '&eTier: &7UNCOMMON'

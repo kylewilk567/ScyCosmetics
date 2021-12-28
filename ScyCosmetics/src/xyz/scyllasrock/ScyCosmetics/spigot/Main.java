@@ -3,6 +3,7 @@ package xyz.scyllasrock.ScyCosmetics.spigot;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.commands.Scycosmetics.Scycosmetics;
@@ -10,6 +11,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.CosmeticDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.DirtyDataTimer;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
+import xyz.scyllasrock.ScyCosmetics.spigot.hooks.ScyCosmeticsExpansion;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.ArrowTrailListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.CosInventoryListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.LastWordsListeners;
@@ -31,7 +33,15 @@ public class Main extends JavaPlugin {
 		
 		//Load dependencies
 		
-		//PremiumVanish
+		//Placeholder API - soft
+		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new ScyCosmeticsExpansion(this).register();
+      } else {
+    	  Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "PlaceholderAPI not found. Disabled ScyCosmetics expansion."
+    	  		+ " Plugin will function without prefixes.");
+      }
+		
+		//PremiumVanish - soft
 		if(Bukkit.getPluginManager().getPlugin("PremiumVanish") != null) {
 			premiumVanishSupportEnabled = true;
 		}

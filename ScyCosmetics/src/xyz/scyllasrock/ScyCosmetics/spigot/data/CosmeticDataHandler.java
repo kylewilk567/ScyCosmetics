@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,6 +28,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticTier;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.LastWords;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerTrail;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.Prefix;
 import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
 
 public class CosmeticDataHandler {
@@ -37,7 +39,7 @@ public class CosmeticDataHandler {
 	
 	public CosmeticDataHandler() {
 		checkOrCreateDirectories("Cosmetics", "Cosmetics" + File.separator + "Emotes");
-		checkOrCreateFiles("last_words.yml", "arrow_trails.yml", "player_trails.yml");
+		checkOrCreateFiles("last_words.yml", "arrow_trails.yml", "player_trails.yml", "prefixes.yml");
 	}
 
 
@@ -132,6 +134,21 @@ public class CosmeticDataHandler {
 			else {
 			cosmetics.put(id, (Cosmetic) new PlayerTrail(id, CosmeticTier.valueOf(playerTrailConfig.getString("trails." + id + ".tier")), 
 					 itemStack, particles, count, offsetX, offsetY, offsetZ));
+			}
+		}
+		
+		//Initialize prefixes
+		YamlConfiguration prefixConfig = getConfigFile("Cosmetics" + File.separator + "prefixes.yml");
+		for(String id : prefixConfig.getConfigurationSection("prefixes").getKeys(false)) {
+			ItemStack itemStack = getItemStackFromConfigSectionAndKey(prefixConfig, "prefixes", id);
+			String translatedPrefix = StringEscapeUtils.unescapeJava(prefixConfig.getString("prefixes." + id + ".prefix"));
+			if(translatedPrefix == null) {
+				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: No prefix for prefix with id " + id + "!");
+			}
+			else {
+			cosmetics.put(id, (Cosmetic) new Prefix(id, CosmeticTier.valueOf(prefixConfig.getString("prefixes." + id + ".tier")), 
+					 itemStack, translatedPrefix, prefixConfig.getStringList("prefixes." + id + ".color_codes"),
+					 prefixConfig.getInt("prefixes." + id + ".color_change_ticks")));
 			}
 		}
 		

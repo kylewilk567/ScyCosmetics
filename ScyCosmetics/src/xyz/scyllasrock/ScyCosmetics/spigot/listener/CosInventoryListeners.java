@@ -9,9 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -43,6 +46,13 @@ public class CosInventoryListeners implements Listener {
 	final int arrowTrailSlot = configMang.getConfig().getInt(baseInvPath + ".items.arrow_trail.slot");
 	final int lastWordsSlot = configMang.getConfig().getInt(baseInvPath + ".items.last_words.slot");
 	final int playerTrailSlot = configMang.getConfig().getInt(baseInvPath + ".items.player_trail.slot");
+	final int emoteSlot = configMang.getConfig().getInt(baseInvPath + ".items.stand_emote.slot");
+	final int prefixSlot = configMang.getConfig().getInt(baseInvPath + ".items.prefix.slot");
+	final int killEffectSlot = configMang.getConfig().getInt(baseInvPath + ".items.kill_effect.slot");
+	final int afkEffectSlot = configMang.getConfig().getInt(baseInvPath + ".items.afk_effect.slot");
+	final int logMessageSlot = configMang.getConfig().getInt(baseInvPath + ".items.log_message.slot");
+	final int titleSlot = configMang.getConfig().getInt(baseInvPath + ".items.title.slot");
+	final int infoItemSlot = configMang.getConfig().getInt(baseInvPath + ".items.info.slot");
 	
 	@EventHandler
 	public void onBaseInvClick(InventoryClickEvent event) {
@@ -57,9 +67,52 @@ public class CosInventoryListeners implements Listener {
 		//It is the base inventory. Cancel click 
 		event.setCancelled(true);
 		
-		//Check slot of clicked item and open new inventory
+		//Check slot of clicked item and open new inventory if it's not the info item or a glass pane
 		Player player = (Player) event.getWhoClicked();
+		if(event.getSlot() != infoItemSlot && !event.getCurrentItem().getType().toString().contains("PANE")) {
+			
+		//Remove cosmetic if one is active
+		if(event.getClick().equals(ClickType.SHIFT_LEFT) || event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+			if(event.getCurrentItem().hasItemMeta()) {
+				ItemMeta meta = event.getCurrentItem().getItemMeta();
+				if(event.getCurrentItem().getItemMeta().getPersistentDataContainer().has(
+						new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING)) {
+					
+					String cosTypeStr = event.getCurrentItem().getItemMeta().getPersistentDataContainer()
+							.get(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING);
+					//Check if one is active
+					if(!playerHandler.getPlayerObjectByUUID(player.getUniqueId()).hasActiveCosmeticType(CosmeticType.valueOf(cosTypeStr))) return;
+					
+					//Remove cosmetic
+					playerHandler.getPlayerObjectByUUID(player.getUniqueId()).removeActiveCosmetic(CosmeticType.valueOf(cosTypeStr));
+									
+					//Remove last line of lore
+					List<String> lore = event.getCurrentItem().getItemMeta().getLore();
+					if(lore.size() > 1) {
+						lore.remove(lore.size() - 1); //Remove last two lines
+						lore.remove(lore.size() - 1);
+					}
+					meta.setLore(lore);
+					event.getCurrentItem().setItemMeta(meta);
+					
+					//Remove enchants from item (remove glow)
+					for(Enchantment e : event.getCurrentItem().getEnchantments().keySet()) {
+						event.getCurrentItem().removeEnchantment(e);
+					}
+					
+				}
+
+				
+			}
+			
+			return;
+		}
+		
+		else {
 		player.openInventory(getCosmeticInventory(event.getSlot(), player));
+		}
+		}
+		
 		
 	}
 	
@@ -74,7 +127,8 @@ public class CosInventoryListeners implements Listener {
 		
 		Player player = (Player) event.getWhoClicked();
 		if(!currTitle.contains(player.getName() + "'s ")) return;
-		if(!currTitle.contains("Arrow trails") && !currTitle.contains("Last words") && !currTitle.contains("Player trails")) return;
+		if(!currTitle.contains("Arrow trails") && !currTitle.contains("Last words")
+				&& !currTitle.contains("Player trails") && !currTitle.contains("Prefixes")) return;
 		
 		//It is a cosmetic inventory - cancel click
 		event.setCancelled(true);
@@ -87,7 +141,7 @@ public class CosInventoryListeners implements Listener {
 			//Return home
 		if(event.getSlot() == event.getInventory().getSize() - 5) {
 			player.closeInventory();
-			player.openInventory(InventoryUtils.getInventoryFromConfigPath(baseInvPath));
+			player.openInventory(InventoryUtils.getBaseCosInventory(playerObject));
 			return;
 		}
 			//Toggle viewing locked items - must reload inventory (changes size)
@@ -189,6 +243,9 @@ public class CosInventoryListeners implements Listener {
 		else if(slot == playerTrailSlot) {
 			inv = this.getSpecificCosmeticInventory(player, CosmeticType.PLAYER_TRAIL, CosmeticType.PLAYER_TRAIL.label);
 		}
+		else if(slot == prefixSlot) {
+			inv = this.getSpecificCosmeticInventory(player, CosmeticType.PREFIX, CosmeticType.PREFIX.label);
+		}
 		
 
 		return inv;		
@@ -196,7 +253,7 @@ public class CosInventoryListeners implements Listener {
 	
 	//Sort options are rarity_ascending, rarity_descending, name (alphabetic), most_recent, least_recent
 	
-	//PLANS FOR FILTERING...
+	//Steps FOR FILTERING...
 	//Step 1, get all itemStacks for the cosmetic type
 	//Step 2, use itemstacks to find the size of inventory to be created
 	//Step 3, take in a filtering argument and sort items (alphabetic by displayname, recently unlocked (front to back and back to front) - obtained from player file)
@@ -228,13 +285,16 @@ public class CosInventoryListeners implements Listener {
 		//Initialize Info Item
 		infoItem = new ItemStack(Material.BEACON);
 		ItemMeta infoMeta = infoItem.getItemMeta();
-		infoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "Info-y info here"));
+		infoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bClick to go back"));
 		infoItem.setItemMeta(infoMeta);
 		
 		//Initialize filterItem
 		filterItem = new ItemStack(Material.GOLD_INGOT);
 		ItemMeta filterMeta = filterItem.getItemMeta();
 		filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+		List<String> filterLore = new ArrayList<String>();
+		filterLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
+		filterMeta.setLore(filterLore);
 		filterItem.setItemMeta(filterMeta);
 		
 		//Initialize currentCosItem

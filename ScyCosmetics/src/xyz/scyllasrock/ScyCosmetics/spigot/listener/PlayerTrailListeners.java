@@ -177,6 +177,12 @@ public class PlayerTrailListeners implements Listener {
 				loc.getWorld().spawnParticle(particle, loc, count, dustTrans);
 			}
 			
+			//Spawns white that transitions to blue
+			else if(customData.equalsIgnoreCase("snow")) {
+				DustTransition dustTrans = new DustTransition(Color.fromRGB(0, 0, 0), Color.fromRGB(121, 215, 232), 1.0F);
+				loc.getWorld().spawnParticle(particle, loc, count, dustTrans);
+			}
+			
 		}
 		//Spell Mob or Spell Mob Ambient particles - offsets are ignored
 		else if(particle.equals(Particle.SPELL_MOB_AMBIENT) || particle.equals(Particle.SPELL_MOB)) {

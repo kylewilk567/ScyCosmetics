@@ -13,29 +13,66 @@ inventory_settings:
     size: 54
     items:
       arrow_trail:
-        material: SPECTRAL_ARROW #To make this a head, use "head;VALUE". Get value from here: https://minecraft-heads.com/
+        material: ARROW #To make this a head, use "head;VALUE". Get value from here: https://minecraft-heads.com/
         display_name: '&bArrow Trails'
         lore:
           - '&3Make your shots sexy'
-        slot: 29 #Slot between 0-53 (inclusive)
+        slot: 17 #Don't change this
       last_words:
-        material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGU4MWY1Zjg3YjNhNjc4ZGRhYjk2ZDQwOTM3YmFjNTg3ZDcwNjVkNTI2Yzg1MzhhMjdhYTVmMzVkZmFjYmRjMCJ9fX0='
+        material: PAPER
         display_name: '&2Last Words'
         lore:
           - '&aCurse your enemies in your final breath <3'
-        slot: 33
+        slot: 15 #Don't change this
       player_trail:
-        material: EMERALD
+        material: LEATHER_BOOTS
         display_name: '&aPlayer Trails'
         lore:
           - '&3Moves like jagger'
-        slot: 22 #Slot between 0-53 (inclusive)
+        slot: 33 #Don't change this
+      stand_emote:
+        material: TOTEM_OF_UNDYING 
+        display_name: '&3Emotes'
+        lore:
+          - '&3Express yourself'
+        slot: 11 #Don't change this
+      prefix:
+        material: NAME_TAG 
+        display_name: '&cPrefixes'
+        lore:
+          - '&4Fun symbol'
+        slot: 9 #Don't change this
+      kill_effect:
+        material: IRON_SWORD 
+        display_name: '&4Kill Effects'
+        lore:
+          - '&cMake total annihilation even better'
+        slot: 27 #Don't change this
+      afk_effect:
+        material: COBWEB 
+        display_name: '&9AFK Effects'
+        lore:
+          - '&3Afk particles!'
+        slot: 22 #Don't change this
+      log_message:
+        material: LEVER 
+        display_name: '&1Log Messages'
+        lore:
+          - '&3Join and leave in style'
+        slot: 35 #Don't change this
+      title:
+        material: WRITABLE_BOOK 
+        display_name: '&eTitles'
+        lore:
+          - '&3Demand respect'
+        slot: 29 #Don't change this
+      
       info: #YET TO BE IMPLEMENTED
-        material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWMwZTkxNDQ3NmUxYjE1ZGEyYTkxZjQ1Njk2ZGQyMTc2NjlkNGRhYzRmYTYyMTY1MDkyOWJhY2UwM2RlMjI1NCJ9fX0='
+        material: BEACON
         display_name: '&cInfo'
         lore:
-          - '&dSum lore'
-        slot: 53
+          - '&dTBD'
+        slot: 49
         enabled: true
   
 misc:
@@ -45,6 +82,7 @@ messages:
   prefix: '&8[&bCosmetics&8]'
   no_permission: '&cYou do not have permission for this command.'
   scycos_give_success: '&aSuccessfully gave player &2{player} &aaccess to the cosmetic &2{cosmetic}&a.'
+  scycos_receive_success: '&aYou have unlocked access to the cosmetic &2{cosmetic}&a.'
   
   error_player_not_found: '&cThe player &4{player} &cis not online or does not exist.'
   error_invalid_cosmetic_id: '&cThe specified cosmetic id does not exist.'

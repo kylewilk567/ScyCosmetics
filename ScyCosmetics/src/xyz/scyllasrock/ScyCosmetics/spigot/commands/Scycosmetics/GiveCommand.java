@@ -55,6 +55,17 @@ public class GiveCommand implements CommandExecutor {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', 
 				configMang.getMessageNoColor("scycos_give_success").replace("{player}", args[1])
 				.replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
+		if(!(sender instanceof Player)) {
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+				configMang.getMessageNoColor("scycos_receive_success").replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
+		}
+		else {
+			Player senderPlayer = (Player) sender;
+			if(!senderPlayer.getUniqueId().equals(player.getUniqueId())) {
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+						configMang.getMessageNoColor("scycos_receive_success").replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
+			}
+		}
 		
 		return false;
 	}
