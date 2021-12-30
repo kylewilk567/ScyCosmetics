@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -87,7 +88,6 @@ public class InventoryUtils {
 		YamlConfiguration config = configMang.getConfig();
 		Inventory inv = Bukkit.createInventory(null, config.getInt(path + ".size"), ChatColor.translateAlternateColorCodes('&', 
 				config.getString(path + ".title")));
-		List<String> activeCosIds = playerObject.getActiveCosmetics();
 		for(String item : config.getConfigurationSection(path + ".items").getKeys(false)) {
 			//Check slot first. If no slot existent, skip item and output error to console
 			if(config.getString(path + ".items." + item + ".slot") == null || config.getInt(path + ".items." + item + ".slot") >= config.getInt(path + ".size")) {
@@ -173,6 +173,117 @@ public class InventoryUtils {
 		
 		pane.setType(Material.YELLOW_STAINED_GLASS_PANE);
 		setPanes(inv, pane, yellow_panes);
+		
+		return inv;
+	}
+	
+	public static Inventory getEmoteDanceInv(Player player, PlayerObject playerObject) {
+		//Values to initialize
+		ItemStack infoItem, showLockedItem, filterItem;
+		List<Cosmetic> sortedCosmetics = new ArrayList<Cosmetic>();
+		//Filter items based on player's filter specifications
+		sortedCosmetics = CosmeticUtils.sortCosmetics(playerObject, CosmeticType.EMOTE_DANCE);		
+
+		//Initialize lockedItemStack - locked
+		if(playerObject.showLockedCosmetics()) {
+			showLockedItem = new ItemStack(Material.REDSTONE);
+			ItemMeta lockedMeta = showLockedItem.getItemMeta();
+			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aHide &cLOCKED &aitems."));
+			showLockedItem.setItemMeta(lockedMeta);
+		}
+	
+		//Initialize lockedItemStack - unlocked
+		else {
+			showLockedItem = new ItemStack(Material.REDSTONE);
+			ItemMeta lockedMeta = showLockedItem.getItemMeta();
+			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));
+			showLockedItem.setItemMeta(lockedMeta);			
+		}
+		
+		//Initialize Info Item
+		infoItem = new ItemStack(Material.BEACON);
+		ItemMeta infoMeta = infoItem.getItemMeta();
+		infoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bEmote Info:"));
+		//Find emotes unlocked
+		int emotesUnlocked = 0;
+		int totalEmotes = 0;
+		for(Cosmetic cos : plugin.getCosmetics().values()) {
+			if(cos.getType().equals(CosmeticType.EMOTE_DANCE)) {
+				++totalEmotes;
+				if(playerObject.getUnlockedCosmetics().contains(cos.getId())) ++emotesUnlocked;
+			}
+		}
+		//lore
+		List<String> lore = new ArrayList<String>();
+		lore.add(ChatColor.translateAlternateColorCodes('&', "&eEmotes unlocked: &a" + emotesUnlocked + "&e/&a" + totalEmotes));
+		infoMeta.setLore(lore);
+		infoItem.setItemMeta(infoMeta);
+		
+		//Initialize filterItem
+		filterItem = new ItemStack(Material.GOLD_INGOT);
+		ItemMeta filterMeta = filterItem.getItemMeta();
+		filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+		List<String> filterLore = new ArrayList<String>();
+		filterLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
+		filterMeta.setLore(filterLore);
+		filterItem.setItemMeta(filterMeta);
+		
+		//Find size of inventory
+		int size = ((int) Math.ceil(sortedCosmetics.size() / 7.0)) * 9 + 18; //4 rows of 7 cosmetics max.
+		if(size > 54) {
+			size = 54;
+		}
+		
+		//Create inventory
+		Inventory inv = Bukkit.createInventory(null, size,
+				ChatColor.translateAlternateColorCodes('&', player.getName() + "'s " + CosmeticType.EMOTE_DANCE.label));
+		
+		
+		//Add the first cosmetics, no more than 28. Locked cosmetics replaced with redstone block
+		int count = 0;
+		int slot = 10;
+		for(Cosmetic cos : sortedCosmetics) {
+			if(count > 28) break;
+
+			ItemStack item = cos.getDisplayItem().clone();
+
+			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) item.setType(Material.REDSTONE_BLOCK);
+			inv.setItem(slot, item);
+			if(slot % 9 == 7) slot += 3;
+			else ++slot;
+			
+			++count;
+		}
+		
+		//Add informational items
+		inv.setItem(size - 9, showLockedItem);
+		inv.setItem(size - 5, infoItem);
+		inv.setItem(size - 1, filterItem);
+		
+		//Add glass panes on sides, top, and bottom
+		int row = 1;
+		ItemStack pane = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+		ItemMeta paneMeta = pane.getItemMeta();
+		paneMeta.setDisplayName(" ");
+		pane.setItemMeta(paneMeta);
+		//Sides
+		while(row + 1 < size / 9) {
+			inv.setItem(9 * row, pane);
+			inv.setItem(9 * row + 8, pane);
+			++row;
+		}
+		//Top
+		for(int i = 0; i < 9; ++i) {
+			inv.setItem(i, pane);
+		}
+		pane.setType(Material.BLACK_STAINED_GLASS_PANE);
+		//Bottom
+		inv.setItem(size - 2, pane);
+		inv.setItem(size - 3, pane);
+		inv.setItem(size - 4, pane);
+		inv.setItem(size - 6, pane);
+		inv.setItem(size - 7, pane);
+		inv.setItem(size - 8, pane);
 		
 		return inv;
 	}

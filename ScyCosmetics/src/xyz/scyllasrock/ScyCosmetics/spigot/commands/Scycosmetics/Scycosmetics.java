@@ -4,24 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import net.md_5.bungee.api.ChatColor;
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
-import xyz.scyllasrock.ScyCosmetics.spigot.objects.ArrowTrail;
-import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
-import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
 import xyz.scyllasrock.ScyCosmetics.util.InventoryUtils;
-import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
 
 public class Scycosmetics implements CommandExecutor, TabCompleter {
 	
@@ -44,6 +37,8 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 		
 		if(args[0].equalsIgnoreCase("test")) {
 			Player player = (Player) sender;
+			ArmorStand stand = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+			stand.setRotation(player.getLocation().getPitch() + 90, player.getLocation().getYaw());
 			player.openInventory(InventoryUtils.getColorPickerInv());
 			return true;
 		}
@@ -95,9 +90,8 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 				for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 					help.add(onlinePlayer.getName());
 				}
-				return help;
 			}
-			
+			return help;
 
 		
 		case 3:
@@ -111,9 +105,9 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 				for(String id : plugin.getCosmetics().keySet()) {
 					if(id.toLowerCase().startsWith(searching)) help.add(id);
 				}
-				return help;
 
 			}
+			return help;
 
 		default:
 			return help;

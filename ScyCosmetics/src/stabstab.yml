@@ -1,0 +1,54 @@
+
+#IMPORTANT NOTE, if you need to rotate in the negative direction to the 0 degree mark, use a tiny negative number such as -0.1. "-0" will not work.
+
+id: EM_STABSTAB
+display_name: '&2Stab Stab' #Name displayed in inventory
+display_item: 'IRON_SWORD'
+display_lore:
+  - '&eTier: &5EPIC'
+tier: EPIC #All caps
+disable_base_plate: true
+set_small: false #small armor stand
+steps: #Steps should be numbers and increase in increments of 1. Start at 1 and go up to however many steps you want
+  1: #Name of step. Use this for the step sequence below
+    rotation: 70 #yaw relative to player (90 means look right, 270 means look left, -90 means look right by rotating in negative direction) 
+    head: 0:0:0 #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: 0:0:0
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 310:0:194
+    left_arm: 310:0:159
+    main_hand: IRON_SWORD #Not required - does NOT support heads
+#    off_hand: DIAMOND_SWORD #Not required - does NOT support heads
+  2:
+    rotation: 70 #yaw relative to player (-90 means look left, 90 means look right)
+    head: 0:0:0
+    body: 0:0:0
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: -265:0:194
+    left_arm: -265:0:159
+    main_hand: IRON_SWORD #Not required - does NOT support heads
+#    off_hand: DIAMOND_SWORD #Not required - does NOT support heads
+  3:
+    rotation: 290 #yaw relative to player (-90 means look left, 90 means look right)
+    head: 0:0:0
+    body: 0:0:0
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 310:0:194
+    left_arm: 310:0:159
+    main_hand: IRON_SWORD #Not required - does NOT support heads
+#    off_hand: DIAMOND_SWORD #Not required - does NOT support heads
+  4:
+    rotation: 290 #yaw relative to player (-90 means look left, 90 means look right)
+    head: 0:0:0
+    body: 0:0:0
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: -265:0:194
+    left_arm: -265:0:159
+    main_hand: IRON_SWORD #Not required - does NOT support heads
+#    off_hand: DIAMOND_SWORD #Not required - does NOT support heads
+      
+sequence: 1, 2:2:5, 1:2:5, 2:2:5, 1:2:5, 2:2:5, 1:2:5, 3:2:1, 4:2:5, 3:2:5, 4:2:5, 3:2:5, 4:2:5, 3:2:5  #First step, NEXT step:Ticks between interpolation:Number of steps - Number of steps should not be 0!

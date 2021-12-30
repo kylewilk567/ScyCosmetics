@@ -1,12 +1,16 @@
 package xyz.scyllasrock.ScyCosmetics.spigot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.commands.Scycosmetics.Scycosmetics;
+import xyz.scyllasrock.ScyCosmetics.spigot.commands.Semote.Semote;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.CosmeticDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.DirtyDataTimer;
@@ -14,7 +18,10 @@ import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.hooks.ScyCosmeticsExpansion;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.ArrowTrailListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.CosInventoryListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.EmoteDanceInvListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.EmoteListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.LastWordsListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.LogMessageListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.PlayerDataListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.PlayerTrailListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
@@ -25,11 +32,14 @@ public class Main extends JavaPlugin {
 	DirtyDataTimer dirtyTimer;
 	private static Main instance;
 	private boolean premiumVanishSupportEnabled = false;
+	private List<ArmorStand> activeEmoteStands;
 
 	@Override
 	public void onEnable() {
 		
 		instance = this;
+		
+		activeEmoteStands = new ArrayList<ArmorStand>();
 		
 		//Load dependencies
 		
@@ -61,6 +71,7 @@ public class Main extends JavaPlugin {
 		
 		//Set command executors
 		Bukkit.getPluginCommand("scycosmetics").setExecutor(new Scycosmetics());
+		Bukkit.getPluginCommand("semote").setExecutor(new Semote());
 		
 		//Set listeners
 		Bukkit.getPluginManager().registerEvents(new PlayerDataListeners(), this);
@@ -68,6 +79,9 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new CosInventoryListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new LastWordsListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerTrailListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new LogMessageListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new EmoteListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new EmoteDanceInvListeners(), this);
 		
 		//Start dirty data timer
 		dirtyTimer = new DirtyDataTimer();
@@ -77,6 +91,11 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		
+		//Remove all active emote armor stands
+		for(ArmorStand stand : this.activeEmoteStands) {
+			stand.remove();
+		}
 		
 		//Stop dirty data timer
 		dirtyTimer.stopTimer();
@@ -96,6 +115,10 @@ public class Main extends JavaPlugin {
 	
 	public HashMap<String, Cosmetic> getCosmetics(){
 		return cosmetics;
+	}
+	
+	public List<ArmorStand> getActiveEmoteStands(){
+		return activeEmoteStands;
 	}
 	
 }

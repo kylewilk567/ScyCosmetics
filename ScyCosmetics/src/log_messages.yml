@@ -1,0 +1,32 @@
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+#These messages can be used as placeholders as well using %scycos_joinmsg% and %scycos_leavemsg% - Useful for things such as sending messages on vanish
+
+messages:
+  LM_SIMPLE:
+    tier: COMMON #MUST be in all caps
+    display_name: '&fSimple' #Name displayed in inventory
+    display_item: 'DIRT'
+    display_lore:
+      - '&eTier: &fCOMMON'
+    join_message: "&7{player} &6has joined the game." #Required
+    leave_message: "&7{player} &6couldn't handle it anymore"#Required
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP #Only plays on join - OPTIONAL
+  LM_REALM:
+    tier: EPIC #MUST be in all caps
+    display_name: '&5Realm' #Name displayed in inventory
+    display_item: 'AZALEA'
+    display_lore:
+      - '&eTier: &5EPIC'
+    join_message: "&7{player} &6has entered the realm." #Required
+    leave_message: "&7{player} &6has left the realm."#Required
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP #Only plays on join - OPTIONAL
+  LM_CHAOS:
+    tier: RARE
+    display_name: '&4Chaos'
+    display_item: 'RAVAGER_SPAWN_EGG'
+    display_lore:
+      - '&eTier: &6RARE'
+    join_message: "&7{player} &6is ready to create some chaos."
+    leave_message: "&7{player} &6will leave mass destruction for a later day."
+    sound: ENTITY_RAVAGER_ROAR #Only plays on join - OPTIONAL
+    

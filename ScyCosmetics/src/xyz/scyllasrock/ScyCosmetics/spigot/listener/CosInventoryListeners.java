@@ -9,8 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,6 +28,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
+import xyz.scyllasrock.ScyCosmetics.util.CosmeticUtils;
 import xyz.scyllasrock.ScyCosmetics.util.InventoryUtils;
 import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
 
@@ -46,7 +45,7 @@ public class CosInventoryListeners implements Listener {
 	final int arrowTrailSlot = configMang.getConfig().getInt(baseInvPath + ".items.arrow_trail.slot");
 	final int lastWordsSlot = configMang.getConfig().getInt(baseInvPath + ".items.last_words.slot");
 	final int playerTrailSlot = configMang.getConfig().getInt(baseInvPath + ".items.player_trail.slot");
-	final int emoteSlot = configMang.getConfig().getInt(baseInvPath + ".items.stand_emote.slot");
+	final int emoteEquipmentSlot = configMang.getConfig().getInt(baseInvPath + ".items.emote_equipment.slot");
 	final int prefixSlot = configMang.getConfig().getInt(baseInvPath + ".items.prefix.slot");
 	final int killEffectSlot = configMang.getConfig().getInt(baseInvPath + ".items.kill_effect.slot");
 	final int afkEffectSlot = configMang.getConfig().getInt(baseInvPath + ".items.afk_effect.slot");
@@ -128,7 +127,9 @@ public class CosInventoryListeners implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if(!currTitle.contains(player.getName() + "'s ")) return;
 		if(!currTitle.contains("Arrow trails") && !currTitle.contains("Last words")
-				&& !currTitle.contains("Player trails") && !currTitle.contains("Prefixes")) return;
+				&& !currTitle.contains("Player trails") && !currTitle.contains("Prefixes")
+				&& !currTitle.contains("Log Messages") && !currTitle.contains("Emote Equipment")
+				&& !currTitle.contains("Titles")) return;
 		
 		//It is a cosmetic inventory - cancel click
 		event.setCancelled(true);
@@ -193,7 +194,11 @@ public class CosInventoryListeners implements Listener {
 			
 		//On click, toggle the cosmetic as being active.
 		boolean setNewGlowing = false;
+		String cosTypeString = event.getInventory().getItem(event.getInventory().getSize() - 2)
+				.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING);
+		CosmeticType cosType = CosmeticType.valueOf(cosTypeString);
 		for(Cosmetic cos : plugin.getCosmetics().values()) {
+			if(!cos.getType().equals(cosType)) continue;
 			if(cos.getDisplayItem().getItemMeta().getDisplayName().equals(event.getCurrentItem().getItemMeta().getDisplayName())) {
 				//If cos is same as current - disable
 				if(playerObject.getActiveCosmeticId(cos.getType()) != null && 
@@ -245,6 +250,15 @@ public class CosInventoryListeners implements Listener {
 		}
 		else if(slot == prefixSlot) {
 			inv = this.getSpecificCosmeticInventory(player, CosmeticType.PREFIX, CosmeticType.PREFIX.label);
+		}
+		else if(slot == logMessageSlot) {
+			inv = this.getSpecificCosmeticInventory(player, CosmeticType.LOG_MESSAGE, CosmeticType.LOG_MESSAGE.label);
+		}
+		else if(slot == emoteEquipmentSlot) {
+			inv = this.getSpecificCosmeticInventory(player, CosmeticType.EMOTE_EQUIPMENT, CosmeticType.EMOTE_EQUIPMENT.label);
+		}
+		else if(slot == titleSlot) {
+			inv = this.getSpecificCosmeticInventory(player, CosmeticType.TITLE, CosmeticType.TITLE.label);
 		}
 		
 
@@ -311,7 +325,7 @@ public class CosInventoryListeners implements Listener {
 		currentCosItem.setItemMeta(currCosMeta);
 		
 		//Filter items based on player's filter specifications
-		sortedCosmetics = this.sortCosmetics(playerObject, type);
+		sortedCosmetics = CosmeticUtils.sortCosmetics(playerObject, type);
 		
 		//Find size of inventory
 		int size = ((int) Math.ceil(sortedCosmetics.size() / 7.0)) * 9 + 18; //4 rows of 7 cosmetics max.
@@ -441,182 +455,8 @@ public class CosInventoryListeners implements Listener {
 	}
 	
 	
-	private List<Cosmetic> sortCosmetics(PlayerObject playerObject, CosmeticType type){
-		List<Cosmetic> sortedList = new ArrayList<Cosmetic>();
-		switch(playerObject.getItemFilter()) {
-		case RARITY_ASCENDING:
-			//Locked items
-			if(playerObject.showLockedCosmetics()) {
-				//Get all locked and unlocked cosmetics for cosmetic type
-				for(Cosmetic cos : plugin.getCosmetics().values()) {
-					if(cos.getType().equals(type)) sortedList.add(cos);
-				}				
-			}
-			
-			//Unlocked items
-			else {
-				for(String id : playerObject.getUnlockedCosmetics()) {
-					Cosmetic cos = plugin.getCosmeticFromId(id);
-					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
-				}
-			}
-			
-			//Sort using rarity, then using alphabetical
-			Collections.sort(sortedList, new Comparator<Cosmetic>() {
-				  @Override
-				  public int compare(Cosmetic c1, Cosmetic c2) {
-					  int order = c1.getTier().ordinal() - c2.getTier().ordinal();
-				    if(order != 0) return order;
-				    return ChatColor.stripColor(c1.getDisplayItem().getItemMeta().getDisplayName())
-				    		.compareTo(ChatColor.stripColor(c2.getDisplayItem().getItemMeta().getDisplayName()));
-				  }
-				});
-			break;
-		case RARITY_DESCENDING:
-			//Locked items
-			if(playerObject.showLockedCosmetics()) {
-				//Get all locked and unlocked cosmetics for cosmetic type
-				for(Cosmetic cos : plugin.getCosmetics().values()) {
-					if(cos.getType().equals(type)) sortedList.add(cos);
-				}				
-			}
-			
-			//Unlocked items
-			else {
-				for(String id : playerObject.getUnlockedCosmetics()) {
-					Cosmetic cos = plugin.getCosmeticFromId(id);
-					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
-				}
-			}
-			//Sort using display names
-			Collections.sort(sortedList, new Comparator<Cosmetic>() {
-				  @Override
-				  public int compare(Cosmetic c1, Cosmetic c2) {
-					  int order = c2.getTier().ordinal() - c1.getTier().ordinal();
-				    if(order != 0) return order;
-				    return ChatColor.stripColor(c1.getDisplayItem().getItemMeta().getDisplayName())
-				    		.compareTo(ChatColor.stripColor(c2.getDisplayItem().getItemMeta().getDisplayName()));
-				  }
-				});
-			break;
-		case LEAST_RECENT:
-			//If showing locked items...
-			if(playerObject.showLockedCosmetics()) {
-				//Add unlocked cosmetics
-				for(String id : playerObject.getUnlockedCosmetics()) {
-					Cosmetic cos = plugin.getCosmeticFromId(id);
-					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
-				}
-				List<Cosmetic> unsortedLocked = new ArrayList<Cosmetic>();
-				//Add locked cosmetics
-				for(Cosmetic cos : plugin.getCosmetics().values()) {
-					if(cos.getType().equals(type) && !sortedList.contains(cos)) unsortedLocked.add(cos);
-				}
-				//Sort locked cosmetics alphabetically
-				Collections.sort(unsortedLocked, new Comparator<Cosmetic>() {
-					  @Override
-					  public int compare(Cosmetic c1, Cosmetic c2) {
-					    return ChatColor.stripColor(c1.getDisplayItem().getItemMeta().getDisplayName())
-					    		.compareTo(ChatColor.stripColor(c2.getDisplayItem().getItemMeta().getDisplayName()));
-					  }
-					});
-				//Add locked cosmetics to sorted list
-				sortedList.addAll(unsortedLocked);
-			}
-			
-			//If not showing locked items
-			else {
-				//Add unlocked cosmetics
-				for(String id : playerObject.getUnlockedCosmetics()) {
-					Cosmetic cos = plugin.getCosmeticFromId(id);
-					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
-				}
-			}
-			break;
-		case MOST_RECENT:
-			//If showing locked items
-			if(playerObject.showLockedCosmetics()) {
-				List<Cosmetic> unsortedList = new ArrayList<Cosmetic>();
-				for(String id : playerObject.getUnlockedCosmetics()) {
-					Cosmetic cos = plugin.getCosmeticFromId(id);
-					if(cos != null && cos.getType().equals(type)) unsortedList.add(cos);
-				}
-				sortedList = this.reverseArrayList(unsortedList);
-				//Add locked cosmetics
-				List<Cosmetic> unsortedLocked = new ArrayList<Cosmetic>();
-				for(Cosmetic cos : plugin.getCosmetics().values()) {
-					if(cos.getType().equals(type) && !sortedList.contains(cos)) unsortedLocked.add(cos);
-				}
-				
-				//Sort locked cosmetics alphabetically
-				Collections.sort(unsortedLocked, new Comparator<Cosmetic>() {
-					  @Override
-					  public int compare(Cosmetic c1, Cosmetic c2) {
-					    return ChatColor.stripColor(c1.getDisplayItem().getItemMeta().getDisplayName())
-					    		.compareTo(ChatColor.stripColor(c2.getDisplayItem().getItemMeta().getDisplayName()));
-					  }
-					});
-				//Add locked cosmetics to sorted list
-				sortedList.addAll(unsortedLocked);
-			}
-			//If not showing locked items, sorted is unsorted in reverse
-			else {
-				//Add unlocked cosmetics in reverse order
-				List<Cosmetic> unsortedList = new ArrayList<Cosmetic>();
-				for(String id : playerObject.getUnlockedCosmetics()) {
-					Cosmetic cos = plugin.getCosmeticFromId(id);
-					if(cos != null && cos.getType().equals(type)) unsortedList.add(cos);
-				}
-				sortedList = this.reverseArrayList(unsortedList);
-			}
-			break;
-			
-		default: //Filter by display name
 
-			//Locked items
-			if(playerObject.showLockedCosmetics()) {
-				//Get all locked and unlocked cosmetics for cosmetic type
-				for(Cosmetic cos : plugin.getCosmetics().values()) {
-					if(cos.getType().equals(type)) sortedList.add(cos);
-				}				
-			}
-			
-			//Unlocked items
-			else {
-				for(String id : playerObject.getUnlockedCosmetics()) {
-					Cosmetic cos = plugin.getCosmeticFromId(id);
-					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
-				}
-			}
-			
-			//Sort using display names
-			Collections.sort(sortedList, new Comparator<Cosmetic>() {
-				  @Override
-				  public int compare(Cosmetic c1, Cosmetic c2) {
-				    return ChatColor.stripColor(c1.getDisplayItem().getItemMeta().getDisplayName())
-				    		.compareTo(ChatColor.stripColor(c2.getDisplayItem().getItemMeta().getDisplayName()));
-				  }
-				});
-			break;
-		}
-		return sortedList;
-	}
 	
-
-    // Takes an arraylist as a parameter and returns
-    // a reversed arraylist
-    private List<Cosmetic> reverseArrayList(List<Cosmetic> alist) {
-        // Arraylist for storing reversed elements
-        // this.revArrayList = alist;
-        for (int i = 0; i < alist.size() / 2; i++) {
-            Cosmetic temp = alist.get(i);
-            alist.set(i, alist.get(alist.size() - i - 1));
-            alist.set(alist.size() - i - 1, temp);
-        }
- 
-        // Return the reversed arraylist
-        return alist;
-    }
  
 
 

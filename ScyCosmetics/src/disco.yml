@@ -1,0 +1,47 @@
+
+#IMPORTANT NOTE, if you need to rotate in the negative direction to the 0 degree mark, use a tiny negative number such as -0.1. "-0" will not work.
+
+id: EM_DISCO
+display_name: '&aDisco' #Name displayed in inventory
+display_item: 'DIAMOND'
+display_lore:
+  - '&eTier: &fCOMMON'
+tier: COMMON #All caps
+disable_base_plate: true
+set_small: false #small armor stand
+steps: #Steps should be numbers and increase in increments of 1. Start at 1 and go up to however many steps you want
+  1: #Name of step. Use this for the step sequence below
+    rotation: 0 #yaw relative to player (-90 means look left, 90 means look right)  #First 7 of these values are required for every step! 
+    head: 0:0:0 #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: 0:0:351 
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 202:0:141
+    left_arm: 0:0:0
+#    main_hand: DIAMOND_SWORD #Not required - does NOT support heads
+#    off_hand: DIAMOND_SWORD #Not required - does NOT support heads
+  2:
+    rotation: 0 #yaw relative to player (-90 means look left, 90 means look right)
+    head: 0:0:0
+    body: 0:0:7
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 359:0:141
+    left_arm: 0:0:0
+#    main_hand: DIAMOND_SWORD #Not required - does NOT support heads
+#    off_hand: DIAMOND_SWORD #Not required - does NOT support heads
+      
+  #Same position as step 1 but negative. #NOTE: negative denotes direction to travel! NOT actual mathematical degrees of this position.
+  #ie: -351 degrees is the same final position as 351 degrees
+  3: 
+    rotation: 0 #yaw relative to player (-90 means look left, 90 means look right)
+    head: 0:0:0
+    body: 0:0:-351 #IMPORTANT! Positive number means rotate in POSITIVE direction! Negative number rotates in negative direction.
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: -202:0:-141
+    left_arm: 0:0:0
+#    main_hand: DIAMOND_SWORD #Not required - does NOT support heads
+#    off_hand: DIAMOND_SWORD #Not required - does NOT support heads
+sequence: 1, 2:5:5, 3:5:5, 2:5:5, 3:5:5, 2:5:10, 3:5:10, 2:5:5, 3:5:5, 2:5:5, 3:5:5, 2:5:5  #First step, NEXT step:Ticks between interpolation:Number of steps - Number of steps should not be 0!
+custom_data: 'none' #Optional. Currently only supports 1 string value.

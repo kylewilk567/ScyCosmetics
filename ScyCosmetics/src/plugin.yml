@@ -9,3 +9,4 @@ description: Flexible cosmetics for players
 commands:
   scycosmetics:
     aliases: [scycosmetic, cosmetics, scos]
+  semote: 

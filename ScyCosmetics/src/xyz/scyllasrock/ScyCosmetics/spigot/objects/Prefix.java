@@ -42,8 +42,7 @@ public class Prefix extends Cosmetic implements Cloneable {
 		else ++currentCodeIndex;
 	}
 	
-    public Prefix clone() throws CloneNotSupportedException
-    {
+    public Prefix clone() throws CloneNotSupportedException {
         return (Prefix) super.clone();
     }
 

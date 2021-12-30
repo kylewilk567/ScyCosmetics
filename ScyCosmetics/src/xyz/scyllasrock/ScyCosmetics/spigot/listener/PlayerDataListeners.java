@@ -1,6 +1,7 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.listener;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -12,8 +13,8 @@ public class PlayerDataListeners implements Listener {
 	Main plugin = Main.getPlugin(Main.class);
 	PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
 	
-	
-	@EventHandler
+	//Run this event first
+	@EventHandler (priority = EventPriority.LOWEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		playerHandler.addPlayerObject(event.getPlayer().getUniqueId()); //Add playerObject to map
 		

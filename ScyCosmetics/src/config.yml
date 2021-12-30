@@ -4,6 +4,7 @@ datastorage:
   
 permissions:
   scycosmetics_give: scycosmetics.give
+  scycosmetics_emote: scycosmetics.emote
   
   
   
@@ -30,7 +31,7 @@ inventory_settings:
         lore:
           - '&3Moves like jagger'
         slot: 33 #Don't change this
-      stand_emote:
+      emote_equipment:
         material: TOTEM_OF_UNDYING 
         display_name: '&3Emotes'
         lore:
@@ -77,13 +78,19 @@ inventory_settings:
   
 misc:
   special_feature_error_cooldown: 5 #in seconds
+  emote_cooldown: 20 #in seconds
+  emote_delay_ticks: 40 #in TICKS
   
 messages:
   prefix: '&8[&bCosmetics&8]'
   no_permission: '&cYou do not have permission for this command.'
   scycos_give_success: '&aSuccessfully gave player &2{player} &aaccess to the cosmetic &2{cosmetic}&a.'
   scycos_receive_success: '&aYou have unlocked access to the cosmetic &2{cosmetic}&a.'
+  emote_spawning: '&aSpawning emote...'
   
   error_player_not_found: '&cThe player &4{player} &cis not online or does not exist.'
+  error_player_only_cmd: '&cSorry console! Only players can perform this command :('
   error_invalid_cosmetic_id: '&cThe specified cosmetic id does not exist.'
   error_particle_data: '&cError! Unable to do special effect. Custom data does not match particle type. Please report to staff, this is a bug.'
+  error_emote_cooldown: '&cYou must wait a few seconds before emoting again!'
+  error_emote_locked: '&cYou have not unlocked this emote!'

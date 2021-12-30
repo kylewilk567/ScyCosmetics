@@ -1,7 +1,9 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.objects;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
@@ -19,7 +21,7 @@ public class PlayerObject {
 
 	private List<String> unlockedCosmetics = new ArrayList<String>();
 	private List<String> activeCosmetics = new ArrayList<String>();
-	private List<DirtyDataType> dirtyData = new ArrayList<DirtyDataType>();
+	private Set<DirtyDataType> dirtyData = new HashSet<DirtyDataType>();
 	
 	//Prefix timer
 	PrefixColorTimer prefixTimer;
@@ -48,7 +50,7 @@ public class PlayerObject {
 	}
 	
 	
-	public List<DirtyDataType> getDirtyData(){
+	public Set<DirtyDataType> getDirtyData(){
 		return dirtyData;
 	}
 	
@@ -105,15 +107,11 @@ public class PlayerObject {
 	 * @param cos
 	 */
 	public void setActiveCosmetic(Cosmetic cos) {
-		boolean dirty = false;
 		if(hasActiveCosmeticType(cos.getType())) {
 			removeActiveCosmetic(cos.getType());
 			addActiveCosmetic(cos);
-			dirty = true;
 		}
-		else dirty = addActiveCosmetic(cos);
-		
-		if(dirty) dirtyData.add(DirtyDataType.ACTIVE_COSMETICS);
+		else addActiveCosmetic(cos);
 	}
 	
 	public void removeActiveCosmetic(CosmeticType type) {
@@ -123,22 +121,27 @@ public class PlayerObject {
 			prefixTimer = null;
 		}
 
-		activeCosmetics.remove(getActiveCosmeticId(type));
+		if(activeCosmetics.remove(getActiveCosmeticId(type))) {
+			dirtyData.add(DirtyDataType.ACTIVE_COSMETICS);
+		}
 	}
 	
-	public boolean addActiveCosmetic(Cosmetic cos) {
+	public void addActiveCosmetic(Cosmetic cos) {
 		//If adding a prefix - set prefix timer
 		if(cos.getType().equals(CosmeticType.PREFIX)) {
 			if(prefixTimer != null) prefixTimer.stopTimer(); //Extra line to make sure timer is stopped
 			prefixTimer = new PrefixColorTimer(getUUID(), (Prefix) cos);
 			prefixTimer.scheduleTimer();
 		}
-		return activeCosmetics.add(cos.getId());
+		if(activeCosmetics.add(cos.getId())) {
+			dirtyData.add(DirtyDataType.ACTIVE_COSMETICS);
+		}
 	}
 	
 	public boolean hasActiveCosmeticType(CosmeticType type) {
 		for(String cos : activeCosmetics) {
-			if(plugin.getCosmeticFromId(cos).getType().equals(type)) return true;
+			Cosmetic cosmetic = plugin.getCosmeticFromId(cos);
+			if(cosmetic != null && cosmetic.getType().equals(type)) return true;
 		}
 		return false;
 	}
