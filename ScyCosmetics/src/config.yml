@@ -3,8 +3,11 @@ datastorage:
   days_clear_after_inactive: 180 #Clear this player's cosmetics data if they have not logged on in this many days
   
 permissions:
+  scycosmetics: scycosmetics.base
+  scycosmetics_help: scycosmetics.help
   scycosmetics_give: scycosmetics.give
-  scycosmetics_emote: scycosmetics.emote
+  
+  semote: scycosmetics.emote
   
   
   

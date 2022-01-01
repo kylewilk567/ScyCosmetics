@@ -129,7 +129,8 @@ public class CosInventoryListeners implements Listener {
 		if(!currTitle.contains("Arrow trails") && !currTitle.contains("Last words")
 				&& !currTitle.contains("Player trails") && !currTitle.contains("Prefixes")
 				&& !currTitle.contains("Log Messages") && !currTitle.contains("Emote Equipment")
-				&& !currTitle.contains("Titles")) return;
+				&& !currTitle.contains("Titles") && !currTitle.contains("Kill Effects")
+				&& !currTitle.contains("AFK Effects")) return;
 		
 		//It is a cosmetic inventory - cancel click
 		event.setCancelled(true);
@@ -237,8 +238,7 @@ public class CosInventoryListeners implements Listener {
 	
 	
 	private Inventory getCosmeticInventory(int slot, Player player) {
-		String title = "default";
-		Inventory inv = Bukkit.createInventory(null, 27, title);
+		Inventory inv = Bukkit.createInventory(null, 27, "default");
 		if(slot == arrowTrailSlot) {
 			inv = this.getSpecificCosmeticInventory(player, CosmeticType.ARROW_TRAIL, CosmeticType.ARROW_TRAIL.label);
 		}
@@ -259,6 +259,12 @@ public class CosInventoryListeners implements Listener {
 		}
 		else if(slot == titleSlot) {
 			inv = this.getSpecificCosmeticInventory(player, CosmeticType.TITLE, CosmeticType.TITLE.label);
+		}
+		else if(slot == killEffectSlot) {
+			inv = this.getSpecificCosmeticInventory(player, CosmeticType.KILL_EFFECT, CosmeticType.KILL_EFFECT.label);
+		}
+		else if(slot == afkEffectSlot) {
+			inv = this.getSpecificCosmeticInventory(player, CosmeticType.AFK_EFFECT, CosmeticType.AFK_EFFECT.label);
 		}
 		
 

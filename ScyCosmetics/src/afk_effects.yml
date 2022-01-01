@@ -1,0 +1,54 @@
+
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+
+#Style:
+#small_pulse
+#pulse
+#twins
+#solar_system
+#halo
+#rain
+
+effects:
+  AE_PULSE:
+    tier: COMMON #MUST be in all caps
+    display_name: '&ePulse' #Name displayed in inventory
+    display_item: 'DIRT'
+    display_lore:
+      - '&eTier: &fCOMMON'
+    style: 'pulse'
+  AE_PULSE_SMALL:
+    tier: COMMON #MUST be in all caps
+    display_name: '&bPulse &7(&fSmall&7)' #Name displayed in inventory
+    display_item: 'DIRT'
+    display_lore:
+      - '&eTier: &fCOMMON'
+    style: 'small_pulse'
+  AE_TWINS:
+    tier: COMMON #MUST be in all caps
+    display_name: '&fTwins' #Name displayed in inventory
+    display_item: 'POISONOUS_POTATO'
+    display_lore:
+      - '&eTier: &fCOMMON'
+    style: 'twins'
+  AE_SOLAR_SYSTEM:
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&eSolar System' #Name displayed in inventory
+    display_item: 'STONE'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    style: 'solar_system'
+  AE_HALO:
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&bHalo' #Name displayed in inventory
+    display_item: 'STONE'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    style: 'halo'
+  AE_RAIN:
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&9Rain' #Name displayed in inventory
+    display_item: 'WATER_BUCKET'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    style: 'rain'

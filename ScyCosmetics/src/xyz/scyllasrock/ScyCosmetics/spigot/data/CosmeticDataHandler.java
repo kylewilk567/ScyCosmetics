@@ -28,17 +28,23 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.EulerAngle;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.AFKEffect;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.AFKEffectStyle;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.ArrowTrail;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticTier;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Emote;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.EmoteEquipment;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.EmoteStep;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.KillEffect;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.KillEffectStyle;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.LastWords;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.LogMessage;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerTrail;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Prefix;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.Title;
 import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
+import xyz.scyllasrock.ScyUtility.objects.Pair;
 
 public class CosmeticDataHandler {
 	
@@ -48,7 +54,8 @@ public class CosmeticDataHandler {
 	
 	public CosmeticDataHandler() {
 		checkOrCreateDirectories("Cosmetics", "Cosmetics" + File.separator + "Emotes");
-		checkOrCreateFiles("last_words.yml", "arrow_trails.yml", "player_trails.yml", "prefixes.yml", "log_messages.yml", "emote_equipment.yml");
+		checkOrCreateFiles("last_words.yml", "arrow_trails.yml", "player_trails.yml", "prefixes.yml", "log_messages.yml",
+				"emote_equipment.yml", "titles.yml", "kill_effects.yml", "afk_effects.yml");
 		checkOrCreateEmotes("disco.yml", "sway.yml", "stabstab.yml");
 	}
 
@@ -265,7 +272,7 @@ public class CosmeticDataHandler {
 			YamlConfiguration emoteConfig = YamlConfiguration.loadConfiguration(emoteFile);
 			ItemStack itemStack = getEmoteItemStack(emoteConfig);
 			String id = emoteConfig.getString("id");
-			List<EmoteStep> positions = readEmoteSteps(emoteConfig);
+			List<Pair<Integer, EmoteStep>> positions = readEmoteSteps(emoteConfig);
 			if(positions == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not read emote with id " + id + "!");
 			}
@@ -274,8 +281,52 @@ public class CosmeticDataHandler {
 						emoteConfig.getBoolean("disable_base_plate"), emoteConfig.getBoolean("set_small")));
 			}
 			
-			
 		}
+		
+		//Initialize titles
+		YamlConfiguration titleConfig = getConfigFile("Cosmetics" + File.separator + "titles.yml");
+		for(String id : titleConfig.getConfigurationSection("titles").getKeys(false)) {
+			ItemStack item = getItemStackFromConfigSectionAndKey(titleConfig, "titles", id);
+			String title = titleConfig.getString("titles." + id + ".title");
+			if(title == null) {
+				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find title for title with id " + id + "!");
+			}
+			else {
+				cosmetics.put(id, (Cosmetic) new Title(id, 
+						CosmeticTier.valueOf(titleConfig.getString("titles." + id + ".tier").toUpperCase()), item, title));
+			}
+		}
+		
+		//Initialize kill effects
+		YamlConfiguration killConfig = getConfigFile("Cosmetics" + File.separator + "kill_effects.yml");
+		for(String id : killConfig.getConfigurationSection("effects").getKeys(false)) {
+			ItemStack item = getItemStackFromConfigSectionAndKey(killConfig, "effects", id);
+			String styleStr = killConfig.getString("effects." + id + ".style");
+			if(styleStr == null) {
+				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find style for kill effect with id " + id + "!");
+			}
+			else {
+				cosmetics.put(id, (Cosmetic) new KillEffect(id, 
+						CosmeticTier.valueOf(killConfig.getString("effects." + id + ".tier").toUpperCase()),
+						item, KillEffectStyle.valueOf(styleStr.toUpperCase())));
+			}
+		}
+		
+		//Initialize afk effects
+		YamlConfiguration afkConfig = getConfigFile("Cosmetics" + File.separator + "afk_effects.yml");
+		for(String id : afkConfig.getConfigurationSection("effects").getKeys(false)) {
+			ItemStack item = getItemStackFromConfigSectionAndKey(afkConfig, "effects", id);
+			String styleStr = afkConfig.getString("effects." + id + ".style");
+			if(styleStr == null) {
+				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find style for afk effect with id " + id + "!");
+			}
+			else {
+				cosmetics.put(id, (Cosmetic) new AFKEffect(id, 
+						CosmeticTier.valueOf(afkConfig.getString("effects." + id + ".tier").toUpperCase()), item,
+						AFKEffectStyle.valueOf(styleStr.toUpperCase())));
+			}
+		}
+	
 		return cosmetics;
 	}
 	
@@ -352,8 +403,8 @@ public class CosmeticDataHandler {
 		return itemStack;
 	}
 	
-	private List<EmoteStep> readEmoteSteps(YamlConfiguration emoteConfig) {
-		List<EmoteStep> positions = new ArrayList<EmoteStep>();
+	private List<Pair<Integer, EmoteStep>> readEmoteSteps(YamlConfiguration emoteConfig) {
+		List<Pair<Integer, EmoteStep>> positions = new ArrayList<Pair<Integer, EmoteStep>>();
 
 		//Read in sequence string and find step numbers
 		String sequence = emoteConfig.getString("sequence"); //Of the form #, #:#:#, #:#:#...
@@ -414,9 +465,10 @@ public class CosmeticDataHandler {
 			numInter = Integer.parseInt(sequenceDataArr[i+1][2]);
 			List<EmoteStep> interSteps = findInterpolatedEmoteSteps(currentStep, nextStep, numInter);
 			for(EmoteStep step : interSteps) {
-				for(int j = 0; j < ticksBetweenInter; ++j) {
-					positions.add(step);
-				}
+				positions.add(new Pair<Integer, EmoteStep>(ticksBetweenInter, step));
+//				for(int j = 0; j < ticksBetweenInter; ++j) {
+//					positions.add(step);
+//				}
 			}
 
 		}

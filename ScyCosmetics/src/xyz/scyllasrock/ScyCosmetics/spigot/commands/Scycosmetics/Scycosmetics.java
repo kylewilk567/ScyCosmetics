@@ -11,6 +11,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.EulerAngle;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
@@ -37,9 +38,12 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 		
 		if(args[0].equalsIgnoreCase("test")) {
 			Player player = (Player) sender;
-			ArmorStand stand = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
-			stand.setRotation(player.getLocation().getPitch() + 90, player.getLocation().getYaw());
 			player.openInventory(InventoryUtils.getColorPickerInv());
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("help")) {
+			new HelpCommand().onCommand(sender, cmd, label, args);
 			return true;
 		}
 		
@@ -75,8 +79,12 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 			if (args[0] != null) {
 				searching = args[0].toLowerCase();
 			}
+			
+			if("help".startsWith(searching) && player.hasPermission(configMang.getPermission("scycosmetics_help"))) {
+				help.add("help");
+			}
 
-			if ("give".startsWith(searching) && player.hasPermission("scycosmetics")) {
+			if ("give".startsWith(searching) && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
 				help.add("give");
 			}
 			return help;

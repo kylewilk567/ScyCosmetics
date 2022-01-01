@@ -31,6 +31,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.objects.EmoteEquipment;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.EmoteStep;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
 import xyz.scyllasrock.ScyCosmetics.util.InventoryUtils;
+import xyz.scyllasrock.ScyUtility.objects.Pair;
 
 public class Semote implements CommandExecutor, TabCompleter {
 	
@@ -42,13 +43,13 @@ public class Semote implements CommandExecutor, TabCompleter {
 	private static int cooldownSeconds = configMang.getConfig().getInt("misc.emote_cooldown");
 	private static int delayTicks = configMang.getConfig().getInt("misc.emote_delay_ticks");
 	
-	private BukkitTask task;
+	private static Map<UUID, BukkitTask> emoteMap = new HashMap<UUID, BukkitTask>();
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		//If sender is player without perms
 		if(sender instanceof Player) {
 			Player player = (Player) sender;
-			if(!player.hasPermission(configMang.getPermission("scycosmetics_emote"))) {
+			if(!player.hasPermission(configMang.getPermission("semote"))) {
 				player.sendMessage(configMang.getMessage("no_permission"));
 				return true;
 			}
@@ -94,6 +95,12 @@ public class Semote implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		
+		//Check only 1 emote active
+		if(emoteMap.containsKey(player.getUniqueId())) {
+			player.sendMessage(configMang.getMessage("error_emote_cooldown"));
+			return true;
+		}
+		
 		EmoteEquipment equipment;
 		try {
 			float yaw = player.getLocation().getYaw();
@@ -104,14 +111,14 @@ public class Semote implements CommandExecutor, TabCompleter {
 			emoteCooldowns.put(player.getUniqueId(), System.currentTimeMillis() + 1000 * cooldownSeconds);
 			player.sendMessage(configMang.getMessage("emote_spawning"));
 			
-			task = Bukkit.getScheduler().runTaskTimer((Plugin) plugin, new Runnable() {				
+			BukkitTask task = Bukkit.getScheduler().runTaskTimer((Plugin) plugin, new Runnable() {				
 				
 				ArmorStand stand;
 				int count = 0;
 				
 				@Override
 				public void run() {
-					EmoteStep step = emote.stepPosition();
+					Pair<Integer, EmoteStep> step = emote.stepPosition();
 					
 					//Initialize armorstand
 					if(count == 0) {
@@ -143,17 +150,26 @@ public class Semote implements CommandExecutor, TabCompleter {
 						plugin.getActiveEmoteStands().add(stand);
 					}
 					
-					if(step == null) {
+					//First value is 1, emote complete
+					if(step.getFirst() == 1) {
 						plugin.getActiveEmoteStands().remove(stand);
 						stand.remove();
-						task.cancel();
+						emoteMap.get(player.getUniqueId()).cancel();
+						emoteMap.remove(player.getUniqueId());
 						return;
 					}
-					setPosition(stand, step, yaw);
+					//Second value is null - wait
+					if(step.getSecond() == null) {
+						return;
+					}
+					//Second value is not null - set position
+					setPosition(stand, step.getSecond(), yaw);
 					
 				}
 				
 			}, delayTicks, 1L);
+			
+			emoteMap.put(player.getUniqueId(), task);
 			
 			
 		} catch (CloneNotSupportedException e1) {

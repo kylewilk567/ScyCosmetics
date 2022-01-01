@@ -1,0 +1,78 @@
+
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+
+#Style:
+#lightning
+#firework - custom data: winter
+#blood
+#ghost
+#angel - 
+#cookie
+#explosion
+#normal
+
+effects:
+  KE_NORMAL:
+    tier: COMMON #MUST be in all caps
+    display_name: '&fNormal' #Name displayed in inventory
+    display_item: 'STONE'
+    display_lore:
+      - '&eTier: &fCOMMON'
+    style: 'normal'
+  KE_LIGHTNING: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: EPIC #MUST be in all caps
+    display_name: '&fLightning' #Name displayed in inventory
+    display_item: 'FIRE_CHARGE'
+    display_lore:
+      - '&eTier: &5EPIC'
+    style: 'lightning'
+  KE_FIREWORK:
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&cFirework' #Name displayed in inventory
+    display_item: 'FIRE_CHARGE'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    style: 'firework'
+  KE_FIREWORK_WINTER:
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&cFirework &7(&fWinter&7)' #Name displayed in inventory
+    display_item: 'FIRE_CHARGE'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    style: 'firework'
+    custom_data: 'winter'
+  KE_ANGEL:
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&fAngel' #Name displayed in inventory
+    display_item: 'ELYTRA'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    style: 'angel'
+  KE_BLOOD:
+    tier: COMMON #MUST be in all caps
+    display_name: '&4Blood' #Name displayed in inventory
+    display_item: 'REDSTONE'
+    display_lore:
+      - '&eTier: &fCOMMON'
+    style: 'blood'
+  KE_COOKIE:
+    tier: EPIC #MUST be in all caps
+    display_name: '&6Cookie' #Name displayed in inventory
+    display_item: 'COOKIE'
+    display_lore:
+      - '&eTier: &5EPIC'
+    style: 'cookie'
+  KE_GHOST:
+    tier: EPIC #MUST be in all caps
+    display_name: '&fGhost' #Name displayed in inventory
+    display_item: 'PLAYER_HEAD'
+    display_lore:
+      - '&eTier: &5EPIC'
+    style: 'ghost'
+  KE_EXPLOSION:
+    tier: EPIC #MUST be in all caps
+    display_name: '&cExplosion' #Name displayed in inventory
+    display_item: 'TNT'
+    display_lore:
+      - '&eTier: &5EPIC'
+    style: 'explosion'

@@ -1,13 +1,10 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.commands.Scycosmetics;
 
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
@@ -31,6 +28,13 @@ public class BaseCommand implements CommandExecutor {
 		}
 		
 			Player player = (Player) sender;
+			
+			//If sender is player without perms
+			if(!player.hasPermission(configMang.getPermission("scycosmetics"))) {
+				player.sendMessage(configMang.getMessage("no_permission"));
+				return true;
+			}
+			
 			PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 			Inventory inv = InventoryUtils.getBaseCosInventory(playerObject);			
 			

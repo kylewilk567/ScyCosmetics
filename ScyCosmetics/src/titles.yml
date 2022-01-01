@@ -1,0 +1,18 @@
+#Requires PlaceholderAPI. Used via %scycos_title%
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+
+titles:
+  TI_WAR_MONGER: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&cWar Monger' #Name displayed in inventory
+    display_item: 'IRON_SWORD'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    title: '&cWar Monger'
+  TI_SCOUNDREL: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: UNCOMMON #MUST be in all caps
+    display_name: '&9Scoundrel' #Name displayed in inventory
+    display_item: 'BLACK_DYE'
+    display_lore:
+      - '&eTier: &7UNCOMMON'
+    title: '&9Scoundrel'

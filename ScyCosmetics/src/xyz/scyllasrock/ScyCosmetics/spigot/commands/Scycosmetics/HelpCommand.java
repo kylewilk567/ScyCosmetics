@@ -1,0 +1,70 @@
+package xyz.scyllasrock.ScyCosmetics.spigot.commands.Scycosmetics;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import net.md_5.bungee.api.ChatColor;
+import xyz.scyllasrock.ScyCosmetics.spigot.Main;
+import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
+import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
+
+public class HelpCommand implements CommandExecutor {
+	
+	Main plugin = Main.getPlugin(Main.class);
+	ConfigManager configMang = ConfigManager.getConfigMang();
+	PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
+	
+	
+	private String[] helpMessages = {" \n&d&lScyCosmetics by &bkwilk &dHelp Menu (1/2)"
+			+ "\n&aCurrently running v&c" + plugin.getDescription().getVersion() + 
+			"\n " +
+			"\n&e/scos - &6Opens cosmetics inventory." + 
+			"\n&e/scos help [page] - &6displays the help menu." +
+			"\n&e/semote [emote] - &6Opens inventory (no args) or plays emote.",
+	
+			" \n&d&nAdmin Commands Only:&e" +
+			"\n " +
+			"\n&e/scos give <player> <cosmetic id> - &6Gives player the cosmetic."
+	};
+
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+		if(sender instanceof Player) {
+			Player player = (Player) sender;
+			if(!player.hasPermission(configMang.getPermission("scycosmetics_help"))) {
+				player.sendMessage(configMang.getMessage("no_permission"));
+				return true;
+			}
+		}
+		
+		
+		//Send the message
+		if(args.length == 1) { // /scos help (page 1)
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.getHelpMessage(1)));
+			return true;
+		}
+		//Check integer argument
+		int page;
+		try{
+			page = Integer.parseInt(args[1]);
+		} catch(Exception e) {
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', configMang.getConfig().getString("messages.prefix") + 
+					" &cArgument is not an integer!\n&cUsage: /scos help <page>"));
+			return true;
+		}
+		
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.getHelpMessage(page)));
+				
+		
+		return false;
+	}
+	
+	private String getHelpMessage(int page) {
+		if(page > helpMessages.length) page = helpMessages.length;
+		if(page <= 0) page = 1;
+		return helpMessages[page - 1];
+	}
+
+}

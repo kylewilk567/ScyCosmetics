@@ -8,6 +8,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Prefix;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.Title;
 
 public class ScyCosmeticsExpansion extends PlaceholderExpansion {
 	
@@ -107,12 +108,14 @@ public class ScyCosmeticsExpansion extends PlaceholderExpansion {
 	            return "";
 	        }
 	        
-	        switch(identifier) {
+	        PlayerObject playerObject = null;
 	        
+	        switch(identifier) {
+	       
 
 	        case "prefix": //%scycos_prefix%
 	        	String prefixStr = "";
-	        	PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
+	        	playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 	        	if(playerObject != null) {
 	        		Prefix prefix = (Prefix) playerObject.getActiveCosmetic(CosmeticType.PREFIX);
 	        		if(prefix != null) {
@@ -120,6 +123,18 @@ public class ScyCosmeticsExpansion extends PlaceholderExpansion {
 	        		}
 	        	}
 	        	return prefixStr;
+	        	
+	        case "title":
+	        	String titleStr = "";
+	        	playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
+	        	if(playerObject != null) {
+	        		Title title = (Title) playerObject.getActiveCosmetic(CosmeticType.TITLE);
+	        		if(title != null) {
+	        			titleStr = title.getTitle();
+	        		}
+	        	}
+	        	
+	        	return titleStr;
 	        }
 
 	 
