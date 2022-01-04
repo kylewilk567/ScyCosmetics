@@ -13,8 +13,8 @@ public class KillEffect extends Cosmetic {
 	
 	private KillEffectStyle style;
 	
-	public KillEffect(String id, CosmeticTier tier, ItemStack displayItem, KillEffectStyle style) {
-		super(id, CosmeticType.KILL_EFFECT, tier, displayItem);
+	public KillEffect(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, KillEffectStyle style) {
+		super(id, CosmeticType.KILL_EFFECT, tier, displayItem, buyPrice);
 		this.style = style;
 	}
 	

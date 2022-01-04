@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -51,12 +52,13 @@ public class CosmeticDataHandler {
 	Main plugin = Main.getPlugin(Main.class);
 	
 	private static CosmeticDataHandler cosmeticHandler;
+	private static ConfigManager configMang = ConfigManager.getConfigMang();
 	
 	public CosmeticDataHandler() {
 		checkOrCreateDirectories("Cosmetics", "Cosmetics" + File.separator + "Emotes");
 		checkOrCreateFiles("last_words.yml", "arrow_trails.yml", "player_trails.yml", "prefixes.yml", "log_messages.yml",
 				"emote_equipment.yml", "titles.yml", "kill_effects.yml", "afk_effects.yml");
-		checkOrCreateEmotes("disco.yml", "sway.yml", "stabstab.yml");
+		checkOrCreateEmotes("disco.yml", "sway.yml", "stabstab.yml", "starlord.yml", "t_pose.yml");
 	}
 
 
@@ -128,33 +130,48 @@ public class CosmeticDataHandler {
 	 * Initializes all cosmetics in this plugin by reading from config files
 	 */
 	public HashMap<String, Cosmetic> initializeCosmetics() {
+		//get default buy prices for each tier
+		Map<String, Double> priceMap = new HashMap<String, Double>();
+		for(CosmeticTier tier : CosmeticTier.values()) {
+			priceMap.put(tier.toString(), configMang.getConfig().getDouble("cosmetics.default_buy_prices." + tier.toString().toLowerCase()));
+		}
+		
 		HashMap<String, Cosmetic> cosmetics = new HashMap<String, Cosmetic>();
 		//Initialize arrow trails
 		YamlConfiguration trailConfig = getConfigFile("Cosmetics" + File.separator + "arrow_trails.yml");
 		for(String id : trailConfig.getConfigurationSection("particles").getKeys(false)) {
-			ItemStack itemStack = this.getItemStackFromConfigSectionAndKey(trailConfig, "particles", id);
-			cosmetics.put(id, (Cosmetic) new ArrowTrail(id, CosmeticTier.valueOf(trailConfig.getString("particles." + id + ".tier")), 
-					Particle.valueOf(trailConfig.getString("particles." + id + ".particle")), itemStack));
+			CosmeticTier tier = CosmeticTier.valueOf(trailConfig.getString("particles." + id + ".tier"));
+			double buyPrice = trailConfig.getDouble("particles." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack itemStack = this.getItemStackFromConfigSectionAndKey(trailConfig, "particles", id, tier);
+			cosmetics.put(id, (Cosmetic) new ArrowTrail(id, tier, itemStack, buyPrice,
+					Particle.valueOf(trailConfig.getString("particles." + id + ".particle"))));
 		}
 			
 		//Initialize last words
 		YamlConfiguration lastWordsConfig = getConfigFile("Cosmetics" + File.separator + "last_words.yml");
 		for(String id : lastWordsConfig.getConfigurationSection("last_words").getKeys(false)) {
-			ItemStack itemStack = getItemStackFromConfigSectionAndKey(lastWordsConfig, "last_words", id);
+			CosmeticTier tier = CosmeticTier.valueOf(lastWordsConfig.getString("last_words." + id + ".tier"));
+			double buyPrice = lastWordsConfig.getDouble("last_words." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack itemStack = getItemStackFromConfigSectionAndKey(lastWordsConfig, "last_words", id, tier);
 			String message = lastWordsConfig.getString("last_words." + id + ".text");
 			if(message == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Message for last words with id " + id + " is null!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new LastWords(id, CosmeticTier.valueOf(lastWordsConfig.getString("last_words." + id + ".tier")), 
-					 itemStack, ChatColor.translateAlternateColorCodes('&', message)));
+			cosmetics.put(id, (Cosmetic) new LastWords(id, tier, itemStack, buyPrice,
+					ChatColor.translateAlternateColorCodes('&', message)));
 			}
 		}
 		
 		//Initialize player trails
 		YamlConfiguration playerTrailConfig = getConfigFile("Cosmetics" + File.separator + "player_trails.yml");
 		for(String id : playerTrailConfig.getConfigurationSection("trails").getKeys(false)) {
-			ItemStack itemStack = getItemStackFromConfigSectionAndKey(playerTrailConfig, "trails", id);
+			CosmeticTier tier = CosmeticTier.valueOf(playerTrailConfig.getString("trails." + id + ".tier"));
+			double buyPrice = playerTrailConfig.getDouble("trails." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack itemStack = getItemStackFromConfigSectionAndKey(playerTrailConfig, "trails", id, tier);
 			int count = playerTrailConfig.getInt("trails." + id + ".count");
 			double offsetX = playerTrailConfig.getDouble("trails." + id + ".offsets.x");
 			double offsetY = playerTrailConfig.getDouble("trails." + id + ".offsets.y");
@@ -167,22 +184,25 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: No particles for player trail with id " + id + "!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new PlayerTrail(id, CosmeticTier.valueOf(playerTrailConfig.getString("trails." + id + ".tier")), 
-					 itemStack, particles, count, offsetX, offsetY, offsetZ));
+			cosmetics.put(id, (Cosmetic) new PlayerTrail(id, tier, 
+					 itemStack, buyPrice, particles, count, offsetX, offsetY, offsetZ));
 			}
 		}
 		
 		//Initialize prefixes
 		YamlConfiguration prefixConfig = getConfigFile("Cosmetics" + File.separator + "prefixes.yml");
 		for(String id : prefixConfig.getConfigurationSection("prefixes").getKeys(false)) {
-			ItemStack itemStack = getItemStackFromConfigSectionAndKey(prefixConfig, "prefixes", id);
+			CosmeticTier tier = CosmeticTier.valueOf(prefixConfig.getString("prefixes." + id + ".tier"));
+			double buyPrice = prefixConfig.getDouble("prefixes." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack itemStack = getItemStackFromConfigSectionAndKey(prefixConfig, "prefixes", id, tier);
 			String translatedPrefix = StringEscapeUtils.unescapeJava(prefixConfig.getString("prefixes." + id + ".prefix"));
 			if(translatedPrefix == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: No prefix for prefix with id " + id + "!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new Prefix(id, CosmeticTier.valueOf(prefixConfig.getString("prefixes." + id + ".tier")), 
-					 itemStack, translatedPrefix, prefixConfig.getStringList("prefixes." + id + ".color_codes"),
+			cosmetics.put(id, (Cosmetic) new Prefix(id, tier, 
+					 itemStack, buyPrice, translatedPrefix, prefixConfig.getStringList("prefixes." + id + ".color_codes"),
 					 prefixConfig.getInt("prefixes." + id + ".color_change_ticks")));
 			}
 		}
@@ -190,7 +210,10 @@ public class CosmeticDataHandler {
 		//Initialize log messages
 		YamlConfiguration logConfig = getConfigFile("Cosmetics" + File.separator + "log_messages.yml");
 		for(String id : logConfig.getConfigurationSection("messages").getKeys(false)) {
-			ItemStack itemStack = getItemStackFromConfigSectionAndKey(logConfig, "messages", id);
+			CosmeticTier tier = CosmeticTier.valueOf(logConfig.getString("messages." + id + ".tier"));
+			double buyPrice = logConfig.getDouble("messages." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack itemStack = getItemStackFromConfigSectionAndKey(logConfig, "messages", id, tier);
 			Sound sound;
 			String logInMessage = logConfig.getString("messages." + id + ".join_message");
 			String logOffMessage = logConfig.getString("messages." + id + ".leave_message");
@@ -203,8 +226,8 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find log in/off message for log message with id " + id + "!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new LogMessage(id, CosmeticTier.valueOf(logConfig.getString("messages." + id + ".tier")), 
-					 itemStack, logInMessage, logOffMessage, sound));
+			cosmetics.put(id, (Cosmetic) new LogMessage(id, tier, 
+					 itemStack, buyPrice, logInMessage, logOffMessage, sound));
 			}
 		}
 		
@@ -212,54 +235,57 @@ public class CosmeticDataHandler {
 		YamlConfiguration equipmentConfig = getConfigFile("Cosmetics" + File.separator + "emote_equipment.yml");
 		for(String id : equipmentConfig.getConfigurationSection("equipment").getKeys(false)) {
 			try {
-			ItemStack itemStack = getItemStackFromConfigSectionAndKey(equipmentConfig, "equipment", id);
-			String helmetMat = equipmentConfig.getString("equipment." + id + ".helmet.material");
-			ItemStack helmet;
-			if(helmetMat.startsWith("head;")) helmet = ItemUtils.getHead(helmetMat.split(";")[1]);
-			else helmet = new ItemStack(Material.valueOf(helmetMat.toUpperCase()));
+				CosmeticTier tier = CosmeticTier.valueOf(equipmentConfig.getString("equipment." + id + ".tier"));
+				double buyPrice = equipmentConfig.getDouble("equipment." + id + ".buy_price");
+				if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+				ItemStack itemStack = getItemStackFromConfigSectionAndKey(equipmentConfig, "equipment", id, tier);
+				String helmetMat = equipmentConfig.getString("equipment." + id + ".helmet.material");
+				ItemStack helmet;
+				if(helmetMat.startsWith("head;")) helmet = ItemUtils.getHead(helmetMat.split(";")[1]);
+				else helmet = new ItemStack(Material.valueOf(helmetMat.toUpperCase()));
 			
-			if(helmetMat.toUpperCase().contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".helmet.color") != null) {
-				LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
-				String[] colorArr = equipmentConfig.getString("equipment." + id + ".helmet.color").split(":");
-				helmetMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
+				if(helmetMat.toUpperCase().contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".helmet.color") != null) {
+					LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
+					String[] colorArr = equipmentConfig.getString("equipment." + id + ".helmet.color").split(":");
+					helmetMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
+							Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
+					helmet.setItemMeta(helmetMeta);
+				}
+			
+				String chestMat = equipmentConfig.getString("equipment." + id + ".chestplate.material");
+				String leggingsMat = equipmentConfig.getString("equipment." + id + ".leggings.material");
+				String bootsMat = equipmentConfig.getString("equipment." + id + ".boots.material");
+			
+				ItemStack chestplate = new ItemStack(Material.valueOf(chestMat.toUpperCase()));
+				ItemStack leggings = new ItemStack(Material.valueOf(leggingsMat.toUpperCase()));
+				ItemStack boots = new ItemStack(Material.valueOf(bootsMat.toUpperCase()));
+			
+				if(chestMat.toUpperCase().contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".chestplate.color") != null) {
+					LeatherArmorMeta leatherMeta = (LeatherArmorMeta) chestplate.getItemMeta();
+					String[] colorArr = equipmentConfig.getString("equipment." + id + ".chestplate.color").split(":");
+					leatherMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
+							Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
+					chestplate.setItemMeta(leatherMeta);
+				}
+			
+				if(leggingsMat.toUpperCase().toUpperCase().contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".leggings.color") != null) {
+					LeatherArmorMeta leatherMeta = (LeatherArmorMeta) leggings.getItemMeta();
+					String[] colorArr = equipmentConfig.getString("equipment." + id + ".leggings.color").split(":");
+					leatherMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
+							Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
+					leggings.setItemMeta(leatherMeta);
+				}
+			
+				if(bootsMat.contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".boots.color") != null) {
+					LeatherArmorMeta leatherMeta = (LeatherArmorMeta) boots.getItemMeta();
+					String[] colorArr = equipmentConfig.getString("equipment." + id + ".boots.color").split(":");
+					leatherMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
 						Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
-				helmet.setItemMeta(helmetMeta);
-			}
-			
-			String chestMat = equipmentConfig.getString("equipment." + id + ".chestplate.material");
-			String leggingsMat = equipmentConfig.getString("equipment." + id + ".leggings.material");
-			String bootsMat = equipmentConfig.getString("equipment." + id + ".boots.material");
-			
-			ItemStack chestplate = new ItemStack(Material.valueOf(chestMat.toUpperCase()));
-			ItemStack leggings = new ItemStack(Material.valueOf(leggingsMat.toUpperCase()));
-			ItemStack boots = new ItemStack(Material.valueOf(bootsMat.toUpperCase()));
-			
-			if(chestMat.toUpperCase().contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".chestplate.color") != null) {
-				LeatherArmorMeta leatherMeta = (LeatherArmorMeta) chestplate.getItemMeta();
-				String[] colorArr = equipmentConfig.getString("equipment." + id + ".chestplate.color").split(":");
-				leatherMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
-						Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
-				chestplate.setItemMeta(leatherMeta);
-			}
-			
-			if(leggingsMat.toUpperCase().toUpperCase().contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".leggings.color") != null) {
-				LeatherArmorMeta leatherMeta = (LeatherArmorMeta) leggings.getItemMeta();
-				String[] colorArr = equipmentConfig.getString("equipment." + id + ".leggings.color").split(":");
-				leatherMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
-						Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
-				leggings.setItemMeta(leatherMeta);
-			}
-			
-			if(bootsMat.contains("LEATHER") && equipmentConfig.getString("equipment." + id + ".boots.color") != null) {
-				LeatherArmorMeta leatherMeta = (LeatherArmorMeta) boots.getItemMeta();
-				String[] colorArr = equipmentConfig.getString("equipment." + id + ".boots.color").split(":");
-				leatherMeta.setColor(Color.fromRGB(Integer.parseInt(colorArr[0]),
-						Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
-				boots.setItemMeta(leatherMeta);
-			}
+					boots.setItemMeta(leatherMeta);
+				}
 
-			cosmetics.put(id, (Cosmetic) new EmoteEquipment(id, CosmeticTier.valueOf(equipmentConfig.getString("equipment." + id + ".tier")), 
-					 itemStack, helmet, chestplate, leggings, boots));
+				cosmetics.put(id, (Cosmetic) new EmoteEquipment(id, tier, 
+						itemStack, buyPrice, helmet, chestplate, leggings, boots));
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -270,14 +296,17 @@ public class CosmeticDataHandler {
 		File emoteDir = new File(plugin.getDataFolder() + File.separator + "Cosmetics" + File.separator + "Emotes");
 		for(File emoteFile : emoteDir.listFiles()) {
 			YamlConfiguration emoteConfig = YamlConfiguration.loadConfiguration(emoteFile);
-			ItemStack itemStack = getEmoteItemStack(emoteConfig);
 			String id = emoteConfig.getString("id");
+			CosmeticTier tier = CosmeticTier.valueOf(emoteConfig.getString("tier"));
+			double buyPrice = emoteConfig.getDouble("buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack itemStack = getEmoteItemStack(emoteConfig, tier);
 			List<Pair<Integer, EmoteStep>> positions = readEmoteSteps(emoteConfig);
 			if(positions == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not read emote with id " + id + "!");
 			}
 			else {
-				cosmetics.put(id, (Cosmetic) new Emote(id, CosmeticTier.valueOf(emoteConfig.getString("tier")), itemStack, positions,
+				cosmetics.put(id, (Cosmetic) new Emote(id, tier, itemStack, buyPrice, positions,
 						emoteConfig.getBoolean("disable_base_plate"), emoteConfig.getBoolean("set_small")));
 			}
 			
@@ -286,36 +315,43 @@ public class CosmeticDataHandler {
 		//Initialize titles
 		YamlConfiguration titleConfig = getConfigFile("Cosmetics" + File.separator + "titles.yml");
 		for(String id : titleConfig.getConfigurationSection("titles").getKeys(false)) {
-			ItemStack item = getItemStackFromConfigSectionAndKey(titleConfig, "titles", id);
+			CosmeticTier tier = CosmeticTier.valueOf(titleConfig.getString("titles." + id + ".tier"));
+			double buyPrice = titleConfig.getDouble("titles." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack item = getItemStackFromConfigSectionAndKey(titleConfig, "titles", id, tier);
 			String title = titleConfig.getString("titles." + id + ".title");
 			if(title == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find title for title with id " + id + "!");
 			}
 			else {
-				cosmetics.put(id, (Cosmetic) new Title(id, 
-						CosmeticTier.valueOf(titleConfig.getString("titles." + id + ".tier").toUpperCase()), item, title));
+				cosmetics.put(id, (Cosmetic) new Title(id, tier, item, buyPrice, title));
 			}
 		}
 		
 		//Initialize kill effects
 		YamlConfiguration killConfig = getConfigFile("Cosmetics" + File.separator + "kill_effects.yml");
 		for(String id : killConfig.getConfigurationSection("effects").getKeys(false)) {
-			ItemStack item = getItemStackFromConfigSectionAndKey(killConfig, "effects", id);
+			CosmeticTier tier = CosmeticTier.valueOf(killConfig.getString("effects." + id + ".tier"));
+			double buyPrice = killConfig.getDouble("effects." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack item = getItemStackFromConfigSectionAndKey(killConfig, "effects", id, tier);
 			String styleStr = killConfig.getString("effects." + id + ".style");
 			if(styleStr == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find style for kill effect with id " + id + "!");
 			}
 			else {
 				cosmetics.put(id, (Cosmetic) new KillEffect(id, 
-						CosmeticTier.valueOf(killConfig.getString("effects." + id + ".tier").toUpperCase()),
-						item, KillEffectStyle.valueOf(styleStr.toUpperCase())));
+						tier, item, buyPrice, KillEffectStyle.valueOf(styleStr.toUpperCase())));
 			}
 		}
 		
 		//Initialize afk effects
 		YamlConfiguration afkConfig = getConfigFile("Cosmetics" + File.separator + "afk_effects.yml");
 		for(String id : afkConfig.getConfigurationSection("effects").getKeys(false)) {
-			ItemStack item = getItemStackFromConfigSectionAndKey(afkConfig, "effects", id);
+			CosmeticTier tier = CosmeticTier.valueOf(afkConfig.getString("effects." + id + ".tier"));
+			double buyPrice = afkConfig.getDouble("effects." + id + ".buy_price");
+			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
+			ItemStack item = getItemStackFromConfigSectionAndKey(afkConfig, "effects", id, tier);
 			String styleStr = afkConfig.getString("effects." + id + ".style");
 			Particle particle;
 			try {
@@ -327,10 +363,8 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find style for afk effect with id " + id + "!");
 			}
 			else {
-				cosmetics.put(id, (Cosmetic) new AFKEffect(id, 
-						CosmeticTier.valueOf(afkConfig.getString("effects." + id + ".tier").toUpperCase()), item,
-						AFKEffectStyle.valueOf(styleStr.toUpperCase()),
-						particle));
+				cosmetics.put(id, (Cosmetic) new AFKEffect(id, tier, item, buyPrice,
+						AFKEffectStyle.valueOf(styleStr.toUpperCase()), particle));
 			}
 		}
 	
@@ -352,7 +386,7 @@ public class CosmeticDataHandler {
 	
 	
 	
-	private ItemStack getItemStackFromConfigSectionAndKey(YamlConfiguration config, String configSection, String key) {
+	private ItemStack getItemStackFromConfigSectionAndKey(YamlConfiguration config, String configSection, String key, CosmeticTier tier) {
 		ItemStack itemStack = new ItemStack(Material.REDSTONE_BLOCK);
 		if(config.getString(configSection + "." + key + ".display_item") != null) {
 			String mat = config.getString(configSection + "." + key + ".display_item").strip();
@@ -362,16 +396,18 @@ public class CosmeticDataHandler {
 			else itemStack.setType(Material.valueOf(config.getString(configSection + "." + key + ".display_item")));
 		}
 		ItemMeta meta = itemStack.getItemMeta();
-		List<String> unTranslatedLore = config.getStringList(configSection + "." + key + ".display_lore");
-		List<String> lore = new ArrayList<String>();
-		for(String s : unTranslatedLore) {
-			lore.add(ChatColor.translateAlternateColorCodes('&', s));
+		List<String> lore = config.getStringList(configSection + "." + key + ".display_lore")
+				.stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
+		//Append tier if necessary
+		if(configMang.getConfig().getBoolean("cosmetics.display_items.lore.append_tier")) {
+			lore.add(ChatColor.translateAlternateColorCodes('&', "&eTier: " + tier.colorCode + tier.toString()));
 		}
 		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', config.getString(configSection + "." + key + ".display_name")));
 		meta.setLore(lore);
 		//Add custom persistent data if exists
-		if(config.getString(configSection + "." + key + ".custom_data") != null) {
 		PersistentDataContainer data = meta.getPersistentDataContainer();
+		data.set(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING, key);
+		if(config.getString(configSection + "." + key + ".custom_data") != null) {
 		data.set(new NamespacedKey(plugin, "ScyCos_data"), PersistentDataType.STRING, config.getString(configSection + "." + key + ".custom_data"));
 		}
 		//Remove attributes from showing
@@ -381,7 +417,7 @@ public class CosmeticDataHandler {
 		return itemStack;
 	}
 	
-	private ItemStack getEmoteItemStack(YamlConfiguration config) {
+	private ItemStack getEmoteItemStack(YamlConfiguration config, CosmeticTier tier) {
 		ItemStack itemStack = new ItemStack(Material.REDSTONE_BLOCK);
 		if(config.getString("display_item") != null) {
 			String mat = config.getString("display_item").strip();
@@ -391,16 +427,18 @@ public class CosmeticDataHandler {
 			else itemStack.setType(Material.valueOf(config.getString("display_item")));
 		}
 		ItemMeta meta = itemStack.getItemMeta();
-		List<String> unTranslatedLore = config.getStringList("display_lore");
-		List<String> lore = new ArrayList<String>();
-		for(String s : unTranslatedLore) {
-			lore.add(ChatColor.translateAlternateColorCodes('&', s));
+		List<String> lore = config.getStringList("display_lore")
+				.stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
+		//Append tier if necessary
+		if(configMang.getConfig().getBoolean("cosmetics.display_items.lore.append_tier")) {
+			lore.add(ChatColor.translateAlternateColorCodes('&', "&eTier: " + tier.colorCode + tier.toString()));
 		}
 		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', config.getString("display_name")));
 		meta.setLore(lore);
 		//Add custom persistent data if exists
-		if(config.getString("custom_data") != null) {
 		PersistentDataContainer data = meta.getPersistentDataContainer();
+		data.set(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING, config.getString("id"));
+		if(config.getString("custom_data") != null) {
 		data.set(new NamespacedKey(plugin, "ScyCos_data"), PersistentDataType.STRING, config.getString("custom_data"));
 		}
 		//Remove attributes from showing

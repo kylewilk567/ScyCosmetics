@@ -57,6 +57,7 @@ public class CosInventoryListeners implements Listener {
 	final int infoItemSlot = configMang.getConfig().getInt(baseInvPath + ".items.info.slot");
 	
 	private static Map<UUID, Pair<List<Cosmetic>, Integer>> savedSortedCosmetics = new HashMap<UUID, Pair<List<Cosmetic>, Integer>>();
+	private static Map<UUID, Pair<Long, String>> purchaseClickCooldown = new HashMap<UUID, Pair<Long, String>>();
 	
 	@EventHandler
 	public void onBaseInvClick(InventoryClickEvent event) {
@@ -241,8 +242,55 @@ public class CosInventoryListeners implements Listener {
 		
 		//If clicking a cosmetic
 		else {
-			//If clicking a redstone block
-			if(event.getCurrentItem().getType().equals(Material.REDSTONE_BLOCK)) return;
+			//If clicking a redstone block - buying an item
+			if(event.getCurrentItem().getType().equals(Material.REDSTONE_BLOCK)) {
+				if(event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+					//If first click - add to map
+					if(!purchaseClickCooldown.containsKey(player.getUniqueId())) {
+						purchaseClickCooldown.put(player.getUniqueId(),
+								new Pair<Long, String>(System.currentTimeMillis() + 500, event.getCurrentItem().getItemMeta().getPersistentDataContainer()
+										.get(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING)));
+					}
+					else if(purchaseClickCooldown.get(player.getUniqueId()).getFirst() < System.currentTimeMillis()
+							|| !purchaseClickCooldown.get(player.getUniqueId()).getSecond()
+							.equals(event.getCurrentItem().getItemMeta()
+									.getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING))) {
+						purchaseClickCooldown.put(player.getUniqueId(),
+								new Pair<Long, String>(System.currentTimeMillis() + 500, event.getCurrentItem().getItemMeta().getPersistentDataContainer()
+										.get(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING)));
+					}
+					
+					//If second click - purchase
+					else {
+						String id = purchaseClickCooldown.get(player.getUniqueId()).getSecond();
+						Cosmetic cos = plugin.getCosmeticFromId(id);
+						//Check money
+						if(plugin.getVaultEco().getBalance(player) < cos.getBuyPrice()) {
+							player.closeInventory();
+							player.sendMessage(configMang.getMessage("error_insufficient_funds"));
+						}
+							
+						else {
+						//Take money
+						plugin.getVaultEco().withdrawPlayer(player, cos.getBuyPrice());
+						
+						//Unlock cosmetic
+						playerObject.addUnlockedCosmetic(id);
+						
+						//Update itemstack
+						event.getClickedInventory().setItem(event.getSlot(), plugin.getCosmeticFromId(id).getDisplayItem().clone());
+						
+						//Remove from map
+						purchaseClickCooldown.remove(player.getUniqueId());
+						
+						//Send message
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+								configMang.getMessageNoColor("purchase_successful").replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
+						}
+					}
+				}
+				return;
+			}
 			
 		//On click, toggle the cosmetic as being active.
 		boolean setNewGlowing = false;
@@ -418,7 +466,17 @@ public class CosInventoryListeners implements Listener {
 				meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 				item.setItemMeta(meta);
 			}
-			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) item.setType(Material.REDSTONE_BLOCK);
+			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) {
+				item.setType(Material.REDSTONE_BLOCK);
+				//Append buyprice
+				ItemMeta meta = item.getItemMeta();
+				List<String> lore = new ArrayList<String>();
+				if(meta.hasLore()) lore = meta.getLore();
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&ePrice: &c" + cos.getBuyPrice()));
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&5&oDouble shift-right-click to purchase"));
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+			}
 			inv.setItem(slot, item);
 			if(slot % 9 == 7) slot += 3;
 			else ++slot;

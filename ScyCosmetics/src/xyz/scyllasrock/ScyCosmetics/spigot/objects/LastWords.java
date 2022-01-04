@@ -6,8 +6,8 @@ public class LastWords extends Cosmetic {
 	
 	private final String finalMessage;
 
-	public LastWords(String id, CosmeticTier tier, ItemStack displayItem, String message) {
-		super(id, CosmeticType.LAST_WORDS, tier, displayItem);
+	public LastWords(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, String message) {
+		super(id, CosmeticType.LAST_WORDS, tier, displayItem, buyPrice);
 		finalMessage = message;
 	}
 	

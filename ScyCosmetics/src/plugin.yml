@@ -3,8 +3,8 @@ name: ScyCosmetics
 version: 1.0
 author: kwilk
 api-version: 1.13
-depend: [ScyUtility]
-softdepend: [PlaceholderAPI, PremiumVanish, JetsAntiAFKPro]
+depend: [ScyUtility, Vault]
+softdepend: [PlaceholderAPI, PremiumVanish, AntiAFKPro]
 description: Flexible cosmetics for players
 
 commands:

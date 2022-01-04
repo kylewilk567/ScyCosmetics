@@ -9,8 +9,9 @@ public class LogMessage extends Cosmetic {
 	private final String logOffMessage;
 	private Sound logInSound;
 
-	public LogMessage(String id, CosmeticTier tier, ItemStack displayItem, String logInMessage, String logOffMessage, Sound logInSound) {
-		super(id, CosmeticType.LOG_MESSAGE, tier, displayItem);
+	public LogMessage(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice,
+			String logInMessage, String logOffMessage, Sound logInSound) {
+		super(id, CosmeticType.LOG_MESSAGE, tier, displayItem, buyPrice);
 		this.logInMessage = logInMessage;
 		this.logOffMessage = logOffMessage;
 		this.logInSound = logInSound;

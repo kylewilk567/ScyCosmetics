@@ -17,8 +17,8 @@ prefixes:
     color_change_ticks: 10 #Should not be a number below 10
     display_name: '&fPickaxe &7(&4R&ca&6i&en&9b&1o&5w&7)' #Name displayed in inventory
     display_item: 'IRON_PICKAXE'
-    display_lore:
-      - '&eTier: &5EPIC'
+#    display_lore: #Optional attribute
+#      - '&eTier: &5EPIC'
   PR_PICKAXE_WHITE: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
     tier: UNCOMMON #MUST be in all caps
     prefix: '\u26CF'
@@ -26,8 +26,6 @@ prefixes:
       - "&f"
     display_name: '&fPickaxe &7(&fWhite&7)' #Name displayed in inventory
     display_item: 'STONE_PICKAXE'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
   PR_SKULL_GREEN:
     tier: UNCOMMON
     prefix: '\u2620'
@@ -35,5 +33,73 @@ prefixes:
       - "&a"
     display_name: '&7Skull &7(&aGreen&7)'
     display_item: 'BONE'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
+  PR_SUN_YELLOW:
+    tier: UNCOMMON
+    prefix: '\u2600'
+    color_codes:
+      - "&e"
+    display_name: '&6Sun &7(&eYellow&7)'
+    display_item: 'SUNFLOWER'
+  PR_SWORDS_RED:
+    tier: EPIC
+    prefix: '\u2694'
+    color_codes:
+      - "&4"
+    display_name: '&6Swords &7(&4Red&7)'
+    display_item: 'DIAMOND_SWORD'
+  PR_STAR_GOLD:
+    tier: UNCOMMON
+    prefix: '\u2B50'
+    color_codes:
+      - "&6"
+    display_name: '&6Star &7(&6Gold&7)'
+    display_item: 'GLOWSTONE'
+  PR_HEADPHONES_RAINBOW:
+    tier: EPIC
+    prefix: '\u1002'
+    color_codes: #If you specify a list here, you should also specify a "color_change_ticks" to denote how fast to switch colors
+      - "&4"
+      - "&c"
+      - "&6"
+      - "&e"
+      - "&9"
+      - "&1"
+      - "&5"
+    color_change_ticks: 20 
+    display_name: '&9Headphones &7(&4R&ca&6i&en&9b&1o&5w&7)'
+    display_item: 'NETHERITE_HELMET'
+  PR_LIGHTNING_WHITE:
+    tier: COMMON
+    prefix: '\u26A1'
+    color_codes:
+      - "&f"
+    display_name: '&eLightning &7(&fWhite&7)'
+    display_item: 'LIGHTNING_ROD'
+  PR_NUKE_PURPLE:
+    tier: COMMON
+    prefix: '\u2622'
+    color_codes:
+      - "&5"
+    display_name: '&2Nuke &7(&5Purple&7)'
+    display_item: 'TNT'
+  PR_COFFEE_LIME:
+    tier: COMMON
+    prefix: '\u2615'
+    color_codes:
+      - "&a"
+    display_name: '&2Coffee &7(&aLime&7)'
+    display_item: 'POTION'
+  PR_HOURGLASS_GOLD:
+    tier: COMMON
+    prefix: '\u231B'
+    color_codes:
+      - "&6"
+    display_name: '&eHourglass &7(&6Gold&7)'
+    display_item: 'CLOCK'
+  PR_PEACE_PURPLE:
+    tier: COMMON
+    prefix: '\u262E'
+    color_codes:
+      - "&5"
+    display_name: '&dPeace &7(&5Purple&7)'
+    display_item: 'ALLIUM'

@@ -1,0 +1,167 @@
+
+#IMPORTANT NOTE, if you need to rotate in the negative direction to the 0 degree mark, use a tiny negative number such as -0.1. "-0" will not work.
+
+id: EM_STARLORD
+display_name: '&4StarLord' #Name displayed in inventory
+display_item: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjEzN2VkMjVmYmVhOGY5YTA0MTc2YTEyNzBkM2ZhMWZhMDE5MWJlNzIyOTdhYjZjNDk5NWMwNjMxYjU3N2YxMyJ9fX0='
+display_lore: #Optional attribute
+  - '&5From Guardians and the Galaxy!'
+  - '&5&0Modified'
+tier: EPIC #All caps
+disable_base_plate: true
+set_small: false #small armor stand
+steps: #Steps should be numbers and increase in increments of 1. Start at 1 and go up to however many steps you want
+  1: #Name of step. Use this for the step sequence below
+    rotation: 0 #yaw relative to player (-90 means look left, 90 means look right)  #First 7 of these values are required for every step! 
+    head: '0:0:0' #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: '0:0:0'
+    left_leg: '0:0:0'
+    right_leg: '0:0:0'
+    right_arm: '0:0:0'
+    left_arm: '270:0:0'
+  2: #Name of step. Use this for the step sequence below
+    rotation: 0 #yaw relative to player (-90 means look left, 90 means look right)  #First 7 of these values are required for every step! 
+    head: '5:0:0' #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:0:0'
+    right_arm: '0:0:0'
+    left_arm: '281:8:0'
+  3: #Name of step. Use this for the step sequence below
+    rotation: 0 #MUST BE 0 ON FIRST STEP - Spigot or MC bug that cannot be fixed...
+    head: '-1:0:0' #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:0:0'
+    right_arm: '0:0:0'
+    left_arm: '-270:-1:0'
+  4: #Name of step. Use this for the step sequence below
+    rotation: -330 #MUST BE 0 ON FIRST STEP - Spigot or MC bug that cannot be fixed...
+    head: '-1:0:0' #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:0:0'
+    right_arm: '310:-326:0'
+    left_arm: '0:-1:0'
+  5: #Name of step. Use this for the step sequence below
+    rotation: 330 #Stepping right 1
+    head: '-1:0:0'
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '-288:17:0'
+    right_arm: '-277:-324:0'
+    left_arm: '-260:37:0'
+  6: #Name of step. Use this for the step sequence below
+    rotation: 330 #Stepping right 2
+    head: '-1:0:0'
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '336:17:0'
+    right_arm: '-268:57:0'
+    left_arm: '270:-295:0'
+  7: #Name of step. Use this for the step sequence below
+    rotation: 330 #Stepping left 1
+    head: '-1:0:0'
+    body: '0:0:0' 
+    left_leg: '-314:-341:0'
+    right_leg: '20:-0.1:0'
+    right_arm: '277:-324:0'
+    left_arm: '-260:37:0'
+  8: #Name of step. Use this for the step sequence below
+    rotation: 330 #Stepping left 2
+    head: '-1:0:0'
+    body: '0:0:0' 
+    left_leg: '343:346:0'
+    right_leg: '20:-0.1:0'
+    right_arm: '-268:57:0'
+    left_arm: '270:-295:0'
+  9: #Name of step. Use this for the step sequence below
+    rotation: 330 #Stepping right 1 again (slight modification)
+    head: '-1:0:0' 
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '-288:17:0'
+    right_arm: '277:-324:0'
+    left_arm: '-260:37:0'
+  10: #Name of step. Use this for the step sequence below
+    rotation: 330 #Reset stance and look right
+    head: '-359.9:32:0' 
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:-0.1:0'
+    right_arm: '0:-359.9:0'
+    left_arm: '0:0:0'
+  11: #Name of step. Use this for the step sequence below
+    rotation: 330 #Kick
+    head: '0:32:0' 
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '-268:35:31'
+    right_arm: '12:0:0'
+    left_arm: '12:-0.1:0'
+  12: #Name of step. Use this for the step sequence below
+    rotation: 330 #Kick reset to 0
+    head: '0:32:0' 
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:-0.1:-0.1'
+    right_arm: '-0.1:0:0'
+    left_arm: '-0.1:-0.1:0'
+  13: #Name of step. Use this for the step sequence below
+    rotation: 330 #right hand out
+    head: '0:32:0' 
+    body: '0:0:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:-0.1:-0.1'
+    right_arm: '-0.1:39:86'
+    left_arm: '-0.1:-0.1:0'
+  14: #Name of step. Use this for the step sequence below
+    rotation: 330 #right hand out
+    head: '0:32:0' 
+    body: '0:10:0' 
+    left_leg: '0:0:0'
+    right_leg: '-343:-0.1:26'
+    right_arm: '-224:-26:300'
+    left_arm: '-312:10:55'
+  15: #Name of step. Use this for the step sequence below
+    rotation: 330 #right hand in for sec
+    head: '0:32:0' 
+    body: '0:10:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:8:-4'
+    right_arm: '241:-26:300'
+    left_arm: '-312:10:55'
+  16: #Name of step. Use this for the step sequence below
+    rotation: 330 #right hand back out for a sec
+    head: '0:32:0' 
+    body: '0:10:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:8:-4'
+    right_arm: '-188:-15:-287'
+    left_arm: '-312:10:55'
+  17: #Name of step. Use this for the step sequence below
+    rotation: 330 #both arms in
+    head: '0:-359.9:0' 
+    body: '0:10:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:8:-4'
+    right_arm: '301:-15:-276'
+    left_arm: '-301:10:55'
+  18: #Name of step. Use this for the step sequence below
+    rotation: -60 #spin! Arms low
+    head: '0:0:0' 
+    body: '0:-0.01:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:8:-4'
+    right_arm: '-221:-359.9:-270'
+    left_arm: '-232:-359.9:90'
+  19: #Name of step. Use this for the step sequence below
+    rotation: -1 #spin! Arms higher
+    head: '0:0:0' 
+    body: '0:-0.01:0' 
+    left_leg: '0:0:0'
+    right_leg: '0:-0.01:-0.01'
+    right_arm: '-221:-359.9:320'
+    left_arm: '-232:0:-26'
+sequence: '1, 1:20:2, 2:3:3, 3:3:3, 2:3:3, 3:3:3, 4:1:10, 5:2:5, 6:2:5, 7:2:5, 8:2:5, 9:2:5, 6:2:5, 10:3:5, 11:2:5, 12:2:5, 13:2:5, 14:1:12, 14:30:1, 15:3:5, 16:3:5, 17:3:5, 18:3:5, 19:1:4, 19:40:1'  #First step, NEXT step:Ticks between interpolation:Number of steps
+custom_data: 'none' #Optional. Currently only supports 1 string value

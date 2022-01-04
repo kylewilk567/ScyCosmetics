@@ -6,8 +6,8 @@ public class Title extends Cosmetic {
 
 	private String title;
 	
-	public Title(String id, CosmeticTier tier, ItemStack displayItem, String title) {
-		super(id, CosmeticType.TITLE, tier, displayItem);
+	public Title(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, String title) {
+		super(id, CosmeticType.TITLE, tier, displayItem, buyPrice);
 		this.title = title;		
 	}
 	

@@ -220,10 +220,10 @@ public class InventoryUtils {
 				if(playerObject.getUnlockedCosmetics().contains(cos.getId())) ++emotesUnlocked;
 			}
 		}
-		//lore
-		List<String> lore = new ArrayList<String>();
-		lore.add(ChatColor.translateAlternateColorCodes('&', "&eEmotes unlocked: &a" + emotesUnlocked + "&e/&a" + totalEmotes));
-		infoMeta.setLore(lore);
+		//info lore
+		List<String> infoLore = new ArrayList<String>();
+		infoLore.add(ChatColor.translateAlternateColorCodes('&', "&eEmotes unlocked: &a" + emotesUnlocked + "&e/&a" + totalEmotes));
+		infoMeta.setLore(infoLore);
 		infoItem.setItemMeta(infoMeta);
 		
 		//Initialize filterItem
@@ -251,7 +251,17 @@ public class InventoryUtils {
 
 			ItemStack item = cos.getDisplayItem().clone();
 
-			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) item.setType(Material.REDSTONE_BLOCK);
+			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) {
+				item.setType(Material.REDSTONE_BLOCK);
+				//Append buyprice
+				ItemMeta meta = item.getItemMeta();
+				List<String> lore = new ArrayList<String>();
+				if(meta.hasLore()) lore = meta.getLore();
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&ePrice: &c" + cos.getBuyPrice()));
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&5&oDouble shift-right-click to purchase"));
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+			}
 			inv.setItem(slot, item);
 			if(slot % 9 == 7) slot += 3;
 			else ++slot;

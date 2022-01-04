@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.jet315.antiafkpro.AntiAFKProAPI;
 import me.jet315.antiafkpro.JetsAntiAFKPro;
+import net.milkbowl.vault.economy.Economy;
 import xyz.scyllasrock.ScyCosmetics.spigot.commands.Scycosmetics.Scycosmetics;
 import xyz.scyllasrock.ScyCosmetics.spigot.commands.Semote.Semote;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
@@ -18,6 +19,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.data.CosmeticDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.DirtyDataTimer;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.hooks.ScyCosmeticsExpansion;
+import xyz.scyllasrock.ScyCosmetics.spigot.hooks.VaultHook;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.AFKParticleListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.ArrowTrailListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.CosInventoryListeners;
@@ -37,6 +39,7 @@ public class Main extends JavaPlugin {
 	DirtyDataTimer dirtyTimer;
 	AfkDetectionTimer afkDetTimer;
 	private AntiAFKProAPI afkAPI;
+	private Economy eco;
 	private static Main instance;
 	private boolean premiumVanishSupportEnabled = false;
 	private List<ArmorStand> activeEmoteStands;
@@ -58,6 +61,15 @@ public class Main extends JavaPlugin {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ScyCosmetics >> Error! ScyUtility is a dependency of this plugin and was not found. Disabling ScyCosmetics.");
 			Bukkit.getPluginManager().disablePlugin(this);
 		}
+		
+		//Vault
+		VaultHook econ = new VaultHook();
+		if(!(econ.setupEconomy())) {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Scycosmetics >> You must have Vault installed and an economy plugin");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+		eco = econ.getEconomy();
 		
 		//JetsAntiAfkPro - soft
 		if(Bukkit.getPluginManager().getPlugin("JetsAntiAFKPro") != null) {
@@ -156,6 +168,10 @@ public class Main extends JavaPlugin {
 	
 	public AntiAFKProAPI getAFKApi() {
 		return afkAPI;
+	}
+	
+	public Economy getVaultEco() {
+		return eco;
 	}
 	
 }

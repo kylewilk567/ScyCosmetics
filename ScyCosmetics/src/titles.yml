@@ -6,216 +6,61 @@ titles:
     tier: UNCOMMON #MUST be in all caps
     display_name: '&cWar Monger' #Name displayed in inventory
     display_item: 'IRON_SWORD'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
+#    display_lore: #Optional Attribute
+#      - '&eTier: &7UNCOMMON'
     title: '&cWar Monger'
   TI_SCOUNDREL:
     tier: UNCOMMON
     display_name: '&9Scoundrel'
     display_item: 'BLACK_DYE'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     title: '&9Scoundrel'
   TI_TRADESMAN:
     tier: COMMON
     display_name: '&5Tradesman'
     display_item: 'BLUE_DYE'
-    display_lore:
-      - '&eTier: &fCOMMON'
     title: '&5Tradesman'
   TI_ELDER:
     tier: RARE
     display_name: '&dElder'
     display_item: 'BONE'
-    display_lore:
-      - '&eTier: &6RARE'
     title: '&dElder'
   TI_VANQUISHER:
     tier: RARE
     display_name: '&4Vanquisher'
     display_item: 'DIAMOND_SWORD'
-    display_lore:
-      - '&eTier: &6RARE'
     title: '&4Vanquisher'
   TI_SAGE:
     tier: UNCOMMON
     display_name: '&aSage'
     display_item: 'BOOK'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     title: '&aSage'
   TI_HERO:
     tier: EPIC
     display_name: '&bHero'
     display_item: 'BOOK'
-    display_lore:
-      - '&eTier: &5EPIC'
     title: '&bHero'
   TI_DEMON:
     tier: EPIC
     display_name: '&cDemon'
     display_item: 'WEEPING_VINES'
-    display_lore:
-      - '&eTier: &5EPIC'
     title: '&cDemon'
   TI_GUIDE:
     tier: EPIC
     display_name: '&eGuide'
     display_item: 'BEACON'
-    display_lore:
-      - '&eTier: &5EPIC'
     title: '&eGuide'
   TI_GRINDER:
     tier: COMMON
     display_name: '&fGrinder'
     display_item: 'MAGMA_BLOCK'
-    display_lore:
-      - '&eTier: &fCOMMON'
     title: '&fGrinder'
   TI_SPIRIT:
     tier: UNCOMMON
     display_name: '&fSpirit'
     display_item: 'MAGMA_BLOCK'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     title: '&fSpirit'
   TI_ORC:
     tier: UNCOMMON
     display_name: '&2Orc'
     display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     title: '&2Orc'
-  TI_TEST1:
-    tier: UNCOMMON
-    display_name: '&2T1'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST2:
-    tier: UNCOMMON
-    display_name: '&2T2'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST3:
-    tier: UNCOMMON
-    display_name: '&2T3'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST4:
-    tier: UNCOMMON
-    display_name: '&2T4'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST5:
-    tier: UNCOMMON
-    display_name: '&2T5'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST6:
-    tier: UNCOMMON
-    display_name: '&2T6'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST7:
-    tier: UNCOMMON
-    display_name: '&2T7'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST8:
-    tier: UNCOMMON
-    display_name: '&2T8'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST9:
-    tier: UNCOMMON
-    display_name: '&2T9'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST10:
-    tier: UNCOMMON
-    display_name: '&2T10'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST11:
-    tier: UNCOMMON
-    display_name: '&2T11'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST12:
-    tier: UNCOMMON
-    display_name: '&2T12'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST13:
-    tier: UNCOMMON
-    display_name: '&2T13'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST14:
-    tier: UNCOMMON
-    display_name: '&2T14'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST15:
-    tier: UNCOMMON
-    display_name: '&2T15'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST16:
-    tier: UNCOMMON
-    display_name: '&2T16'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST17:
-    tier: UNCOMMON
-    display_name: '&2T17'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST18:
-    tier: UNCOMMON
-    display_name: '&2T18'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'
-  TI_TEST19:
-    tier: UNCOMMON
-    display_name: '&2T19'
-    display_item: 'ROTTEN_FLESH'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
-    title: '&2T1'

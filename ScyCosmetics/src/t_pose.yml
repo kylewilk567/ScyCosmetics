@@ -1,0 +1,73 @@
+
+#IMPORTANT NOTE, if you need to rotate in the negative direction to the 0 degree mark, use a tiny negative number such as -0.1. "-0" will not work.
+
+id: EM_TPOSE
+display_name: '&eT Pose' #Name displayed in inventory
+display_item: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDRlZjA0MTljODgzZGMxMTRkYWU0MmQ0NjhjNjRmZDNlY2M0OTI0NzFhMWRkNjI3MTU2OTg2N2E4ZDU0NjkifX19'
+#display_lore: #Optional attribute
+#  - '&eTier: &7UNCOMMON'
+tier: UNCOMMON #All caps
+disable_base_plate: true
+set_small: false #small armor stand
+steps: #Steps should be numbers and increase in increments of 1. Start at 1 and go up to however many steps you want
+  1: #Name of step. Use this for the step sequence below
+    rotation: 45 #ALL 7 of these values are required for every step!
+    head: 0:0:0 #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: 0:0:0 
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 180:0:270
+    left_arm: 0:0:270
+  2:
+    rotation: 45
+    head: 0:0:0
+    body: 0:0:0
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 180:0:-180
+    left_arm: 0:0:0
+      
+  #Same position as step 1 but negative. #NOTE: negative denotes direction to travel! NOT actual mathematical degrees of this position.
+  #ie: -351 degrees is the same final position as 351 degrees
+  3: 
+    rotation: -325
+    head: 0:0:0
+    body: 0:0:0 #IMPORTANT! Positive number means rotate in POSITIVE direction! Negative number rotates in negative direction.
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 180:0:180
+    left_arm: 0:0:0
+  4: 
+    rotation: -325
+    head: 0:0:0
+    body: 0:0:0 #IMPORTANT! Positive number means rotate in POSITIVE direction! Negative number rotates in negative direction.
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 180:0:270
+    left_arm: 0:0:-270
+  5: 
+    rotation: 0 #ALL 7 of these values are required for every step!
+    head: 0:0:0 #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: 0:0:0 
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 180:0:270
+    left_arm: 0:0:270
+  6: 
+    rotation: 0 #ALL 7 of these values are required for every step!
+    head: 0:0:0 #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: 0:0:0 
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 180:0:-180
+    left_arm: 0:0:0
+  7: #Name of step. Use this for the step sequence below
+    rotation: 45 #ALL 7 of these values are required for every step!
+    head: 0:0:0 #Rotation in DEGREES in the order found on this website: https://haselkern.com/Minecraft-ArmorStand/
+    body: 0:0:0 
+    left_leg: 0:0:0
+    right_leg: 0:0:0
+    right_arm: 180:0:270
+    left_arm: 0:0:-270
+sequence: 5, 5:30:1, 6:3:5, 2:2:5, 7:3:5, 1:30:1, 2:3:5, 3:2:10, 4:3:5, 4:30:1  #First step, NEXT step:Ticks between interpolation:Number of steps
+custom_data: 'none' #Optional. Currently only supports 1 string value

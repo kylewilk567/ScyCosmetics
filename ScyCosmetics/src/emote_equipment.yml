@@ -9,8 +9,8 @@ equipment:
     tier: EPIC #MUST be in all caps
     display_name: '&6Rainbow Pig' #Name displayed in inventory
     display_item: 'FIRE_CHARGE'
-    display_lore:
-      - '&eTier: &5EPIC'
+#    display_lore: #Optional attribute
+#      - '&eTier: &5EPIC'
     helmet:
       material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGVhM2RkYzkxN2Q2ZWJkOGFlZWM3ZmRmZGFmMzI2ZDhjNmZlYWUzZGY1NjRjZDI3MzdkZGNhNzQ1ZjVlN2IxIn19fQ=='
     chestplate:
@@ -27,8 +27,6 @@ equipment:
     tier: UNCOMMON #MUST be in all caps
     display_name: '&4Mario - Shy Guy' #Name displayed in inventory
     display_item: 'STONE'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     helmet:
       material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzExN2YxNDdhNTI0NGY3N2JkOGE3MzQ2ZmQzMTJhN2EzZWNmM2I2NGM3NmM3ZmQ2NzQyNzI5MjJjOTEwOWQifX19'
     chestplate:
@@ -40,3 +38,18 @@ equipment:
     boots: 
       material: LEATHER_BOOTS
       color: 255:0:255
+  EE_STARLORD: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED
+    tier: EPIC #MUST be in all caps
+    display_name: '&4StarLord' #Name displayed in inventory
+    display_item: 'LANTERN'
+    helmet:
+      material: 'head;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjEzN2VkMjVmYmVhOGY5YTA0MTc2YTEyNzBkM2ZhMWZhMDE5MWJlNzIyOTdhYjZjNDk5NWMwNjMxYjU3N2YxMyJ9fX0='
+    chestplate:
+      material: LEATHER_CHESTPLATE
+      color: 73:86:107
+    leggings:
+      material: LEATHER_LEGGINGS
+      color: 73:86:107
+    boots: 
+      material: LEATHER_BOOTS
+      color: 73:86:107

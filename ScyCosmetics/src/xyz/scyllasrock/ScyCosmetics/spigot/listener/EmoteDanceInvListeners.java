@@ -1,20 +1,28 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.listener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import net.md_5.bungee.api.ChatColor;
+import xyz.scyllasrock.ScyCosmetics.spigot.Main;
+import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
@@ -25,7 +33,11 @@ import xyz.scyllasrock.ScyUtility.objects.Pair;
 
 public class EmoteDanceInvListeners implements Listener {
 	
+	private static Main plugin = Main.getInstance();
 	private static PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
+	private static ConfigManager configMang = ConfigManager.getConfigMang();
+	
+	private static Map<UUID, Pair<Long, String>> purchaseClickCooldown = new HashMap<UUID, Pair<Long, String>>();
 	
 	@EventHandler
 	public void onInvClick(InventoryClickEvent event) {
@@ -95,7 +107,17 @@ public class EmoteDanceInvListeners implements Listener {
 					meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 					item.setItemMeta(meta);
 				}
-				if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) item.setType(Material.REDSTONE_BLOCK);
+				if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) {
+					item.setType(Material.REDSTONE_BLOCK);
+					//Append buyprice
+					ItemMeta meta = item.getItemMeta();
+					List<String> lore = new ArrayList<String>();
+					if(meta.hasLore()) lore = meta.getLore();
+					lore.add(ChatColor.translateAlternateColorCodes('&', "&ePrice: &c" + cos.getBuyPrice()));
+					lore.add(ChatColor.translateAlternateColorCodes('&', "&5&0Double shift-right-click to purchase"));
+					meta.setLore(lore);
+					item.setItemMeta(meta);
+				}
 				event.getClickedInventory().setItem(slot, item);
 				if(slot % 9 == 7) slot += 3;
 				else ++slot;
@@ -114,6 +136,57 @@ public class EmoteDanceInvListeners implements Listener {
 			event.getClickedInventory().setItem(event.getClickedInventory().getSize() - 1, filterItem);
 			return;
 		}
+	    
+	    //If clicking cosmetic
+		if(event.getCurrentItem().getType().equals(Material.REDSTONE_BLOCK)) {
+		if(event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+			//If first click - add to map
+			if(!purchaseClickCooldown.containsKey(player.getUniqueId())) {
+				purchaseClickCooldown.put(player.getUniqueId(),
+						new Pair<Long, String>(System.currentTimeMillis() + 500, event.getCurrentItem().getItemMeta().getPersistentDataContainer()
+								.get(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING)));
+			}
+			else if(purchaseClickCooldown.get(player.getUniqueId()).getFirst() < System.currentTimeMillis()
+					|| !purchaseClickCooldown.get(player.getUniqueId()).getSecond()
+					.equals(event.getCurrentItem().getItemMeta()
+							.getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING))) {
+				purchaseClickCooldown.put(player.getUniqueId(),
+						new Pair<Long, String>(System.currentTimeMillis() + 500, event.getCurrentItem().getItemMeta().getPersistentDataContainer()
+								.get(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING)));
+			}
+			
+			//If second click - purchase
+			else {
+				String id = purchaseClickCooldown.get(player.getUniqueId()).getSecond();
+				Cosmetic cos = plugin.getCosmeticFromId(id);
+				//Check money
+				if(plugin.getVaultEco().getBalance(player) < cos.getBuyPrice()) {
+					player.closeInventory();
+					player.sendMessage(configMang.getMessage("error_insufficient_funds"));
+				}
+					
+				else {
+				//Take money
+				plugin.getVaultEco().withdrawPlayer(player, cos.getBuyPrice());
+				
+				//Unlock cosmetic
+				playerObject.addUnlockedCosmetic(id);
+				
+				//Update itemstack
+				event.getClickedInventory().setItem(event.getSlot(), plugin.getCosmeticFromId(id).getDisplayItem().clone());
+				
+				//Remove from map
+				purchaseClickCooldown.remove(player.getUniqueId());
+				
+				//Send message
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+						configMang.getMessageNoColor("purchase_successful").replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
+				}
+			}
+		}
+		return;
+	}
+		
 	}
 	
 	

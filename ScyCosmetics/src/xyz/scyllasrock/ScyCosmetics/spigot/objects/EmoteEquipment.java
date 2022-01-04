@@ -9,9 +9,9 @@ public class EmoteEquipment extends Cosmetic {
 	private final ItemStack leggings;
 	private final ItemStack boots;
 	
-	public EmoteEquipment(String id, CosmeticTier tier, ItemStack displayItem,
+	public EmoteEquipment(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice,
 			ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
-		super(id, CosmeticType.EMOTE_EQUIPMENT, tier, displayItem);
+		super(id, CosmeticType.EMOTE_EQUIPMENT, tier, displayItem, buyPrice);
 		this.helmet = helmet;
 		this.chestplate = chestplate;
 		this.leggings = leggings;

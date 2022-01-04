@@ -9,8 +9,8 @@ public class AFKEffect extends Cosmetic implements Cloneable {
 	Particle particle;
 	int step = 0;
 
-	public AFKEffect(String id, CosmeticTier tier, ItemStack displayItem, AFKEffectStyle style, Particle particle) {
-		super(id, CosmeticType.AFK_EFFECT, tier, displayItem);
+	public AFKEffect(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, AFKEffectStyle style, Particle particle) {
+		super(id, CosmeticType.AFK_EFFECT, tier, displayItem, buyPrice);
 		this.style = style;
 		this.particle = particle;
 	}

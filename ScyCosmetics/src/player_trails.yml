@@ -20,8 +20,8 @@ trails:
     count: 1 #How many particles to spawn - INTEGER
     display_name: '&2Dust &7(&2Christ&4mas&7)' #Name displayed in inventory
     display_item: 'PARROT_SPAWN_EGG'
-    display_lore:
-      - '&eTier: &aSEASONAL'
+#    display_lore: #Optional attribute
+#      - '&eTier: &aSEASONAL'
     offsets: #Allowed ranges from player's feet where particles can spawn
       x: 0.25
       y: 0
@@ -34,8 +34,6 @@ trails:
     count: 1 #How many particles to spawn - INTEGER
     display_name: '&2Dust &7(&fSnow&7)' #Name displayed in inventory
     display_item: 'SNOWBALL'
-    display_lore:
-      - '&eTier: &aSEASONAL'
     offsets: #Allowed ranges from player's feet where particles can spawn
       x: 0.25
       y: 0
@@ -48,8 +46,6 @@ trails:
     count: 1 #How many particles to spawn - INTEGER
     display_name: '&4Spell Mob &7(&dR&aa&bn&cd&eo&9m&7)' #Name displayed in inventory
     display_item: 'POTION'
-    display_lore:
-      - '&eTier: &6RARE'
     offsets: #Allowed ranges from player's feet where particles can spawn
       x: 0.25
       y: 0
@@ -62,8 +58,6 @@ trails:
     count: 1 #How many particles to spawn - INTEGER
     display_name: '&4Spell Mob &7(&dMagenta&7)' #Name displayed in inventory
     display_item: 'POTION'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     offsets: #Allowed ranges from player's feet where particles can spawn
       x: 0.25
       y: 1.0
@@ -76,8 +70,6 @@ trails:
     count: 1 #How many particles to spawn - INTEGER
     display_name: '&4Spell Mob &7(&9Blue&7)' #Name displayed in inventory
     display_item: 'POTION'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     offsets: #Allowed ranges from player's feet where particles can spawn
       x: 0.25
       y: 0
@@ -95,8 +87,6 @@ trails:
       z: 0.25
     display_name: '&cHOT uwu'
     display_item: 'BLAZE_POWDER'
-    display_lore:
-      - '&eTier: &5EPIC'
   PT_REDSTONE_RANDOM:
     tier: EPIC
     particles: #Do NOT use multiple particle types if redstone is included!
@@ -104,8 +94,6 @@ trails:
     count: 1
     display_name: '&4Redstone &7(&dR&aa&bn&cd&eo&9m&7)'
     display_item: 'REDSTONE'
-    display_lore:
-      - '&eTier: &5EPIC'
     offsets:
       x: 0.25
       y: 0
@@ -118,8 +106,6 @@ trails:
     count: 1
     display_name: '&4Redstone &7(&8Black&7)'
     display_item: 'REDSTONE'
-    display_lore:
-      - '&eTier: &fCOMMON'
     offsets:
       x: 0.25
       y: 0
@@ -131,8 +117,6 @@ trails:
     count: 1
     display_name: '&4Redstone &7(&fWhite&7)'
     display_item: 'REDSTONE'
-    display_lore:
-      - '&eTier: &fCOMMON'
     offsets:
       x: 0.25
       y: 0
@@ -145,8 +129,6 @@ trails:
     count: 1
     display_name: '&2Note &7(&aGreen&7)'
     display_item: 'JUKEBOX'
-    display_lore:
-      - '&eTier: &fCOMMON'
     offsets:
       x: 0.25
       y: 0
@@ -160,8 +142,6 @@ trails:
     count: 1
     display_name: '&2Note &7(&4Red&7) &ewith &4flame'
     display_item: 'JUKEBOX'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
     offsets:
       x: 0.5
       y: 0

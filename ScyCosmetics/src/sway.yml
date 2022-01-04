@@ -3,8 +3,8 @@
 id: EM_SWAY
 display_name: '&cSway' #Name displayed in inventory
 display_item: 'DIAMOND'
-display_lore:
-  - '&eTier: &fCOMMON'
+#display_lore: #Optional attribute
+#  - '&eTier: &fCOMMON'
 tier: COMMON #All caps
 disable_base_plate: true
 set_small: false #small armor stand

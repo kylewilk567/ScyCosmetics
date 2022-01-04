@@ -79,6 +79,22 @@ inventory_settings:
         slot: 49
         enabled: true
   
+cosmetics:
+  display_items:
+    lore: #Option to automatically apply the tier and buy price of an item to the lore
+      append_tier: true
+  default_buy_prices:
+    common: 50
+    uncommon: 75
+    rare: 100
+    epic: 150
+    special: 200
+    legendary: 300
+    mythic: 500
+    artifact: 100000
+    seasonal: 500
+    lore: 100000
+  
 misc:
   special_feature_error_cooldown: 5 #in seconds
   emote_cooldown: 20 #in seconds
@@ -90,6 +106,7 @@ messages:
   scycos_give_success: '&aSuccessfully gave player &2{player} &aaccess to the cosmetic &2{cosmetic}&a.'
   scycos_receive_success: '&aYou have unlocked access to the cosmetic &2{cosmetic}&a.'
   emote_spawning: '&aSpawning emote...'
+  purchase_successful: '&aYou have successfully bought {cosmetic}&a.'
   
   error_player_not_found: '&cThe player &4{player} &cis not online or does not exist.'
   error_player_only_cmd: '&cSorry console! Only players can perform this command :('
@@ -97,3 +114,4 @@ messages:
   error_particle_data: '&cError! Unable to do special effect. Custom data does not match particle type. Please report to staff, this is a bug.'
   error_emote_cooldown: '&cYou must wait a few seconds before emoting again!'
   error_emote_locked: '&cYou have not unlocked this emote!'
+  error_insufficient_funds: '&cYou do not have enough money!'

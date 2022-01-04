@@ -1,13 +1,6 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.objects;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import net.md_5.bungee.api.ChatColor;
 
 public abstract class Cosmetic {
 	
@@ -15,13 +8,14 @@ public abstract class Cosmetic {
 	private final CosmeticType type;
 	private final CosmeticTier tier;
 	private final ItemStack displayItem;
+	private final double buyPrice;
 	
-	public Cosmetic(String id, CosmeticType type, CosmeticTier tier, ItemStack displayItem) {
+	public Cosmetic(String id, CosmeticType type, CosmeticTier tier, ItemStack displayItem, double buyPrice) {
 		this.id = id;
 		this.type = type;
 		this.tier = tier;
 		this.displayItem = displayItem;
-
+		this.buyPrice = buyPrice;
 	}
 	
 	public String getId() {
@@ -38,6 +32,10 @@ public abstract class Cosmetic {
 	
 	public ItemStack getDisplayItem() {
 		return displayItem;
+	}
+	
+	public double getBuyPrice() {
+		return buyPrice;
 	}
 	
 	public abstract String[] getCosData();

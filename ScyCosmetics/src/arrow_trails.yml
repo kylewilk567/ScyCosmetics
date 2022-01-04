@@ -19,35 +19,28 @@ particles:
     particle: ASH #Particle enum
     display_name: '&8Ash' #Name displayed in inventory
     display_item: 'FIRE_CHARGE'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
+#    display_lore: #Optional attribute
+#      - '&eTier: &7UNCOMMON'
   AR_REDSTONE_BLACK:
     tier: COMMON #MUST be in all caps
     particle: REDSTONE #Particle enum - this particle CAN change color!
     display_name: '&4Redstone &7(&8Black&7)' #Name displayed in inventory
     display_item: 'REDSTONE' #redstone dust
-    display_lore:
-      - '&eTier: &fCOMMON'
   AR_NOTE_GREEN:
     tier: UNCOMMON #MUST be in all caps
     particle: NOTE #Particle enum
     display_name: '&2Note &7(&aGreen&7)' #Name displayed in inventory
     display_item: 'JUKEBOX'
-    display_lore:
-      - '&eTier: &7UNCOMMON'
+    buy_price: 90 #Custom buy price - does not support free cosmetics! Just make price low instead, but not 0.
   AR_RAINBOW_NOTE:
     tier: EPIC #MUST be in all caps
     particle: NOTE #Particle enum
     display_name: '&4R&ca&6i&en&9b&1o&5w &eNote' #Name displayed in inventory
     display_item: 'JUKEBOX'
-    display_lore:
-      - '&eTier: &5EPIC'
     custom_data: 'rainbow'
   AR_CHRISTMAS_NOTE:
     tier: SEASONAL #MUST be in all caps
     particle: NOTE #Particle enum
     display_name: '&2Christmas Note' #Name displayed in inventory
     display_item: 'JUKEBOX'
-    display_lore:
-      - '&eTier: &aSEASONAL'
     custom_data: 'christmas'

@@ -19,9 +19,9 @@ public class PlayerTrail extends Cosmetic{
 	private final double offsetY;
 	private final double offsetZ;
 	
-	public PlayerTrail(String id, CosmeticTier tier, ItemStack displayItem, List<Particle> particles, int count,
+	public PlayerTrail(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, List<Particle> particles, int count,
 			double offsetX, double offsetY, double offsetZ) {		
-		super(id, CosmeticType.PLAYER_TRAIL, tier, displayItem);
+		super(id, CosmeticType.PLAYER_TRAIL, tier, displayItem, buyPrice);
 		this.particles = particles;
 		this.count = count;
 		this.offsetX = offsetX;

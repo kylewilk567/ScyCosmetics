@@ -14,8 +14,8 @@ public class ArrowTrail extends Cosmetic {
 	private final Particle particle;
 
 
-	public ArrowTrail(String id, CosmeticTier tier, Particle particle, ItemStack displayItem) {		
-		super(id, CosmeticType.ARROW_TRAIL, tier, displayItem);
+	public ArrowTrail(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, Particle particle) {		
+		super(id, CosmeticType.ARROW_TRAIL, tier, displayItem, buyPrice);
 		this.particle = particle;
 	}
 	
