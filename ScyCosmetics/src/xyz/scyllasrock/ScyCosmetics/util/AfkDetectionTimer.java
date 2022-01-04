@@ -36,7 +36,7 @@ public class AfkDetectionTimer implements Runnable {
 			else afkSeconds = afkAPI.getAFKPlayer(player).getSecondsAFK();
 			
 			//If player is afk (seconds > 60) and does not have afk particles, set afk particles
-			if(afkSeconds > 5) {
+			if(afkSeconds > 60) {
 				if(!afkParticleTracker.containsKey(player.getUniqueId())) {
 					//Check if player has afkParticles enabled
 					PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());

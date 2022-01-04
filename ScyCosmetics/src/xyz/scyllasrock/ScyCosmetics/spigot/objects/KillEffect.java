@@ -1,5 +1,6 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.objects;
 
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;

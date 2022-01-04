@@ -73,9 +73,9 @@ inventory_settings:
       
       info: #YET TO BE IMPLEMENTED
         material: BEACON
-        display_name: '&cInfo'
-        lore:
-          - '&dTBD'
+        display_name: '&bCosmetic Info'
+#        lore: #Add any additional lore you want here
+#          - ''
         slot: 49
         enabled: true
   

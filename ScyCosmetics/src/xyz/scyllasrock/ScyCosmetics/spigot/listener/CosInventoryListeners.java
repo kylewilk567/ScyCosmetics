@@ -1,9 +1,10 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.listener;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +33,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
 import xyz.scyllasrock.ScyCosmetics.util.CosmeticUtils;
 import xyz.scyllasrock.ScyCosmetics.util.InventoryUtils;
 import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
+import xyz.scyllasrock.ScyUtility.objects.Pair;
 
 public class CosInventoryListeners implements Listener {
 	
@@ -52,6 +55,8 @@ public class CosInventoryListeners implements Listener {
 	final int logMessageSlot = configMang.getConfig().getInt(baseInvPath + ".items.log_message.slot");
 	final int titleSlot = configMang.getConfig().getInt(baseInvPath + ".items.title.slot");
 	final int infoItemSlot = configMang.getConfig().getInt(baseInvPath + ".items.info.slot");
+	
+	private static Map<UUID, Pair<List<Cosmetic>, Integer>> savedSortedCosmetics = new HashMap<UUID, Pair<List<Cosmetic>, Integer>>();
 	
 	@EventHandler
 	public void onBaseInvClick(InventoryClickEvent event) {
@@ -108,7 +113,9 @@ public class CosInventoryListeners implements Listener {
 		}
 		
 		else {
-		player.openInventory(getCosmeticInventory(event.getSlot(), player));
+			Pair<Inventory, List<Cosmetic>> invCosPair = getCosmeticInventory(event.getSlot(), player);
+		player.openInventory(invCosPair.getFirst());
+		savedSortedCosmetics.put(player.getUniqueId(), new Pair<List<Cosmetic>, Integer>(invCosPair.getSecond(), 1));
 		}
 		}
 		
@@ -146,27 +153,52 @@ public class CosInventoryListeners implements Listener {
 			player.openInventory(InventoryUtils.getBaseCosInventory(playerObject));
 			return;
 		}
-			//Toggle viewing locked items - must reload inventory (changes size)
+			//Toggle viewing locked items - does not close inventory
 		else if(event.getSlot() == event.getInventory().getSize() - 9) {
 			playerObject.setShowLockedCosmetics(!playerObject.showLockedCosmetics());
 			String cosTypeString = event.getInventory().getItem(event.getInventory().getSize() - 2)
 					.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING);
 			CosmeticType cosType = CosmeticType.valueOf(cosTypeString);
-			//reload inventory
-			player.closeInventory();
-			player.openInventory(this.getSpecificCosmeticInventory(player, cosType, cosType.label));
+			//Resort cosmetics
+			CosmeticUtils.sortCosmetics(playerObject, cosType);
+			//Go back to page 1! (since size of sortedCosmetics has changed)
+			this.updateCosmeticsForPage(playerObject, event.getClickedInventory(), cosType, 1);
+			
+			//Update show locked item
+			ItemStack showLockedItem = event.getCurrentItem();
+			ItemMeta lockedMeta = showLockedItem.getItemMeta();
+			if(playerObject.showLockedCosmetics()) {
+				lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aHide &cLOCKED &aitems."));
+			}
+			else {
+				lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));	
+			}
+			
+			showLockedItem.setItemMeta(lockedMeta);	
+			event.getClickedInventory().setItem(event.getClickedInventory().getSize() - 9, showLockedItem);
 			return;
 		}
 		
-			//Toggle filter method - will just reload for now
+			//Toggle filter method - does not close inventory
 		else if(event.getSlot() == event.getInventory().getSize() - 1) {
 			playerObject.toggleItemFilter();
 			String cosTypeString = event.getInventory().getItem(event.getInventory().getSize() - 2)
 					.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING);
 			CosmeticType cosType = CosmeticType.valueOf(cosTypeString);
-			//reload inventory
-			player.closeInventory();
-			player.openInventory(this.getSpecificCosmeticInventory(player, cosType, cosType.label));
+				//Resort cosmetics
+			CosmeticUtils.sortCosmetics(playerObject, cosType);
+			
+			this.updateCosmeticsForPage(playerObject, event.getClickedInventory(), cosType, savedSortedCosmetics.get(playerObject.getUUID()).getSecond());
+			
+				//Update filter item 
+			ItemStack filterItem = new ItemStack(Material.GOLD_INGOT);
+			ItemMeta filterMeta = filterItem.getItemMeta();
+			filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+			List<String> filterLore = new ArrayList<String>();
+			filterLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
+			filterMeta.setLore(filterLore);
+			filterItem.setItemMeta(filterMeta);
+			event.getClickedInventory().setItem(event.getClickedInventory().getSize() - 1, filterItem);
 			return;
 		}
 		
@@ -177,11 +209,30 @@ public class CosInventoryListeners implements Listener {
 			CosmeticType cosType = CosmeticType.valueOf(cosTypeString);
 			//reload inventory
 			player.closeInventory();
-			player.openInventory(this.getSpecificCosmeticInventory(player, cosType, cosType.label));
+			Pair<Inventory, List<Cosmetic>> invCosPair = getSpecificCosmeticInventory(player, cosType, cosType.label);
+			player.openInventory(invCosPair.getFirst());
+			savedSortedCosmetics.put(player.getUniqueId(), new Pair<List<Cosmetic>, Integer>(invCosPair.getSecond(), 1));
 			return;
 		}
 		
-		//TODO: If clicking a page item
+		//If clicking a page item
+		if(event.getSlot() == event.getInventory().getSize() - 4 || event.getSlot() == event.getInventory().getSize() - 6) {
+			String cosTypeString = event.getInventory().getItem(event.getInventory().getSize() - 2)
+					.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING);
+			CosmeticType cosType = CosmeticType.valueOf(cosTypeString);
+			//Next page
+			if(event.getSlot() == event.getInventory().getSize() - 4) {
+				this.updateCosmeticsForPage(playerObject, event.getClickedInventory(),
+						cosType, savedSortedCosmetics.get(player.getUniqueId()).getSecond() + 1);
+
+			}
+			//Previous page
+			else {
+				this.updateCosmeticsForPage(playerObject, event.getClickedInventory(),
+						cosType, savedSortedCosmetics.get(player.getUniqueId()).getSecond() - 1);
+			}
+			return;
+		}
 		
 		//If clicking any other item in the bottom row
 		else if(event.getSlot() >= event.getInventory().getSize() - 9) {
@@ -216,7 +267,6 @@ public class CosInventoryListeners implements Listener {
 			}
 		}
 
-		Bukkit.getConsoleSender().sendMessage("Active Cos: " + playerObject.getActiveCosmetics()); //** TO BE REMOVED
 		//Update glowing item
 			//Remove all glowing
 		for(ItemStack item : event.getClickedInventory().getContents()) {
@@ -236,39 +286,46 @@ public class CosInventoryListeners implements Listener {
 		
 	}
 	
+	/*
+	 * Remove sorted cosmetics from map to save memory
+	 */
+	@EventHandler
+	public void onInvClose(InventoryCloseEvent event) {
+		savedSortedCosmetics.remove(event.getPlayer().getUniqueId());
+	}
 	
-	private Inventory getCosmeticInventory(int slot, Player player) {
-		Inventory inv = Bukkit.createInventory(null, 27, "default");
+	
+	private Pair<Inventory, List<Cosmetic>> getCosmeticInventory(int slot, Player player) {
 		if(slot == arrowTrailSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.ARROW_TRAIL, CosmeticType.ARROW_TRAIL.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.ARROW_TRAIL, CosmeticType.ARROW_TRAIL.label);
 		}
 		else if(slot == lastWordsSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.LAST_WORDS, CosmeticType.LAST_WORDS.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.LAST_WORDS, CosmeticType.LAST_WORDS.label);
 		}
 		else if(slot == playerTrailSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.PLAYER_TRAIL, CosmeticType.PLAYER_TRAIL.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.PLAYER_TRAIL, CosmeticType.PLAYER_TRAIL.label);
 		}
 		else if(slot == prefixSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.PREFIX, CosmeticType.PREFIX.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.PREFIX, CosmeticType.PREFIX.label);
 		}
 		else if(slot == logMessageSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.LOG_MESSAGE, CosmeticType.LOG_MESSAGE.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.LOG_MESSAGE, CosmeticType.LOG_MESSAGE.label);
 		}
 		else if(slot == emoteEquipmentSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.EMOTE_EQUIPMENT, CosmeticType.EMOTE_EQUIPMENT.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.EMOTE_EQUIPMENT, CosmeticType.EMOTE_EQUIPMENT.label);
 		}
 		else if(slot == titleSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.TITLE, CosmeticType.TITLE.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.TITLE, CosmeticType.TITLE.label);
 		}
 		else if(slot == killEffectSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.KILL_EFFECT, CosmeticType.KILL_EFFECT.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.KILL_EFFECT, CosmeticType.KILL_EFFECT.label);
 		}
 		else if(slot == afkEffectSlot) {
-			inv = this.getSpecificCosmeticInventory(player, CosmeticType.AFK_EFFECT, CosmeticType.AFK_EFFECT.label);
+			return this.getSpecificCosmeticInventory(player, CosmeticType.AFK_EFFECT, CosmeticType.AFK_EFFECT.label);
 		}
 		
 
-		return inv;		
+		return null;		
 	}
 	
 	//Sort options are rarity_ascending, rarity_descending, name (alphabetic), most_recent, least_recent
@@ -278,29 +335,24 @@ public class CosInventoryListeners implements Listener {
 	//Step 2, use itemstacks to find the size of inventory to be created
 	//Step 3, take in a filtering argument and sort items (alphabetic by displayname, recently unlocked (front to back and back to front) - obtained from player file)
 	//Step 4, create inventory
-	private Inventory getSpecificCosmeticInventory(Player player, CosmeticType type, String cosmeticTitle) {
+	private Pair<Inventory, List<Cosmetic>> getSpecificCosmeticInventory(Player player, CosmeticType type, String cosmeticTitle) {
 		PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 		//Values to initialize
 		ItemStack infoItem, showLockedItem, filterItem, currentCosItem;
-		ItemStack pageItem1 = null;
 		ItemStack pageItem2 = null;
 		List<Cosmetic> sortedCosmetics = new ArrayList<Cosmetic>();
 
-		//Initialize lockedItemStack - locked
+		//Initialize lockedItemStack
+		showLockedItem = new ItemStack(Material.REDSTONE);
+		ItemMeta lockedMeta = showLockedItem.getItemMeta();
 		if(playerObject.showLockedCosmetics()) {
-			showLockedItem = new ItemStack(Material.REDSTONE);
-			ItemMeta lockedMeta = showLockedItem.getItemMeta();
 			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aHide &cLOCKED &aitems."));
-			showLockedItem.setItemMeta(lockedMeta);
 		}
-	
-		//Initialize lockedItemStack - unlocked
 		else {
-			showLockedItem = new ItemStack(Material.REDSTONE);
-			ItemMeta lockedMeta = showLockedItem.getItemMeta();
-			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));
-			showLockedItem.setItemMeta(lockedMeta);			
+			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));	
 		}
+		
+		showLockedItem.setItemMeta(lockedMeta);	
 		
 		//Initialize Info Item
 		infoItem = new ItemStack(Material.BEACON);
@@ -334,8 +386,8 @@ public class CosInventoryListeners implements Listener {
 		sortedCosmetics = CosmeticUtils.sortCosmetics(playerObject, type);
 		
 		//Find size of inventory
-		int size = ((int) Math.ceil(sortedCosmetics.size() / 7.0)) * 9 + 18; //4 rows of 7 cosmetics max.
-		if(size > 54) {
+		int size = 54; //4 rows of 7 cosmetics max.
+		if(sortedCosmetics.size() > 28) {
 			size = 54;
 			//Initialize pageItem2
 			pageItem2 = new ItemStack(Material.FEATHER);
@@ -376,7 +428,6 @@ public class CosInventoryListeners implements Listener {
 		
 		//Add informational items
 		inv.setItem(size - 9, showLockedItem);
-		inv.setItem(size - 6, pageItem1);
 		inv.setItem(size - 4, pageItem2);
 		inv.setItem(size - 5, infoItem);
 		inv.setItem(size - 1, filterItem);
@@ -457,10 +508,84 @@ public class CosInventoryListeners implements Listener {
 		}
 		}
 
-		return inv;
+		return new Pair<Inventory, List<Cosmetic>>(inv, sortedCosmetics);
 	}
 	
+	private List<Cosmetic> getCosmeticsForPage(List<Cosmetic> sortedCosmetics, int page){
+		List<Cosmetic> pageCosmetics = new ArrayList<Cosmetic>();
+		//Check if there are cosmetics on that page
+		if(sortedCosmetics.size() >= (page - 1) * 28) {
+			//Add correct indices to list
+			for(int index = (page - 1) * 28; index < sortedCosmetics.size(); ++index) {
+				pageCosmetics.add(sortedCosmetics.get(index));
+			}
+		}
+		
+		return pageCosmetics;
+	}
 	
+	private void updateCosmeticsForPage(PlayerObject playerObject, Inventory inv, CosmeticType cosType, int newPage) {
+		//Get cosmetics on this page (can be empty)
+		List<Cosmetic> pageCos = getCosmeticsForPage(savedSortedCosmetics.get(playerObject.getUUID()).getFirst(), newPage);
+		ItemStack activeItem = null;
+		Cosmetic activeCos = playerObject.getActiveCosmetic(cosType);
+		if(activeCos != null) activeItem = activeCos.getDisplayItem();
+		int slot = 10;
+		for(int count = 0; count < 28; ++count) {
+			Cosmetic cos = null;
+			if(count < pageCos.size()) cos = pageCos.get(count);
+			ItemStack item = null;
+			if(cos != null) item = cos.getDisplayItem().clone();
+			//Glow if active item
+			if(ItemUtils.itemEquals(item, activeItem)){
+				item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+				ItemMeta meta = item.getItemMeta();
+				meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+				item.setItemMeta(meta);
+			}
+			if(cos != null && item != null) {
+			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) item.setType(Material.REDSTONE_BLOCK);
+			}
+			inv.setItem(slot, item);
+			if(slot % 9 == 7) slot += 3;
+			else ++slot;
+		}
+
+		
+		//Update page items
+		//Set previous page item
+		int sortedSize = savedSortedCosmetics.get(playerObject.getUUID()).getFirst().size();
+		if(newPage > 1) {
+			ItemStack pageItem1 = new ItemStack(Material.FEATHER);
+			ItemMeta page1Meta = pageItem1.getItemMeta();
+			page1Meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&fPrevious page"));
+			pageItem1.setItemMeta(page1Meta);
+			inv.setItem(inv.getSize() - 6, pageItem1);
+		}
+		else {
+			inv.setItem(inv.getSize() - 6, null);
+		}
+
+		//Update next page item
+		if(sortedSize > newPage * 24) {
+			ItemStack pageItem2 = new ItemStack(Material.FEATHER);
+			ItemMeta page2Meta = pageItem2.getItemMeta();
+			page2Meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&fNext page"));
+			pageItem2.setItemMeta(page2Meta);
+			inv.setItem(inv.getSize() - 4, pageItem2);
+		}
+		else {
+			inv.setItem(inv.getSize() - 4, null);
+		}
+
+	
+		//update page number
+		savedSortedCosmetics.put(playerObject.getUUID(), new Pair<List<Cosmetic>, Integer>(savedSortedCosmetics.get(playerObject.getUUID()).getFirst(), newPage));
+	}
+	
+	public static Map<UUID, Pair<List<Cosmetic>, Integer>> getSavedSortedCosmetics(){
+		return savedSortedCosmetics;
+	}
 
 	
  

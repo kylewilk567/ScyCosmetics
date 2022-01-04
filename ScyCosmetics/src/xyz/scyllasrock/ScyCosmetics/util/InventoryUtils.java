@@ -136,6 +136,13 @@ public class InventoryUtils {
 									"&cShift click to disable"));
 					}
 			}
+			//Info item lore
+			else {
+				//Add unlocked out of total info here
+				int numUnlocked = playerObject.getUnlockedCosmetics().size();
+				int totalCos = plugin.getCosmetics().size();
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&eCosmetics unlocked: &a" + numUnlocked + "&e/&a" + totalCos));
+			}
 
 			meta.setLore(lore);
 
@@ -229,10 +236,7 @@ public class InventoryUtils {
 		filterItem.setItemMeta(filterMeta);
 		
 		//Find size of inventory
-		int size = ((int) Math.ceil(sortedCosmetics.size() / 7.0)) * 9 + 18; //4 rows of 7 cosmetics max.
-		if(size > 54) {
-			size = 54;
-		}
+		int size = 54;
 		
 		//Create inventory
 		Inventory inv = Bukkit.createInventory(null, size,

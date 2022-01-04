@@ -38,17 +38,6 @@ public class KillEffectListeners implements Listener {
 	private static Map<Integer, BukkitTask> effectMap = new HashMap<Integer, BukkitTask>();
 	private static Integer effectCounter = 0;
 	
-	//**TO BE REMOVED
-	@EventHandler
-	public void onBlockBreak(BlockBreakEvent event) {
-		Player player = event.getPlayer();
-		if(!player.isOp()) return;
-		PlayerObject killerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
-		KillEffect effect = (KillEffect) killerObject.getActiveCosmetic(CosmeticType.KILL_EFFECT);
-		if(effect == null) return;
-		spawnKillEffect(effect, event.getBlock().getLocation(), player);
-	}
-	
 	@EventHandler
 	public void onPlayerKill(PlayerDeathEvent event) {
 		if(event.getEntity() == null) return;

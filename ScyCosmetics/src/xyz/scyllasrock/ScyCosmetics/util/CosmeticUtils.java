@@ -5,11 +5,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+
 import net.md_5.bungee.api.ChatColor;
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.CosInventoryListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
+import xyz.scyllasrock.ScyUtility.objects.Pair;
 
 public class CosmeticUtils {
 	
@@ -175,6 +179,14 @@ public class CosmeticUtils {
 				});
 			break;
 		}
+		//Save sorted list to uuid
+		if(!CosInventoryListeners.getSavedSortedCosmetics().containsKey(playerObject.getUUID()))
+			CosInventoryListeners.getSavedSortedCosmetics().put(playerObject.getUUID(), new Pair<List<Cosmetic>, Integer>(sortedList, 1));
+		else {
+			int currPage = CosInventoryListeners.getSavedSortedCosmetics().get(playerObject.getUUID()).getSecond();
+			CosInventoryListeners.getSavedSortedCosmetics().put(playerObject.getUUID(), new Pair<List<Cosmetic>, Integer>(sortedList, currPage));
+		}
+		
 		return sortedList;
 	}
 	
