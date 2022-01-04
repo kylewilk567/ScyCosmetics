@@ -2,6 +2,7 @@ package xyz.scyllasrock.ScyCosmetics.spigot.listener;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -19,18 +20,17 @@ public class LastWordsListeners implements Listener {
 	PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
 	ConfigManager configMang = ConfigManager.getConfigMang();
 	
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGH)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		
 		//Check if killer was a player
 		if(player.getKiller() != null) {
 		
-		Player killer = player.getKiller();
 		//Check if player has a lastwords active
 		PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 		LastWords lastWords = (LastWords) playerObject.getActiveCosmetic(CosmeticType.LAST_WORDS);
-		killer.sendMessage(lastWords.getMessage());
+		event.setDeathMessage(lastWords.getMessage());
 		}
 	}
 	

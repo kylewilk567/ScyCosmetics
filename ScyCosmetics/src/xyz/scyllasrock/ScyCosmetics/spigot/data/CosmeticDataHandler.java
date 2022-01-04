@@ -317,13 +317,20 @@ public class CosmeticDataHandler {
 		for(String id : afkConfig.getConfigurationSection("effects").getKeys(false)) {
 			ItemStack item = getItemStackFromConfigSectionAndKey(afkConfig, "effects", id);
 			String styleStr = afkConfig.getString("effects." + id + ".style");
+			Particle particle;
+			try {
+			particle = Particle.valueOf(afkConfig.getString("effects." + id + ".particle").toUpperCase());
+			} catch(Exception e) {
+				particle = null;
+			}
 			if(styleStr == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find style for afk effect with id " + id + "!");
 			}
 			else {
 				cosmetics.put(id, (Cosmetic) new AFKEffect(id, 
 						CosmeticTier.valueOf(afkConfig.getString("effects." + id + ".tier").toUpperCase()), item,
-						AFKEffectStyle.valueOf(styleStr.toUpperCase())));
+						AFKEffectStyle.valueOf(styleStr.toUpperCase()),
+						particle));
 			}
 		}
 	

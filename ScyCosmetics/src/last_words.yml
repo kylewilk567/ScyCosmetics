@@ -1,5 +1,5 @@
 
-#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, SPECIAL, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
 
 last_words:
   LW_GLAD: #Id stored in database and used for finding cosmetic information. SHOULD NOT BE CHANGED AFTER ONE IS ADDED

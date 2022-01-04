@@ -8,7 +8,7 @@ banned_particles: #TO BE REMOVED LATER. Don't use these particles
   - LEGACY_BLOCK_DUST
   - LEGACY_FALLING_DUST
   
-#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, SPECIAL, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
 #&f, &
 #Particles that can change color: REDSTONE, NOTE, SPELL_MOB, SPELL_MOB_AMBIENT
 #Custom_data - do NOT change the values. These are special effects that must hold certain values to work.

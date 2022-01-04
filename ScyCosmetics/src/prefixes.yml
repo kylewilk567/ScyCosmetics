@@ -1,5 +1,5 @@
 #Requires PlaceholderAPI. Used via %scycos_prefix%
-#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, SPECIAL, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
 #Prefixes only supports characters! No strings! All prefixes must be from UTF encoding characters
 
 prefixes:

@@ -4,7 +4,7 @@ version: 1.0
 author: kwilk
 api-version: 1.13
 depend: [ScyUtility]
-softdepend: [PlaceholderAPI, PremiumVanish]
+softdepend: [PlaceholderAPI, PremiumVanish, JetsAntiAFKPro]
 description: Flexible cosmetics for players
 
 commands:

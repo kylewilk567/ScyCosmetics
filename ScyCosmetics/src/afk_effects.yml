@@ -1,11 +1,12 @@
 
-#Tier options: COMMON, UNCOMMON, RARE, EPIC, UNIQUE, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
+#Tier options: COMMON, UNCOMMON, RARE, EPIC, SPECIAL, LEGENDARY, MYTHIC, ARTIFACT, SEASONAL, LORE
 
+#Note: All styles require a 'particle' attribute unless otherwise specified
 #Style:
 #small_pulse
 #pulse
 #twins
-#solar_system
+#solar_system - ignores 'particle' value
 #halo
 #rain
 
@@ -17,6 +18,7 @@ effects:
     display_lore:
       - '&eTier: &fCOMMON'
     style: 'pulse'
+    particle: 'SOUL_FIRE_FLAME'
   AE_PULSE_SMALL:
     tier: COMMON #MUST be in all caps
     display_name: '&bPulse &7(&fSmall&7)' #Name displayed in inventory
@@ -24,6 +26,7 @@ effects:
     display_lore:
       - '&eTier: &fCOMMON'
     style: 'small_pulse'
+    particle: 'SOUL_FIRE_FLAME'
   AE_TWINS:
     tier: COMMON #MUST be in all caps
     display_name: '&fTwins' #Name displayed in inventory
@@ -31,6 +34,7 @@ effects:
     display_lore:
       - '&eTier: &fCOMMON'
     style: 'twins'
+    particle: 'END_ROD'
   AE_SOLAR_SYSTEM:
     tier: UNCOMMON #MUST be in all caps
     display_name: '&eSolar System' #Name displayed in inventory
@@ -45,10 +49,20 @@ effects:
     display_lore:
       - '&eTier: &7UNCOMMON'
     style: 'halo'
-  AE_RAIN:
+    particle: 'FLAME'
+  AE_RAIN_WATER:
     tier: UNCOMMON #MUST be in all caps
-    display_name: '&9Rain' #Name displayed in inventory
+    display_name: '&9Rain &7(&9Water&7)' #Name displayed in inventory
     display_item: 'WATER_BUCKET'
     display_lore:
       - '&eTier: &7UNCOMMON'
     style: 'rain'
+    particle: 'DRIP_WATER'
+  AE_RAIN_LAVA:
+    tier: RARE #MUST be in all caps
+    display_name: '&9Rain &7(&6Lava&7)' #Name displayed in inventory
+    display_item: 'LAVA_BUCKET'
+    display_lore:
+      - '&eTier: &6RARE'
+    style: 'rain'
+    particle: 'DRIP_LAVA'

@@ -71,7 +71,7 @@ public class AfkParticleTimer implements Runnable {
                 double x = (radius * Math.cos(t / radius)) + centerLoc.getX();
                 double z = centerLoc.getZ() + (radius * Math.sin(t / radius));
                 Location particleLoc = new Location(player.getWorld(), x, centerLoc.getY(), z);
-                player.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, particleLoc, 1, 0, 0, 0, 0);
+                player.getWorld().spawnParticle(effect.getParticle(), particleLoc, 1, 0, 0, 0, 0);
            
             }
     		
@@ -86,7 +86,7 @@ public class AfkParticleTimer implements Runnable {
     		
     		//Spawn particles in circle at radius
     		for (double t = 0; t <= 2*Math.PI; t += 0.3) {
-                player.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, centerLoc2, 0, Math.cos(t), 0, Math.sin(t), 0.1);
+                player.getWorld().spawnParticle(effect.getParticle(), centerLoc2, 0, Math.cos(t), 0, Math.sin(t), 0.1);
            
             }
     		
@@ -101,8 +101,8 @@ public class AfkParticleTimer implements Runnable {
     		twin1.setZ(twin1.getZ() + Math.cos(step * .05));
     		twin2.setX(twin2.getX() - Math.sin(step * .05));
     		twin2.setZ(twin2.getZ() - Math.cos(step * .05));
-    		player.getWorld().spawnParticle(Particle.END_ROD, twin1, 1, 0, 0, 0, 0);
-    		player.getWorld().spawnParticle(Particle.END_ROD, twin2, 1, 0, 0, 0, 0);
+    		player.getWorld().spawnParticle(effect.getParticle(), twin1, 1, 0, 0, 0, 0);
+    		player.getWorld().spawnParticle(effect.getParticle(), twin2, 1, 0, 0, 0, 0);
     		break;
     		
     	case SOLAR_SYSTEM:
@@ -158,7 +158,7 @@ public class AfkParticleTimer implements Runnable {
     		//Spawn particles in circle at radius
     		for (double t = 0; t <= 2*Math.PI; t += 0.3) {
     			Location haloLoc = haloCenter.clone().add(0.5 * Math.cos(t), 0, 0.5 * Math.sin(t));
-                player.getWorld().spawnParticle(Particle.FLAME, haloLoc, 1, 0, 0, 0, 0);
+                player.getWorld().spawnParticle(effect.getParticle(), haloLoc, 1, 0, 0, 0, 0);
            
             }
     		break;
@@ -169,7 +169,7 @@ public class AfkParticleTimer implements Runnable {
     		Location cloudHeight = player.getLocation().clone();
     		//Increase y slightly
     		cloudHeight.setY(cloudHeight.getY() + 2.5);
-    		player.getWorld().spawnParticle(Particle.DRIP_WATER, cloudHeight, 10, 0.75, 0, 0.75, 1);
+    		player.getWorld().spawnParticle(effect.getParticle(), cloudHeight, 10, 0.75, 0, 0.75, 1);
 
     		break;
     		
