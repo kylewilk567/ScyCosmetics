@@ -117,7 +117,7 @@ public class CosmeticDataHandler {
 			File newFile = new File(plugin.getDataFolder() + File.separator + "Cosmetics" +  File.separator + "Emotes" + File.separator + s);
 			if(newFile.exists()) continue;
 			try {
-				InputStream istream = plugin.getResource(s);
+				InputStream istream = plugin.getResource("emoteFiles" + File.separator + s);
 				OutputStream ostream = new FileOutputStream(newFile);
 				istream.transferTo(ostream);
 				ostream.close();
