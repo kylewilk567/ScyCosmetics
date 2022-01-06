@@ -60,33 +60,30 @@ public class EmoteDanceInvListeners implements Listener {
 		PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 		
 
-		//Toggle viewing locked items - does not close inventory
+		//Toggle FILTER method - does not close inventory
 	    if(event.getSlot() == event.getInventory().getSize() - 9) {
-		playerObject.setShowLockedCosmetics(!playerObject.showLockedCosmetics());
+	    	playerObject.toggleItemFilter();
 		
-		//Resort cosmetics
-		CosmeticUtils.sortCosmetics(playerObject, CosmeticType.EMOTE_DANCE);
-		//Go back to page 1! (since size of sortedCosmetics has changed)
-		this.updateCosmeticsForPage(playerObject, event.getClickedInventory(), CosmeticType.EMOTE_DANCE, 1);
+	    	//Resort cosmetics
+	    	CosmeticUtils.sortCosmetics(playerObject, CosmeticType.EMOTE_DANCE);
+	    	//Go back to page 1! (since size of sortedCosmetics has changed)
+	    	this.updateCosmeticsForPage(playerObject, event.getClickedInventory(), CosmeticType.EMOTE_DANCE, 1);
 		
-		//Update show locked item
-		ItemStack showLockedItem = event.getCurrentItem();
-		ItemMeta lockedMeta = showLockedItem.getItemMeta();
-		if(playerObject.showLockedCosmetics()) {
-			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aHide &cLOCKED &aitems."));
-		}
-		else {
-			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));	
-		}
+	    	//Update filter item
+	    	ItemStack lockedItem = event.getCurrentItem();
+	    	ItemMeta lockedMeta = lockedItem.getItemMeta();
+	    	lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+	    	List<String> lockedLore = new ArrayList<String>();
+	    	lockedLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
+	    	lockedMeta.setLore(lockedLore);
+	    	lockedItem.setItemMeta(lockedMeta);
+	    	event.getClickedInventory().setItem(event.getClickedInventory().getSize() - 9, lockedItem);
+	    	return;
+	    }
 		
-		showLockedItem.setItemMeta(lockedMeta);	
-		event.getClickedInventory().setItem(event.getClickedInventory().getSize() - 9, showLockedItem);
-		return;
-	}
-		
-			//Toggle filter method - will just reload for now
+			//Toggle SORT method - will just reload for now
 		else if(event.getSlot() == event.getInventory().getSize() - 1) {
-			playerObject.toggleItemFilter();
+			playerObject.toggleItemSort();
 			//Resort cosmetics
 			List<Cosmetic> sortedCosmetics = CosmeticUtils.sortCosmetics(playerObject, CosmeticType.EMOTE_DANCE);
 			
@@ -109,7 +106,8 @@ public class EmoteDanceInvListeners implements Listener {
 				}
 				if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) {
 					item.setType(Material.REDSTONE_BLOCK);
-					//Append buyprice
+					//Append buyprice - if purchaseable
+					if(cos.isPurchaseable()) {
 					ItemMeta meta = item.getItemMeta();
 					List<String> lore = new ArrayList<String>();
 					if(meta.hasLore()) lore = meta.getLore();
@@ -117,6 +115,7 @@ public class EmoteDanceInvListeners implements Listener {
 					lore.add(ChatColor.translateAlternateColorCodes('&', "&5&0Double shift-right-click to purchase"));
 					meta.setLore(lore);
 					item.setItemMeta(meta);
+					}
 				}
 				event.getClickedInventory().setItem(slot, item);
 				if(slot % 9 == 7) slot += 3;
@@ -125,10 +124,10 @@ public class EmoteDanceInvListeners implements Listener {
 				++count;
 			}
 			
-				//Update filter item 
+				//Update sort item 
 			ItemStack filterItem = new ItemStack(Material.GOLD_INGOT);
 			ItemMeta filterMeta = filterItem.getItemMeta();
-			filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+			filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent sort method: &6" + playerObject.getItemSort().toString()));
 			List<String> filterLore = new ArrayList<String>();
 			filterLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
 			filterMeta.setLore(filterLore);
@@ -155,10 +154,11 @@ public class EmoteDanceInvListeners implements Listener {
 								.get(new NamespacedKey(plugin, "ScyCos_id"), PersistentDataType.STRING)));
 			}
 			
-			//If second click - purchase
+			//If second click - purchase if purchaseable
 			else {
 				String id = purchaseClickCooldown.get(player.getUniqueId()).getSecond();
 				Cosmetic cos = plugin.getCosmeticFromId(id);
+				if(!cos.isPurchaseable()) return;
 				//Check money
 				if(plugin.getVaultEco().getBalance(player) < cos.getBuyPrice()) {
 					player.closeInventory();
@@ -169,8 +169,8 @@ public class EmoteDanceInvListeners implements Listener {
 				//Take money
 				plugin.getVaultEco().withdrawPlayer(player, cos.getBuyPrice());
 				
-				//Unlock cosmetic
-				playerObject.addUnlockedCosmetic(id);
+				//Unlock cosmetic (and send message)
+				playerObject.addUnlockedCosmetic(id, true);
 				
 				//Update itemstack
 				event.getClickedInventory().setItem(event.getSlot(), plugin.getCosmeticFromId(id).getDisplayItem().clone());
@@ -178,9 +178,6 @@ public class EmoteDanceInvListeners implements Listener {
 				//Remove from map
 				purchaseClickCooldown.remove(player.getUniqueId());
 				
-				//Send message
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-						configMang.getMessageNoColor("purchase_successful").replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
 				}
 			}
 		}

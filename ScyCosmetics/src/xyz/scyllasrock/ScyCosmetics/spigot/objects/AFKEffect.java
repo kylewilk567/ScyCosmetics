@@ -1,5 +1,7 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.objects;
 
+import java.util.List;
+
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,8 +11,10 @@ public class AFKEffect extends Cosmetic implements Cloneable {
 	Particle particle;
 	int step = 0;
 
-	public AFKEffect(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, AFKEffectStyle style, Particle particle) {
-		super(id, CosmeticType.AFK_EFFECT, tier, displayItem, buyPrice);
+	public AFKEffect(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice,
+			List<String> purchaseableAfterTimes, List<String> purchaseableBeforeTimes, boolean isUnobtainable,
+			AFKEffectStyle style, Particle particle) {
+		super(id, CosmeticType.AFK_EFFECT, tier, displayItem, buyPrice, purchaseableAfterTimes, purchaseableBeforeTimes, isUnobtainable);
 		this.style = style;
 		this.particle = particle;
 	}

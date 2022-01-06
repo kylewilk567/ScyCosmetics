@@ -191,21 +191,14 @@ public class InventoryUtils {
 		//Filter items based on player's filter specifications
 		sortedCosmetics = CosmeticUtils.sortCosmetics(playerObject, CosmeticType.EMOTE_DANCE);		
 
-		//Initialize lockedItemStack - locked
-		if(playerObject.showLockedCosmetics()) {
-			showLockedItem = new ItemStack(Material.REDSTONE);
-			ItemMeta lockedMeta = showLockedItem.getItemMeta();
-			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aHide &cLOCKED &aitems."));
-			showLockedItem.setItemMeta(lockedMeta);
-		}
-	
-		//Initialize lockedItemStack - unlocked
-		else {
-			showLockedItem = new ItemStack(Material.REDSTONE);
-			ItemMeta lockedMeta = showLockedItem.getItemMeta();
-			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));
-			showLockedItem.setItemMeta(lockedMeta);			
-		}
+		//Initialize lockedItemStack
+		showLockedItem = new ItemStack(Material.REDSTONE);
+		ItemMeta lockedMeta = showLockedItem.getItemMeta();
+		lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+		List<String> lockedLore = new ArrayList<String>();
+		lockedLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
+		lockedMeta.setLore(lockedLore);
+		showLockedItem.setItemMeta(lockedMeta);
 		
 		//Initialize Info Item
 		infoItem = new ItemStack(Material.BEACON);
@@ -253,7 +246,8 @@ public class InventoryUtils {
 
 			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) {
 				item.setType(Material.REDSTONE_BLOCK);
-				//Append buyprice
+				//Append buyprice if purchaseable
+				if(cos.isPurchaseable()) {
 				ItemMeta meta = item.getItemMeta();
 				List<String> lore = new ArrayList<String>();
 				if(meta.hasLore()) lore = meta.getLore();
@@ -261,6 +255,7 @@ public class InventoryUtils {
 				lore.add(ChatColor.translateAlternateColorCodes('&', "&5&oDouble shift-right-click to purchase"));
 				meta.setLore(lore);
 				item.setItemMeta(meta);
+				}
 			}
 			inv.setItem(slot, item);
 			if(slot % 9 == 7) slot += 3;

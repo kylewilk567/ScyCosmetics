@@ -12,8 +12,9 @@ public class Prefix extends Cosmetic implements Cloneable {
 	private final int colorChangeTicks;
 
 	public Prefix(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice,
+			List<String> purchaseableAfterTimes, List<String> purchaseableBeforeTimes, boolean isUnobtainble,
 			String prefix, List<String> colorCodes, int colorChangeTicks) {
-		super(id, CosmeticType.PREFIX, tier, displayItem, buyPrice);
+		super(id, CosmeticType.PREFIX, tier, displayItem, buyPrice, purchaseableAfterTimes, purchaseableBeforeTimes, isUnobtainble);
 		this.prefix = prefix;
 		this.colorCodes = colorCodes;
 		currentCodeIndex = 0;

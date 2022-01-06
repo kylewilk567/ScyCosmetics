@@ -6,18 +6,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import net.md_5.bungee.api.ChatColor;
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
+import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
 import xyz.scyllasrock.ScyCosmetics.util.PrefixColorTimer;
 
 public class PlayerObject {
 	
-	Main plugin = Main.getPlugin(Main.class);
+	private static Main plugin = Main.getInstance();
+	private static ConfigManager configMang = ConfigManager.getConfigMang();
 	
 	private UUID uuid;
 	
 	//Inventory information
 	private ItemFilter itemFilter;
-	private boolean showLockedCosmetics;
+	private ItemSort itemSort;
 
 	private List<String> unlockedCosmetics = new ArrayList<String>();
 	private List<String> activeCosmetics = new ArrayList<String>();
@@ -27,17 +33,17 @@ public class PlayerObject {
 	PrefixColorTimer prefixTimer;
 	
 	
-	public PlayerObject(UUID uuid, ItemFilter itemFilter, boolean showLockedCosmetics, List<String> unlockedCosmetics) {
+	public PlayerObject(UUID uuid, ItemFilter itemFilter, ItemSort itemSort, List<String> unlockedCosmetics) {
 		this.uuid = uuid;
 		this.itemFilter = itemFilter;
-		this.showLockedCosmetics = showLockedCosmetics;
+		this.itemSort = itemSort;
 		this.unlockedCosmetics = unlockedCosmetics;
 	}
 	
-	public PlayerObject(UUID uuid, ItemFilter itemFilter, boolean showLockedCosmetics, List<String> unlockedCosmetics, List<String> activeCosmetics) {
+	public PlayerObject(UUID uuid, ItemFilter itemFilter, ItemSort itemSort, List<String> unlockedCosmetics, List<String> activeCosmetics) {
 		this.uuid = uuid;
 		this.itemFilter = itemFilter;
-		this.showLockedCosmetics = showLockedCosmetics;
+		this.itemSort = itemSort;
 		this.unlockedCosmetics = unlockedCosmetics;
 		this.activeCosmetics = activeCosmetics;
 		
@@ -70,8 +76,8 @@ public class PlayerObject {
 		return itemFilter;
 	}
 	
-	public boolean showLockedCosmetics() {
-		return showLockedCosmetics;
+	public ItemSort getItemSort() {
+		return itemSort;
 	}
 	
 	
@@ -151,9 +157,17 @@ public class PlayerObject {
 		return false;
 	}
 	
-	public boolean addUnlockedCosmetic(String id) {
+	public boolean addUnlockedCosmetic(String id, boolean sendMessage) {
 		if(unlockedCosmetics.contains(id)) return false;
 		unlockedCosmetics.add(id);
+		//Message player
+		if(sendMessage) {
+		Player player = Bukkit.getPlayer(uuid);
+		Cosmetic cos = plugin.getCosmeticFromId(id);
+		if(player != null) player.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+				configMang.getMessageNoColor("scycos_receive_success").replace("{cosmetic}",
+						cos.getType() + " " + cos.getDisplayItem().getItemMeta().getDisplayName())));
+		}
 		dirtyData.add(DirtyDataType.UNLOCKED_COSMETICS);
 		return true;
 	}
@@ -164,29 +178,18 @@ public class PlayerObject {
 	}
 	
 	public void toggleItemFilter() {
-		switch(itemFilter) {
-		case NAME:
-			itemFilter = ItemFilter.RARITY_ASCENDING;
-			break;
-		case RARITY_ASCENDING:
-			itemFilter = ItemFilter.RARITY_DESCENDING;
-			break;
-		case RARITY_DESCENDING:
-			itemFilter = ItemFilter.LEAST_RECENT;
-			break;
-		case LEAST_RECENT:
-			itemFilter = ItemFilter.MOST_RECENT;
-			break;
-		case MOST_RECENT:
-			itemFilter = ItemFilter.NAME;
-			break;
-		}
+		itemFilter = itemFilter.next();
 		dirtyData.add(DirtyDataType.ITEM_FILTER);
 	}
 	
-	public void setShowLockedCosmetics(boolean show) {
-		this.showLockedCosmetics = show;
-		dirtyData.add(DirtyDataType.SHOW_LOCKED_COSMETICS);
+	public void setItemSort(ItemSort itemSort) {
+		this.itemSort = itemSort;
+		dirtyData.add(DirtyDataType.ITEM_SORT);
+	}
+	
+	public void toggleItemSort() {
+		itemSort = itemSort.next();
+		dirtyData.add(DirtyDataType.ITEM_SORT);
 	}
 	
 }

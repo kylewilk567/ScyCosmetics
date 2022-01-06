@@ -65,7 +65,7 @@ public class Main extends JavaPlugin {
 		//Vault
 		VaultHook econ = new VaultHook();
 		if(!(econ.setupEconomy())) {
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Scycosmetics >> You must have Vault installed and an economy plugin");
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Scycosmetics >> You must have Vault installed and an economy plugin. Disabling ScyCosmetics.");
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}

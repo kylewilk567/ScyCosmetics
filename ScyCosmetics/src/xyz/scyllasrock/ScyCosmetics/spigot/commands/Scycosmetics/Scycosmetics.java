@@ -15,12 +15,18 @@ import org.bukkit.util.EulerAngle;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
+import xyz.scyllasrock.ScyCosmetics.spigot.data.PlayerDataHandler;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticTier;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
 import xyz.scyllasrock.ScyCosmetics.util.InventoryUtils;
 
 public class Scycosmetics implements CommandExecutor, TabCompleter {
 	
 	Main plugin = Main.getPlugin(Main.class);
 	private static ConfigManager configMang = ConfigManager.getConfigMang();
+	private static PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
 
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -49,6 +55,11 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 		
 		if(args[0].equalsIgnoreCase("give")) {
 			new GiveCommand().onCommand(sender, cmd, label, args);
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("take")) {
+			new TakeCommand().onCommand(sender, cmd, label, args);
 			return true;
 		}
 		
@@ -108,10 +119,54 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 			
 			//Give command
 			if(args[0].equalsIgnoreCase("give") && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
+				Player argument = Bukkit.getPlayer(args[1]);
+				PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(argument.getUniqueId());
+				//Cosmetic ids player does not have, else add nothing
+				for(Cosmetic cos : plugin.getCosmetics().values()) {
+					if(cos.getId().toLowerCase().startsWith(searching) && !playerObject.hasCosmeticUnlocked(cos)) help.add(cos.getId());
+				}
 				
-				//Cosmetic ids
-				for(String id : plugin.getCosmetics().keySet()) {
-					if(id.toLowerCase().startsWith(searching)) help.add(id);
+				//Random argument
+				if("random".startsWith(searching)) help.add("random");
+
+			}
+			
+			//Take command
+			if(args[0].equalsIgnoreCase("take") && player.hasPermission(configMang.getPermission("scycosmetics_take"))) {
+				Player argument = Bukkit.getPlayer(args[1]);
+				PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(argument.getUniqueId());
+				//Cosmetic ids player does not have, else add nothing
+				for(Cosmetic cos : plugin.getCosmetics().values()) {
+					if(cos.getId().toLowerCase().startsWith(searching) && playerObject.hasCosmeticUnlocked(cos)) help.add(cos.getId());
+				}
+			}
+			return help;
+			
+		case 4:
+			searching = "";
+			if(args[3] != null) searching = args[3].toLowerCase();
+			
+			//Give random command
+			if(args[0].equalsIgnoreCase("give") && args[2].equalsIgnoreCase("random") && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
+				
+				//cosmetic types
+				for(CosmeticType type : CosmeticType.values()) {
+					if(type.toString().toLowerCase().startsWith(searching)) help.add(type.toString());
+				}
+
+			}
+			return help;
+			
+		case 5:
+			searching = "";
+			if(args[4] != null) searching = args[4].toLowerCase();
+			
+			//Give random type [tier] command
+			if(args[0].equalsIgnoreCase("give") && args[2].equalsIgnoreCase("random") && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
+				
+				//cosmetic tiers
+				for(CosmeticTier tier : CosmeticTier.values()) {
+					if(tier.toString().toLowerCase().startsWith(searching)) help.add(tier.toString());
 				}
 
 			}

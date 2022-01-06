@@ -154,9 +154,9 @@ public class CosInventoryListeners implements Listener {
 			player.openInventory(InventoryUtils.getBaseCosInventory(playerObject));
 			return;
 		}
-			//Toggle viewing locked items - does not close inventory
+			//Toggle item FILTER - does not close inventory
 		else if(event.getSlot() == event.getInventory().getSize() - 9) {
-			playerObject.setShowLockedCosmetics(!playerObject.showLockedCosmetics());
+			playerObject.toggleItemFilter();
 			String cosTypeString = event.getInventory().getItem(event.getInventory().getSize() - 2)
 					.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING);
 			CosmeticType cosType = CosmeticType.valueOf(cosTypeString);
@@ -165,24 +165,21 @@ public class CosInventoryListeners implements Listener {
 			//Go back to page 1! (since size of sortedCosmetics has changed)
 			this.updateCosmeticsForPage(playerObject, event.getClickedInventory(), cosType, 1);
 			
-			//Update show locked item
-			ItemStack showLockedItem = event.getCurrentItem();
-			ItemMeta lockedMeta = showLockedItem.getItemMeta();
-			if(playerObject.showLockedCosmetics()) {
-				lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aHide &cLOCKED &aitems."));
-			}
-			else {
-				lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));	
-			}
-			
-			showLockedItem.setItemMeta(lockedMeta);	
-			event.getClickedInventory().setItem(event.getClickedInventory().getSize() - 9, showLockedItem);
+			//Update filter item
+			ItemStack lockedItem = event.getCurrentItem();
+			ItemMeta lockedMeta = lockedItem.getItemMeta();
+			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+			List<String> lockedLore = new ArrayList<String>();
+			lockedLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
+			lockedMeta.setLore(lockedLore);
+			lockedItem.setItemMeta(lockedMeta);
+			event.getClickedInventory().setItem(event.getClickedInventory().getSize() - 9, lockedItem);
 			return;
 		}
 		
-			//Toggle filter method - does not close inventory
+			//Toggle SORT method - does not close inventory
 		else if(event.getSlot() == event.getInventory().getSize() - 1) {
-			playerObject.toggleItemFilter();
+			playerObject.toggleItemSort();
 			String cosTypeString = event.getInventory().getItem(event.getInventory().getSize() - 2)
 					.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING);
 			CosmeticType cosType = CosmeticType.valueOf(cosTypeString);
@@ -191,10 +188,10 @@ public class CosInventoryListeners implements Listener {
 			
 			this.updateCosmeticsForPage(playerObject, event.getClickedInventory(), cosType, savedSortedCosmetics.get(playerObject.getUUID()).getSecond());
 			
-				//Update filter item 
+				//Update sort item 
 			ItemStack filterItem = new ItemStack(Material.GOLD_INGOT);
 			ItemMeta filterMeta = filterItem.getItemMeta();
-			filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+			filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent sort method: &6" + playerObject.getItemSort().toString()));
 			List<String> filterLore = new ArrayList<String>();
 			filterLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
 			filterMeta.setLore(filterLore);
@@ -264,6 +261,7 @@ public class CosInventoryListeners implements Listener {
 					else {
 						String id = purchaseClickCooldown.get(player.getUniqueId()).getSecond();
 						Cosmetic cos = plugin.getCosmeticFromId(id);
+						if(!cos.isPurchaseable()) return;
 						//Check money
 						if(plugin.getVaultEco().getBalance(player) < cos.getBuyPrice()) {
 							player.closeInventory();
@@ -274,8 +272,8 @@ public class CosInventoryListeners implements Listener {
 						//Take money
 						plugin.getVaultEco().withdrawPlayer(player, cos.getBuyPrice());
 						
-						//Unlock cosmetic
-						playerObject.addUnlockedCosmetic(id);
+						//Unlock cosmetic (and send message)
+						playerObject.addUnlockedCosmetic(id, true);
 						
 						//Update itemstack
 						event.getClickedInventory().setItem(event.getSlot(), plugin.getCosmeticFromId(id).getDisplayItem().clone());
@@ -283,9 +281,6 @@ public class CosInventoryListeners implements Listener {
 						//Remove from map
 						purchaseClickCooldown.remove(player.getUniqueId());
 						
-						//Send message
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-								configMang.getMessageNoColor("purchase_successful").replace("{cosmetic}", cos.getDisplayItem().getItemMeta().getDisplayName())));
 						}
 					}
 				}
@@ -378,7 +373,7 @@ public class CosInventoryListeners implements Listener {
 	
 	//Sort options are rarity_ascending, rarity_descending, name (alphabetic), most_recent, least_recent
 	
-	//Steps FOR FILTERING...
+	//Steps FOR SORTING...
 	//Step 1, get all itemStacks for the cosmetic type
 	//Step 2, use itemstacks to find the size of inventory to be created
 	//Step 3, take in a filtering argument and sort items (alphabetic by displayname, recently unlocked (front to back and back to front) - obtained from player file)
@@ -390,17 +385,14 @@ public class CosInventoryListeners implements Listener {
 		ItemStack pageItem2 = null;
 		List<Cosmetic> sortedCosmetics = new ArrayList<Cosmetic>();
 
-		//Initialize lockedItemStack
+		//Initialize lockedItemStack - filter item
 		showLockedItem = new ItemStack(Material.REDSTONE);
 		ItemMeta lockedMeta = showLockedItem.getItemMeta();
-		if(playerObject.showLockedCosmetics()) {
-			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aHide &cLOCKED &aitems."));
-		}
-		else {
-			lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aShow &cLOCKED &aitems."));	
-		}
-		
-		showLockedItem.setItemMeta(lockedMeta);	
+		lockedMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+		List<String> lockedLore = new ArrayList<String>();
+		lockedLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
+		lockedMeta.setLore(lockedLore);
+		showLockedItem.setItemMeta(lockedMeta);
 		
 		//Initialize Info Item
 		infoItem = new ItemStack(Material.BEACON);
@@ -408,10 +400,10 @@ public class CosInventoryListeners implements Listener {
 		infoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bClick to go back"));
 		infoItem.setItemMeta(infoMeta);
 		
-		//Initialize filterItem
+		//Initialize sortItem
 		filterItem = new ItemStack(Material.GOLD_INGOT);
 		ItemMeta filterMeta = filterItem.getItemMeta();
-		filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent filter method: &6" + playerObject.getItemFilter().toString()));
+		filterMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eCurrent sort method: &6" + playerObject.getItemSort().toString()));
 		List<String> filterLore = new ArrayList<String>();
 		filterLore.add(ChatColor.translateAlternateColorCodes('&', "&5Click to toggle method"));
 		filterMeta.setLore(filterLore);
@@ -468,7 +460,8 @@ public class CosInventoryListeners implements Listener {
 			}
 			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) {
 				item.setType(Material.REDSTONE_BLOCK);
-				//Append buyprice
+				//Append buyprice - if purchaseable
+				if(cos.isPurchaseable()) {
 				ItemMeta meta = item.getItemMeta();
 				List<String> lore = new ArrayList<String>();
 				if(meta.hasLore()) lore = meta.getLore();
@@ -476,6 +469,7 @@ public class CosInventoryListeners implements Listener {
 				lore.add(ChatColor.translateAlternateColorCodes('&', "&5&oDouble shift-right-click to purchase"));
 				meta.setLore(lore);
 				item.setItemMeta(meta);
+				}
 			}
 			inv.setItem(slot, item);
 			if(slot % 9 == 7) slot += 3;
@@ -524,7 +518,10 @@ public class CosInventoryListeners implements Listener {
 					configMang.getConfig().getString(baseInvPath + ".items." + key + ".display_name")));
 			PersistentDataContainer itemData = cosMeta.getPersistentDataContainer();
 			itemData.set(new NamespacedKey(plugin, "ScyCos_Type"), PersistentDataType.STRING, key.toUpperCase());
-			currentCosItem.setItemMeta(currCosMeta);
+			cosMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			cosMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+			cosMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+
 			cosItem.setItemMeta(cosMeta);
 			invSelItems.add(cosItem);
 		}
@@ -602,7 +599,19 @@ public class CosInventoryListeners implements Listener {
 				item.setItemMeta(meta);
 			}
 			if(cos != null && item != null) {
-			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) item.setType(Material.REDSTONE_BLOCK);
+			if(!playerObject.getUnlockedCosmetics().contains(cos.getId())) {
+				item.setType(Material.REDSTONE_BLOCK);
+				//Append buyprice - if purchaseable
+				if(cos.isPurchaseable()) {
+				ItemMeta meta = item.getItemMeta();
+				List<String> lore = new ArrayList<String>();
+				if(meta.hasLore()) lore = meta.getLore();
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&ePrice: &c" + cos.getBuyPrice()));
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&5&oDouble shift-right-click to purchase"));
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+				}
+			}
 			}
 			inv.setItem(slot, item);
 			if(slot % 9 == 7) slot += 3;

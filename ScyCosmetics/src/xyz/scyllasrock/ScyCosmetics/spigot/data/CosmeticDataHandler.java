@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +145,11 @@ public class CosmeticDataHandler {
 			double buyPrice = trailConfig.getDouble("particles." + id + ".buy_price");
 			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
 			ItemStack itemStack = this.getItemStackFromConfigSectionAndKey(trailConfig, "particles", id, tier);
+			String afterString = trailConfig.getString("particles." + id + ".is_purchaseable_after");
+			String beforeString = trailConfig.getString("particles." + id + ".is_purchaseable_before");
 			cosmetics.put(id, (Cosmetic) new ArrowTrail(id, tier, itemStack, buyPrice,
+					getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+					trailConfig.getBoolean("particles." + id + ".is_unobtainable"),
 					Particle.valueOf(trailConfig.getString("particles." + id + ".particle"))));
 		}
 			
@@ -160,7 +165,11 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Message for last words with id " + id + " is null!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new LastWords(id, tier, itemStack, buyPrice,
+				String afterString = lastWordsConfig.getString("last_words." + id + ".is_purchaseable_after");
+				String beforeString = lastWordsConfig.getString("last_words." + id + ".is_purchaseable_before");
+				cosmetics.put(id, (Cosmetic) new LastWords(id, tier, itemStack, buyPrice,
+					getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+					lastWordsConfig.getBoolean("last_words." + id + ".is_unobtainable"),
 					ChatColor.translateAlternateColorCodes('&', message)));
 			}
 		}
@@ -184,8 +193,13 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: No particles for player trail with id " + id + "!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new PlayerTrail(id, tier, 
-					 itemStack, buyPrice, particles, count, offsetX, offsetY, offsetZ));
+				String afterString = playerTrailConfig.getString("trails." + id + ".is_purchaseable_after");
+				String beforeString = playerTrailConfig.getString("trails." + id + ".is_purchaseable_before");
+				cosmetics.put(id, (Cosmetic) new PlayerTrail(id, tier, 
+					 itemStack, buyPrice,
+					 getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+					 playerTrailConfig.getBoolean("trails." + id + ".is_unobtainable"),
+					 particles, count, offsetX, offsetY, offsetZ));
 			}
 		}
 		
@@ -201,8 +215,13 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: No prefix for prefix with id " + id + "!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new Prefix(id, tier, 
-					 itemStack, buyPrice, translatedPrefix, prefixConfig.getStringList("prefixes." + id + ".color_codes"),
+				String afterString = prefixConfig.getString("prefixes." + id + ".is_purchaseable_after");
+				String beforeString = prefixConfig.getString("prefixes." + id + ".is_purchaseable_before");
+				cosmetics.put(id, (Cosmetic) new Prefix(id, tier, 
+					 itemStack, buyPrice,
+					 getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+					 prefixConfig.getBoolean("prefixes." + id + ".is_unobtainable"),
+					 translatedPrefix, prefixConfig.getStringList("prefixes." + id + ".color_codes"),
 					 prefixConfig.getInt("prefixes." + id + ".color_change_ticks")));
 			}
 		}
@@ -226,8 +245,13 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find log in/off message for log message with id " + id + "!");
 			}
 			else {
-			cosmetics.put(id, (Cosmetic) new LogMessage(id, tier, 
-					 itemStack, buyPrice, logInMessage, logOffMessage, sound));
+				String afterString = logConfig.getString("messages." + id + ".is_purchaseable_after");
+				String beforeString = logConfig.getString("messages." + id + ".is_purchaseable_before");
+				cosmetics.put(id, (Cosmetic) new LogMessage(id, tier, 
+					 itemStack, buyPrice,
+					 getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+					 logConfig.getBoolean("messages." + id + ".is_unobtainable"),
+					 logInMessage, logOffMessage, sound));
 			}
 		}
 		
@@ -283,9 +307,13 @@ public class CosmeticDataHandler {
 						Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
 					boots.setItemMeta(leatherMeta);
 				}
-
+				String afterString = equipmentConfig.getString("equipment." + id + ".is_purchaseable_after");
+				String beforeString = equipmentConfig.getString("equipment." + id + ".is_purchaseable_before");
 				cosmetics.put(id, (Cosmetic) new EmoteEquipment(id, tier, 
-						itemStack, buyPrice, helmet, chestplate, leggings, boots));
+						itemStack, buyPrice,
+						getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+						equipmentConfig.getBoolean("equipment." + id + ".is_unobtainable"),
+						helmet, chestplate, leggings, boots));
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -306,7 +334,11 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not read emote with id " + id + "!");
 			}
 			else {
-				cosmetics.put(id, (Cosmetic) new Emote(id, tier, itemStack, buyPrice, positions,
+				String afterString = emoteConfig.getString("is_purchaseable_after");
+				String beforeString = emoteConfig.getString("is_purchaseable_before");
+				cosmetics.put(id, (Cosmetic) new Emote(id, tier, itemStack, buyPrice,
+						getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+						emoteConfig.getBoolean("is_unobtainable"), positions,
 						emoteConfig.getBoolean("disable_base_plate"), emoteConfig.getBoolean("set_small")));
 			}
 			
@@ -324,7 +356,11 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find title for title with id " + id + "!");
 			}
 			else {
-				cosmetics.put(id, (Cosmetic) new Title(id, tier, item, buyPrice, title));
+				String afterString = titleConfig.getString("titles." + id + ".is_purchaseable_after");
+				String beforeString = titleConfig.getString("titles." + id + ".is_purchaseable_before");
+				cosmetics.put(id, (Cosmetic) new Title(id, tier, item, buyPrice,
+						getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+						titleConfig.getBoolean("titles." + id + ".is_unobtainable"), title));
 			}
 		}
 		
@@ -340,8 +376,13 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find style for kill effect with id " + id + "!");
 			}
 			else {
+				String afterString = killConfig.getString("effects." + id + ".is_purchaseable_after");
+				String beforeString = killConfig.getString("effects." + id + ".is_purchaseable_before");
 				cosmetics.put(id, (Cosmetic) new KillEffect(id, 
-						tier, item, buyPrice, KillEffectStyle.valueOf(styleStr.toUpperCase())));
+						tier, item, buyPrice,
+						getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+						killConfig.getBoolean("effects." + id + ".is_unobtainable"),
+						KillEffectStyle.valueOf(styleStr.toUpperCase())));
 			}
 		}
 		
@@ -363,7 +404,11 @@ public class CosmeticDataHandler {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: Could not find style for afk effect with id " + id + "!");
 			}
 			else {
+				String afterString = afkConfig.getString("effects." + id + ".is_purchaseable_after");
+				String beforeString = afkConfig.getString("effects." + id + ".is_purchaseable_before");
 				cosmetics.put(id, (Cosmetic) new AFKEffect(id, tier, item, buyPrice,
+						getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
+						afkConfig.getBoolean("effects." + id + ".is_unobtainable"),
 						AFKEffectStyle.valueOf(styleStr.toUpperCase()), particle));
 			}
 		}
@@ -446,6 +491,12 @@ public class CosmeticDataHandler {
 		meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
 		itemStack.setItemMeta(meta);
 		return itemStack;
+	}
+	
+	private List<String> getPurchaseableStringList(String s) {
+		if(s == null) return new ArrayList<String>();
+		String[] dateArr = s.split(";");
+		return Arrays.asList(dateArr).stream().map(dateString -> dateString.strip()).collect(Collectors.toList());
 	}
 	
 	private List<Pair<Integer, EmoteStep>> readEmoteSteps(YamlConfiguration emoteConfig) {

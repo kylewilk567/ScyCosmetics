@@ -6,6 +6,7 @@ permissions:
   scycosmetics: scycosmetics.base
   scycosmetics_help: scycosmetics.help
   scycosmetics_give: scycosmetics.give
+  scycosmetics_take: scycosmetics.take
   
   semote: scycosmetics.emote
   
@@ -96,9 +97,18 @@ cosmetics:
     lore: 100000
   
 misc:
-  special_feature_error_cooldown: 5 #in seconds
-  emote_cooldown: 20 #in seconds
-  emote_delay_ticks: 40 #in TICKS
+  #in seconds. Given to players if a special feature stops working so players can notify admin of the issue.
+  special_feature_error_cooldown: 5
+  #in seconds. Prevents use of emotes until this cooldown passes.
+  emote_cooldown: 20
+  #in TICKS. Ticks until armor stand spawns after running the command
+  emote_delay_ticks: 40 
+  #A number (can have decimals) between 0-100 representing percent chance a player wins vault money in place of a cosmetic.
+  give_random_vault_chance: 10.0 
+  #How much money to give a player who wins vault money in place of a cosmetic. No effect if give_random_vault_chance = 0
+  give_random_vault_amount: 50.0
+  #How much money to give a player if they already have all cosmetics of the specified type and tier unlocked. Set to 0 to give them nothing
+  give_vault_all_unlocked: 100.0
   
 messages:
   prefix: '&8[&bCosmetics&8]'
@@ -106,11 +116,16 @@ messages:
   scycos_give_success: '&aSuccessfully gave player &2{player} &aaccess to the cosmetic &2{cosmetic}&a.'
   scycos_receive_success: '&aYou have unlocked access to the cosmetic &2{cosmetic}&a.'
   emote_spawning: '&aSpawning emote...'
-  purchase_successful: '&aYou have successfully bought {cosmetic}&a.'
+  random_vault_money_given: '&aYou have been awarded &2${amount} &ainstead of a cosmetic!'
+  random_vault_no_money_given: '&cYou did not win a random cosmetic :('
+  all_cos_unlocked_given_money: '&aYou have been awarded &2${amount} &ainstead of a cosmetic because you have all available cosmetics unlocked!'
+  all_cos_unlocked_no_reward: '&cYou were not given a cosmetic because they were all already unlocked.'
   
   error_player_not_found: '&cThe player &4{player} &cis not online or does not exist.'
   error_player_only_cmd: '&cSorry console! Only players can perform this command :('
   error_invalid_cosmetic_id: '&cThe specified cosmetic id does not exist.'
+  error_invalid_cosmetic_type: '&cThe specified cosmetic type does not exist.'
+  error_invalid_cosmetic_tier: '&cThe specified cosmetic tier does not exist.'
   error_particle_data: '&cError! Unable to do special effect. Custom data does not match particle type. Please report to staff, this is a bug.'
   error_emote_cooldown: '&cYou must wait a few seconds before emoting again!'
   error_emote_locked: '&cYou have not unlocked this emote!'

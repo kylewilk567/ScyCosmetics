@@ -17,8 +17,9 @@ public class Emote extends Cosmetic implements Cloneable {
 	private final boolean setSmall;
 
 	public Emote(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice,
+			List<String> purchaseableAfterTimes, List<String> purchaseableBeforeTimes, boolean isUnobtainble,
 			List<Pair<Integer, EmoteStep>> positions, boolean disableBasePlate, boolean setSmall) {
-		super(id, CosmeticType.EMOTE_DANCE, tier, displayItem, buyPrice);
+		super(id, CosmeticType.EMOTE_DANCE, tier, displayItem, buyPrice, purchaseableAfterTimes, purchaseableBeforeTimes, isUnobtainble);
 		this.positions = positions;
 		currentStep = 0;
 		this.disableBasePlate = disableBasePlate;

@@ -19,18 +19,25 @@ effects:
 #      - '&eTier: &fCOMMON'
     style: 'pulse'
     particle: 'SOUL_FIRE_FLAME'
+    is_purchaseable_after: '2022:01:07:00:00' #start date - yyyy:mm:dd:hh:mm - don't specify year if you want to recur annually
+    is_purchaseable_before: '2022:03:01:00:00' #end date - yyyy:mm:dd:hh:mm
+    is_unobtainable: true #defaults to false if unspecified
   AE_PULSE_SMALL:
     tier: COMMON #MUST be in all caps
     display_name: '&bPulse &7(&fSmall&7)' #Name displayed in inventory
     display_item: 'DIRT'
     style: 'small_pulse'
     particle: 'SOUL_FIRE_FLAME'
+    is_purchaseable_after: '01:07:00:00' #start date - yyyy:mm:dd:hh:mm - don't specify year if you want to recur annually. All other values are required: mm:dd:hh:mm
+    is_purchaseable_before: '03:01:00:00' #end date - yyyy:mm:dd:hh:mm
   AE_TWINS:
     tier: COMMON #MUST be in all caps
     display_name: '&fTwins' #Name displayed in inventory
     display_item: 'POISONOUS_POTATO'
     style: 'twins'
     particle: 'END_ROD'
+    is_purchaseable_after: '12:01:00:00;02:12:00:00' #Can also do more than one time of year
+    is_purchaseable_before: '12:26:00:00;02:16:00:00' # This does December 1st - Jan 5th, and Feb 12th - Feb 16th annually. First after date matches with first before date...
   AE_SOLAR_SYSTEM:
     tier: UNCOMMON #MUST be in all caps
     display_name: '&eSolar System' #Name displayed in inventory

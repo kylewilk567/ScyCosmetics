@@ -1,6 +1,8 @@
 package xyz.scyllasrock.ScyCosmetics.spigot.objects;
 
 
+import java.util.List;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -13,8 +15,10 @@ public class KillEffect extends Cosmetic {
 	
 	private KillEffectStyle style;
 	
-	public KillEffect(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice, KillEffectStyle style) {
-		super(id, CosmeticType.KILL_EFFECT, tier, displayItem, buyPrice);
+	public KillEffect(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice,
+			List<String> purchaseableAfterTimes, List<String> purchaseableBeforeTimes, boolean isUnobtainble,
+			KillEffectStyle style) {
+		super(id, CosmeticType.KILL_EFFECT, tier, displayItem, buyPrice, purchaseableAfterTimes, purchaseableBeforeTimes, isUnobtainble);
 		this.style = style;
 	}
 	
