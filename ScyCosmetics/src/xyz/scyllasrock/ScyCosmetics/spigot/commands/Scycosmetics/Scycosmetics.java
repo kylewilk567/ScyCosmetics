@@ -63,6 +63,16 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		
+		if(args[0].equalsIgnoreCase("giveall")) {
+			new GiveAllCommand().onCommand(sender, cmd, label, args);
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("takeall")) {
+			new TakeAllCommand().onCommand(sender, cmd, label, args);
+			return true;
+		}
+		
 
 		
 		return false;
@@ -98,6 +108,16 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 			if ("give".startsWith(searching) && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
 				help.add("give");
 			}
+			
+			if ("take".startsWith(searching) && player.hasPermission(configMang.getPermission("scycosmetics_take"))) {
+				help.add("take");
+			}
+			if ("giveall".startsWith(searching) && player.hasPermission(configMang.getPermission("scycosmetics_giveall"))) {
+				help.add("giveall");
+			}
+			if ("takeall".startsWith(searching) && player.hasPermission(configMang.getPermission("scycosmetics_takeall"))) {
+				help.add("takeall");
+			}
 			return help;
 			
 		case 2:
@@ -105,7 +125,10 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 			if(args[1] != null) searching = args[1].toLowerCase();
 			
 			//Give command - player argument
-			if(args[0].equalsIgnoreCase("give") && player.hasPermission(configMang.getPermission("scycosmetics_give"))) {
+			if(args[0].equalsIgnoreCase("give") && player.hasPermission(configMang.getPermission("scycosmetics_give"))
+					|| args[0].equalsIgnoreCase("take") && player.hasPermission(configMang.getPermission("scycosmetics_take"))
+					|| args[0].equalsIgnoreCase("giveall") && player.hasPermission(configMang.getPermission("scycosmetics_giveall"))
+					|| args[0].equalsIgnoreCase("takeall") && player.hasPermission(configMang.getPermission("scycosmetics_takeall"))) {
 				for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 					help.add(onlinePlayer.getName());
 				}
@@ -140,6 +163,20 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 					if(cos.getId().toLowerCase().startsWith(searching) && playerObject.hasCosmeticUnlocked(cos)) help.add(cos.getId());
 				}
 			}
+			
+			//Giveall or takeall commands
+			if(args[0].equalsIgnoreCase("giveall") && player.hasPermission(configMang.getPermission("scycosmetics_giveall"))
+					|| args[0].equalsIgnoreCase("takeall") && player.hasPermission(configMang.getPermission("scycosmetics_takeall"))) {
+				
+				//cosmetic types
+				for(CosmeticType type : CosmeticType.values()) {
+					if(type.toString().toLowerCase().startsWith(searching)) help.add(type.toString());
+				}
+				
+			}
+			
+			
+			
 			return help;
 			
 		case 4:
@@ -154,6 +191,17 @@ public class Scycosmetics implements CommandExecutor, TabCompleter {
 					if(type.toString().toLowerCase().startsWith(searching)) help.add(type.toString());
 				}
 
+			}
+			
+			//Giveall or takeall commands
+			if(args[0].equalsIgnoreCase("giveall") && player.hasPermission(configMang.getPermission("scycosmetics_giveall"))
+					|| args[0].equalsIgnoreCase("takeall") && player.hasPermission(configMang.getPermission("scycosmetics_takeall"))) {
+				
+				//cosmetic tiers
+				for(CosmeticTier tier : CosmeticTier.values()) {
+					if(tier.toString().toLowerCase().startsWith(searching)) help.add(tier.toString());
+				}
+				
 			}
 			return help;
 			

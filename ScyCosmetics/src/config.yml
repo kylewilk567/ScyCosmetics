@@ -7,6 +7,8 @@ permissions:
   scycosmetics_help: scycosmetics.help
   scycosmetics_give: scycosmetics.give
   scycosmetics_take: scycosmetics.take
+  scycosmetics_giveall: scycosmetics.giveall
+  scycosmetics_takeall: scycosmetics.takeall
   
   semote: scycosmetics.emote
   
@@ -114,7 +116,11 @@ messages:
   prefix: '&8[&bCosmetics&8]'
   no_permission: '&cYou do not have permission for this command.'
   scycos_give_success: '&aSuccessfully gave player &2{player} &aaccess to the cosmetic &2{cosmetic}&a.'
+  scycos_giveall_success: '&aSuccessfully gave player &2{player} &aaccess to all cosmetics of specified type and tier.'
+  scycos_take_success: '&aRemoved access to cosmetic &2{cosmetic} &afrom player &2{player}&a.'
+  scycos_takeall_success: '&aRemoved all cosmetics of specified type and tier from &2{player}&a.'
   scycos_receive_success: '&aYou have unlocked access to the cosmetic &2{cosmetic}&a.'
+  scycos_receiveall_success: '&aYou have unlocked access to all cosmetics of type &2{type} &aand tier &2{tier}&a.'
   emote_spawning: '&aSpawning emote...'
   random_vault_money_given: '&aYou have been awarded &2${amount} &ainstead of a cosmetic!'
   random_vault_no_money_given: '&cYou did not win a random cosmetic :('
@@ -130,3 +136,4 @@ messages:
   error_emote_cooldown: '&cYou must wait a few seconds before emoting again!'
   error_emote_locked: '&cYou have not unlocked this emote!'
   error_insufficient_funds: '&cYou do not have enough money!'
+  error_take_cosmetic_already_locked: '&cThe player specified has this cosmetic already locked.'

@@ -109,7 +109,7 @@ public class CosmeticDataHandler {
 	}
 	
 	/**
-	 * Creates all files in Cosmetics folder - MODIFY TO ALLOW A CHANGE OF DIRECTORY!
+	 * Creates all files in Cosmetics folder
 	 * @param files
 	 */
 	private void checkOrCreateEmotes(String... files) {

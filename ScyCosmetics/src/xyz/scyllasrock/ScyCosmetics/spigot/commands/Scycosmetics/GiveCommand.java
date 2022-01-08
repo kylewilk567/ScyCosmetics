@@ -168,7 +168,7 @@ public class GiveCommand implements CommandExecutor {
 		
 		
 		//Check extra argument is a valid cosmetic id
-		Cosmetic cos = plugin.getCosmeticFromId(args[2]);
+		Cosmetic cos = plugin.getCosmeticFromId(args[2].toUpperCase());
 		if(cos == null) {
 			sender.sendMessage(configMang.getMessage("error_invalid_cosmetic_id"));
 			return true;
@@ -178,11 +178,11 @@ public class GiveCommand implements CommandExecutor {
 		if(sender instanceof Player) {
 			Player senderPlayer = (Player) sender;
 			if(senderPlayer.getUniqueId().equals(player.getUniqueId())) {
-				playerHandler.getPlayerObjectByUUID(player.getUniqueId()).addUnlockedCosmetic(args[2], false);
+				playerHandler.getPlayerObjectByUUID(player.getUniqueId()).addUnlockedCosmetic(args[2].toUpperCase(), false);
 			}
-			else playerHandler.getPlayerObjectByUUID(player.getUniqueId()).addUnlockedCosmetic(args[2], true);
+			else playerHandler.getPlayerObjectByUUID(player.getUniqueId()).addUnlockedCosmetic(args[2].toUpperCase(), true);
 		}
-		else playerHandler.getPlayerObjectByUUID(player.getUniqueId()).addUnlockedCosmetic(args[2], false);
+		else playerHandler.getPlayerObjectByUUID(player.getUniqueId()).addUnlockedCosmetic(args[2].toUpperCase(), false);
 
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', 
 				configMang.getMessageNoColor("scycos_give_success").replace("{player}", args[1])

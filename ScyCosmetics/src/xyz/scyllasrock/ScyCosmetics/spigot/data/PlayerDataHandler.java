@@ -107,7 +107,7 @@ public class PlayerDataHandler {
 					new PlayerObject(uuid, ItemFilter.valueOf(config.getString("cosmetic_filter")), ItemSort.valueOf(config.getString("cosmetic_sort")),
 							config.getStringList("unlocked_cosmetics"), config.getStringList("active_cosmetics")));
 		}
-		else playerObjects.put(uuid, new PlayerObject(uuid, ItemFilter.valueOf("NAME"), ItemSort.valueOf("SHOW_ALL"), new ArrayList<String>(), new ArrayList<String>()));
+		else playerObjects.put(uuid, new PlayerObject(uuid, ItemFilter.valueOf("SHOW_ALL"), ItemSort.valueOf("NAME"), new ArrayList<String>(), new ArrayList<String>()));
 	}
 	
 	

@@ -172,6 +172,26 @@ public class PlayerObject {
 		return true;
 	}
 	
+	public boolean removeUnlockedCosmetic(String id, boolean sendMessage) {
+		if(!unlockedCosmetics.contains(id)) return false;
+		unlockedCosmetics.remove(id);
+		//If player has this cosmetic active, disable it.
+		if(activeCosmetics.contains(id)) {
+			Cosmetic cos = plugin.getCosmeticFromId(id);
+			removeActiveCosmetic(cos.getType());
+			if(sendMessage) {
+				Player player = Bukkit.getPlayer(uuid);
+				if(player != null) player.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+						configMang.getMessageNoColor("scycos_active_taken").replace("{cosmetic}",
+								cos.getType() + " " + cos.getDisplayItem().getItemMeta().getDisplayName())));
+			}
+
+		}
+		
+		dirtyData.add(DirtyDataType.UNLOCKED_COSMETICS);
+		return true;
+	}
+	
 	public void setItemFilter(ItemFilter filter) {
 		this.itemFilter = filter;
 		dirtyData.add(DirtyDataType.ITEM_FILTER);
