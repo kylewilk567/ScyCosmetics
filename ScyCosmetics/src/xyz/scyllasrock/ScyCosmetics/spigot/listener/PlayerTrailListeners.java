@@ -160,7 +160,7 @@ public class PlayerTrailListeners implements Listener {
 		else if(particle.equals(Particle.DUST_COLOR_TRANSITION)) {
 			//No data specified - just spawn a white particle
 			if(customData == null) {
-				DustTransition dustTrans = new DustTransition(Color.fromRGB(0, 0, 0), Color.fromRGB(0, 0, 0), 1.0F);
+				DustTransition dustTrans = new DustTransition(Color.fromRGB(255, 255, 255), Color.fromRGB(255, 255, 255), 1.0F);
 				loc.getWorld().spawnParticle(particle, loc, count, dustTrans);
 			}
 			
@@ -179,7 +179,7 @@ public class PlayerTrailListeners implements Listener {
 			
 			//Spawns white that transitions to blue
 			else if(customData.equalsIgnoreCase("snow")) {
-				DustTransition dustTrans = new DustTransition(Color.fromRGB(0, 0, 0), Color.fromRGB(121, 215, 232), 1.0F);
+				DustTransition dustTrans = new DustTransition(Color.fromRGB(255, 255, 255), Color.fromRGB(121, 215, 232), 1.0F);
 				loc.getWorld().spawnParticle(particle, loc, count, dustTrans);
 			}
 			
