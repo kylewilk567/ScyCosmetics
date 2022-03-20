@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -66,6 +67,12 @@ public class Semote implements CommandExecutor, TabCompleter {
 		//Check arg length
 		if(args.length > 1) {
 			player.sendMessage(ChatColor.RED + "Usage: /semote <emote>");
+			return true;
+		}
+		
+		//Check gamemode - cannot emote if in spectator
+		if(player.getGameMode().equals(GameMode.SPECTATOR)) {
+			player.sendMessage(configMang.getMessage("error_emote_spectator"));
 			return true;
 		}
 		

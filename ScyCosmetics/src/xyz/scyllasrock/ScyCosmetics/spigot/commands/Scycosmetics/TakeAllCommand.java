@@ -29,7 +29,7 @@ public class TakeAllCommand implements CommandExecutor {
 		//If sender is player without perms
 		if(sender instanceof Player) {
 			Player player = (Player) sender;
-			if(!player.hasPermission(configMang.getPermission("scycosmetics_giveall"))) {
+			if(!player.hasPermission(configMang.getPermission("scycosmetics_takeall"))) {
 				player.sendMessage(configMang.getMessage("no_permission"));
 				return true;
 			}

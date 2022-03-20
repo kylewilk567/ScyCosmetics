@@ -21,6 +21,7 @@ public class HelpCommand implements CommandExecutor {
 			+ "\n&aCurrently running v&c" + plugin.getDescription().getVersion() + 
 			"\n " +
 			"\n&e/scos - &6Opens cosmetics inventory." + 
+			"\n&e/scos afk - &6Manually toggles visibility of afk particles." +
 			"\n&e/scos help [page] - &6displays the help menu." +
 			"\n&e/semote [emote] - &6Opens inventory (no args) or plays emote.",
 	

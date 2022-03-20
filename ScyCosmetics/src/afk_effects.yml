@@ -9,6 +9,8 @@
 #solar_system - ignores 'particle' value
 #halo
 #rain
+#hail - no particle attribute
+#stationary_command_file - requires 'file:' key AND 'particle: REDSTONE'. Optional 'offset: #:#:#' parameter as well (forward/back:up/down:left/right)
 
 effects:
   AE_PULSE:
@@ -43,6 +45,8 @@ effects:
     display_name: '&eSolar System' #Name displayed in inventory
     display_item: 'STONE'
     style: 'solar_system'
+    is_purchaseable_after: '12:01:00:00' #Set both before and after dates to the same to prevent purchase while keeping cosmetic as "obtainable"
+    is_purchaseable_before: '12:01:00:00' # Date matches after date
   AE_HALO:
     tier: UNCOMMON #MUST be in all caps
     display_name: '&bHalo' #Name displayed in inventory
@@ -61,3 +65,30 @@ effects:
     display_item: 'LAVA_BUCKET'
     style: 'rain'
     particle: 'DRIP_LAVA'
+  AE_HAIL:
+    tier: EPIC
+    display_name: '&fHail'
+    display_item: 'SNOWBALL'
+    style: 'hail'
+  AE_YOUTUBE:
+    tier: SPECIAL
+    display_name: '&fYou&4Tube'
+    display_item: 'RED_WOOL'
+    style: 'stationary_command_file'
+    files: 
+      - "youtube.txt"
+    offset: "3:-0.7:0"
+    particle: 'REDSTONE'
+  AE_ALCHEMY_CIRCLE1:
+    tier: SPECIAL
+    display_name: '&5Alchemy Circle &a#1'
+    display_item: 'GREEN_WOOL'
+    style: 'moving_command_file'
+    files: 
+      - "alchemy_circle#1Small.txt"
+      - "alchemy_circle#1Large.txt"
+    rotations:
+      - "0.6" #Rotate 0.6 degrees per tick in x-z plane clockwise. ie: -22 degrees per second
+      - "-0.6" #Rotate counter-clockwise
+    offset: "0:0:0"
+    particle: 'REDSTONE'

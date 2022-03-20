@@ -23,7 +23,6 @@ public class BaseCommand implements CommandExecutor {
 		if(!(sender instanceof Player)) {
 			//**Send help command message instead for Console
 			
-			
 			return true;
 		}
 		

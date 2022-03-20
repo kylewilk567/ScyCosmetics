@@ -119,7 +119,7 @@ public class ScyCosmeticsExpansion extends PlaceholderExpansion {
 	        	if(playerObject != null) {
 	        		Prefix prefix = (Prefix) playerObject.getActiveCosmetic(CosmeticType.PREFIX);
 	        		if(prefix != null) {
-	        			prefixStr = prefix.getColorCode() + prefix.getPrefix();
+	        			prefixStr = " " + prefix.getColorCode() + prefix.getPrefix() + " ";
 	        		}
 	        	}
 	        	return prefixStr;
@@ -130,7 +130,7 @@ public class ScyCosmeticsExpansion extends PlaceholderExpansion {
 	        	if(playerObject != null) {
 	        		Title title = (Title) playerObject.getActiveCosmetic(CosmeticType.TITLE);
 	        		if(title != null) {
-	        			titleStr = title.getTitle();
+	        			titleStr = " &7the " + title.getTitle();
 	        		}
 	        	}
 	        	

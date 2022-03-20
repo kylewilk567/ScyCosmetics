@@ -4,6 +4,7 @@ datastorage:
   
 permissions:
   scycosmetics: scycosmetics.base
+  scycosmetics_afk: scycosmetics.afk
   scycosmetics_help: scycosmetics.help
   scycosmetics_give: scycosmetics.give
   scycosmetics_take: scycosmetics.take
@@ -122,10 +123,11 @@ messages:
   scycos_receive_success: '&aYou have unlocked access to the cosmetic &2{cosmetic}&a.'
   scycos_receiveall_success: '&aYou have unlocked access to all cosmetics of type &2{type} &aand tier &2{tier}&a.'
   emote_spawning: '&aSpawning emote...'
-  random_vault_money_given: '&aYou have been awarded &2${amount} &ainstead of a cosmetic!'
+  random_vault_money_given: '&aYou have been awarded &2{amount}GP &ainstead of a cosmetic!'
   random_vault_no_money_given: '&cYou did not win a random cosmetic :('
   all_cos_unlocked_given_money: '&aYou have been awarded &2${amount} &ainstead of a cosmetic because you have all available cosmetics unlocked!'
   all_cos_unlocked_no_reward: '&cYou were not given a cosmetic because they were all already unlocked.'
+  player_set_afk: "&aYou are now afk."
   
   error_player_not_found: '&cThe player &4{player} &cis not online or does not exist.'
   error_player_only_cmd: '&cSorry console! Only players can perform this command :('
@@ -137,3 +139,4 @@ messages:
   error_emote_locked: '&cYou have not unlocked this emote!'
   error_insufficient_funds: '&cYou do not have enough money!'
   error_take_cosmetic_already_locked: '&cThe player specified has this cosmetic already locked.'
+  error_emote_spectator: "&cCannot emote while in spectator mode!"

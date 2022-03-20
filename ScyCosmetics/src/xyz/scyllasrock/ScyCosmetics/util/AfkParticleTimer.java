@@ -1,22 +1,34 @@
 package xyz.scyllasrock.ScyCosmetics.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
-import xyz.scyllasrock.ScyCosmetics.spigot.data.ConfigManager;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.AFKEffect;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.AFKEffectStyle;
 
 public class AfkParticleTimer implements Runnable {
 	
 	
-	Main plugin = Main.getInstance();
-	ConfigManager configMang = ConfigManager.getConfigMang();
+	private static Main plugin = Main.getInstance();
 	
 	private BukkitTask task;
 	private Player player;	
@@ -43,8 +55,13 @@ public class AfkParticleTimer implements Runnable {
      * Schedules this instance to "run" every colorChangeTicks
      */
     public void scheduleTimer() {
+    	if(effect.getStyle().equals(AFKEffectStyle.HAIL)) {
+    		task = Bukkit.getScheduler().runTaskTimer(plugin, this, 0L, 1L);
+    	}
         // Initialize our assigned task's id, for later use so we can cancel
-        task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 0L, 1L);
+    	else {
+    		task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 0L, 1L);
+    	}
     }
     
     /*
@@ -55,6 +72,11 @@ public class AfkParticleTimer implements Runnable {
     }
     
     private void playEffect() {
+    	//Check if player is vanished. If vanished, do not play effect
+    	if(isVanished(player)) return;
+    	//Check if in spectator mode. Also do not play effect
+    	if(player.getGameMode().equals(GameMode.SPECTATOR)) return;
+    	
 		int step = effect.step();
     	switch(effect.getStyle()) {
     	
@@ -173,7 +195,127 @@ public class AfkParticleTimer implements Runnable {
 
     		break;
     		
+    	case HAIL:
+    		if(step % 7 != 0) return;
+    		
+    		//Spawn snowball at random location 2 blocks above player's head
+    		Location snowballLoc = player.getLocation().clone();
+    		double rangeMin = -1.5;
+    		double rangeMax = 1.5;
+    		Random r = new Random();
+    		double xOffset = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+    		double zOffset = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+    		snowballLoc.add(new Vector(xOffset, 4, zOffset));
+    		Snowball snowball = (Snowball) player.getWorld().spawnEntity(snowballLoc, EntityType.SNOWBALL);
+    		snowball.setMetadata("scos_hail", new FixedMetadataValue(plugin, true)); //Used to disable damage
+    		snowball.setVelocity(new Vector(-0.06 * xOffset, -0.05, -0.06 * zOffset)); //Snowballs move towards player
+    		
+    		break;
+    		
+    	case MOVING_COMMAND_FILE:
+    	case STATIONARY_COMMAND_FILE:
+    		if(step % 2 != 0) return; //Spawn particles every 4 ticks. Code runs for both moving and stationary types
+    		spawnPlayerParticleImage(effect, step);
+    		
+    		break;
+    		
     	}
     }
+    
+	/**
+	 * PremiumVanish support
+	 * @param player
+	 * @return
+	 */
+	private static boolean isVanished(Player player) {
+		if(!plugin.premVanishEnabled()) return false;
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
+        }
+        return false;
+}
+	
+	private void spawnPlayerParticleImage(AFKEffect effect, int step) {
+		
+		Particle particle = Particle.REDSTONE;
+		Location playerClone = player.getLocation().clone();
+		for(int i = 0; i < effect.getFiles().size(); ++i) {
+	
+		try {
+			File file = effect.getFiles().get(i);
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line;
+			while((line = br.readLine()) != null) {
+				String[] commandArgs = line.split(" ");
+				if(!commandArgs[0].equalsIgnoreCase("particle")) continue;
+				if(commandArgs.length < 15) continue;
+				double red = Double.parseDouble(commandArgs[2]) * 255;
+				double green = Double.parseDouble(commandArgs[3]) * 255;
+				double blue = Double.parseDouble(commandArgs[4]) * 255;
+				float size = Float.parseFloat(commandArgs[5]);
+				Vector offset = getParticleOffsetFromCommandArgs(effect, step, commandArgs, i);
+				
+				Location particleLoc = playerClone.clone();
+				particleLoc.setX(particleLoc.getX() + offset.getX());
+				particleLoc.setY(particleLoc.getY() + offset.getY());
+				particleLoc.setZ(particleLoc.getZ() + offset.getZ());
+				
+				int count = Integer.parseInt(commandArgs[12]);
+				
+				DustOptions options = new DustOptions(
+						org.bukkit.Color.fromRGB((int) red, (int) green, (int) blue), size);
+				particleLoc.getWorld().spawnParticle(particle, particleLoc, count, 0, 0, 0, options);
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		}
+		
+	}
+	
+	private Vector getParticleOffsetFromCommandArgs(AFKEffect effect, int step, String[] commandArgs, int fileNumber) {
+		
+		Vector yHat = new Vector(0, 1, 0);
+		
+		//Unit vector in xz plane where player is facing
+		Vector pHat = player.getLocation().getDirection();
+		pHat.setY(0);
+		pHat.normalize();
+		
+		//Left right offset length
+		double leftRight = Double.parseDouble(commandArgs[6].substring(1)); //Left right
+		
+		//Front back offset length
+		double frontBack = Double.parseDouble(commandArgs[8].substring(1)); //Forward back
+		
+		//Up down offset length
+		double yOff = Double.parseDouble(commandArgs[7].substring(1)); //Up down
+		
+		//Add custom offsets
+		leftRight += effect.getLeftRightOffset();
+		yOff += effect.getUpDownOffset();
+		frontBack += effect.getFrontBackOffset();
+		
+		//Get frontBack and leftRight in terms of x z coordinates
+		Vector frontBackXZ = pHat.clone().multiply(frontBack);
+		Vector leftRightXZ = pHat.clone().crossProduct(yHat).multiply(leftRight);
+		
+		//Calculate final offset in xz
+		Vector offset = new Vector(0, yOff, 0);
+		offset.add(frontBackXZ);
+		offset.add(leftRightXZ);
+		
+		//Rotate offset if effect is of type moving_command_file
+		if(effect.getStyle().equals(AFKEffectStyle.MOVING_COMMAND_FILE)) {
+			offset.rotateAroundAxis(new Vector(0, 1, 0), step * effect.getRotations().get(fileNumber));
+		}
+		
+		return offset;
+	}
+
+	
 
 }

@@ -20,13 +20,13 @@ import xyz.scyllasrock.ScyCosmetics.spigot.objects.ArrowTrail;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
 
-public class ArrowTrailListeners implements Listener {
+public class ArrowTrailListenersOLD implements Listener {
 	
 	private ConfigManager configMang = ConfigManager.getConfigMang();
 	private PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
 	
 	@EventHandler
-	public void onBowShoot(EntityShootBowEvent event) {
+	public void onShoot(EntityShootBowEvent event) {
 		if(!(event.getEntity() instanceof Player)) return;
 		if(!(event.getProjectile() instanceof Arrow)) return;
 		
@@ -42,18 +42,15 @@ public class ArrowTrailListeners implements Listener {
 		if(trail.getCosData() != null) customData = trail.getCosData()[0];
 		else customData = null;
 		
-		boolean correctData = trail.hasCorrectCustomData();
+		boolean correctData = checkParticleData(trail);
 		//Send error message if data does not match with particle type
 		if(!correctData) {
 			player.sendMessage(configMang.getMessage("error_particle_data"));
 		}
-		
 		Arrow arrow = (Arrow) event.getProjectile();
-		arrow.setCritical(false);
-		
-		
-		new BukkitRunnable() {
+		arrow.setCritical(false); //Remove crit particles if cosmetic enabled
 
+		new BukkitRunnable() {
 			double offsetX = 0, offsetY = 0, offsetZ = 0;
 			int data = 0;
 			Object dataOb = null;
@@ -104,13 +101,10 @@ public class ArrowTrailListeners implements Listener {
 							} catch(NumberFormatException e) {
 								e.printStackTrace();
 							}
-	
+
 						}
 					}
 				}
-		
-
-
 		        if(arrow.isDead() || arrow.isOnGround()) {
 		            this.cancel();
 		        } else {
@@ -121,23 +115,48 @@ public class ArrowTrailListeners implements Listener {
 		                location.setZ(location.getZ() + arrow.getVelocity().getZ() * (double) offset / 4.0D);
 		                
 		                //Spawn particle
+		                
+		                //If redstone
 		                if(particle.equals(Particle.REDSTONE)) {
-			        		arrow.getLocation().getWorld().spawnParticle(
-			        				particle, arrow.getLocation(), 0, offsetX, offsetY, offsetZ, 1, dataOb, true);
+		    				arrow.getWorld().spawnParticle(particle, location, 0,
+		                            offsetX, offsetY, offsetZ,
+		                            1, dataOb, true);
 		                }
+		                
+		                //Else note or other particles
 		                else {
-			        		arrow.getLocation().getWorld().spawnParticle(
-			        				particle, arrow.getLocation(), 0, offsetX, offsetY, offsetZ, 1, null, true);
+			                arrow.getWorld().spawnParticle(particle, location, 0,
+			                        offsetX, offsetY, offsetZ,
+			                        1, null, true);
 		                }
 
 		            }
 		        }
-		        count += 1;
+				count += 1;
 			}
 			
 		}.runTaskTimer(Main.getInstance(), 0L, 1L);
 		
+		
+		
 
 	}
+	
+	
+	/**
+	 * 
+	 * @param trail
+	 * @return - true if particle and custom data are a correct match
+	 */
+	private boolean checkParticleData(ArrowTrail trail) {
+		String[] customData = trail.getCosData();
+		if(customData == null) return true;
+		String customDataValue = customData[0];
+		//*** BETTER WAY TO MATCH UP PARTICLES WITH KEYS
+		if(customDataValue.equalsIgnoreCase("rainbow") || customDataValue.equalsIgnoreCase("christmas") && trail.getParticle().equals(Particle.NOTE)) return true;
+		if(customDataValue.startsWith("RGB") && trail.getParticle().equals(Particle.REDSTONE)) return true;
+			return false;	
+	}
+	
 
 }

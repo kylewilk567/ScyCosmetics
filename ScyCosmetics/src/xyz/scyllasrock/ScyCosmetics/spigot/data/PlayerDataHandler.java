@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticTier;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.ItemFilter;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.ItemSort;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
@@ -105,9 +106,12 @@ public class PlayerDataHandler {
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
 			playerObjects.put(uuid,
 					new PlayerObject(uuid, ItemFilter.valueOf(config.getString("cosmetic_filter")), ItemSort.valueOf(config.getString("cosmetic_sort")),
+							CosmeticTier.valueOf(config.getString("rarity_filter_tier")),
 							config.getStringList("unlocked_cosmetics"), config.getStringList("active_cosmetics")));
 		}
-		else playerObjects.put(uuid, new PlayerObject(uuid, ItemFilter.valueOf("SHOW_ALL"), ItemSort.valueOf("NAME"), new ArrayList<String>(), new ArrayList<String>()));
+		else playerObjects.put(uuid, new PlayerObject(uuid, ItemFilter.SHOW_ALL, ItemSort.NAME,
+				CosmeticTier.COMMON,
+				new ArrayList<String>(), new ArrayList<String>()));
 	}
 	
 	
@@ -136,6 +140,18 @@ public class PlayerDataHandler {
 		}
 	}
 	
+	
+	public void updateRarityFilterTier(UUID uuid) {
+		File f = createPlayerDataFile(uuid); //Create file if not exists
+		
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
+		config.set("rarity_filter_tier", playerObjects.get(uuid).getRarityFilterTier().toString());
+		try {
+			config.save(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void updateItemFilter(UUID uuid) {
 		File f = createPlayerDataFile(uuid); //Create file if not exists

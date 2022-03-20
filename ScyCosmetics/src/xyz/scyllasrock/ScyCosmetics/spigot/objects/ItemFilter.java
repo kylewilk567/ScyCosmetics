@@ -2,7 +2,7 @@ package xyz.scyllasrock.ScyCosmetics.spigot.objects;
 
 public enum ItemFilter {
 	
-	SHOW_ALL, SHOW_OBTAINABLE, SHOW_UNLOCKED;
+	SHOW_ALL, SHOW_OBTAINABLE, SHOW_UNLOCKED, SHOW_RARITY;
 	
 	
     private static ItemFilter[] vals = values();

@@ -14,6 +14,7 @@ public class ArrowTrail extends Cosmetic {
 	private Main plugin = Main.getInstance();
 	
 	private final Particle particle;
+	private final boolean hasCorrectCustomData;
 
 
 	public ArrowTrail(String id, CosmeticTier tier, ItemStack displayItem, double buyPrice,
@@ -21,10 +22,32 @@ public class ArrowTrail extends Cosmetic {
 			Particle particle) {		
 		super(id, CosmeticType.ARROW_TRAIL, tier, displayItem, buyPrice, purchaseableAfterTimes, purchaseableBeforeTimes, isUnobtainble);
 		this.particle = particle;
+		
+		String[] customData = this.getCosData();
+		if(customData == null) {
+			hasCorrectCustomData = true;
+			return;
+		}
+		String customDataValue = customData[0];
+		//*** BETTER WAY TO MATCH UP PARTICLES WITH KEYS
+		if(customDataValue.equalsIgnoreCase("rainbow") || customDataValue.equalsIgnoreCase("christmas") && this.getParticle().equals(Particle.NOTE)) hasCorrectCustomData = true;
+		else if(customDataValue.startsWith("RGB") && this.getParticle().equals(Particle.REDSTONE)) hasCorrectCustomData = true;
+		else hasCorrectCustomData = false;	
+		
 	}
 	
 	public Particle getParticle() {
 		return particle;
+	}
+	
+	
+	/**
+	 * 
+	 * @param trail
+	 * @return - true if particle and custom data are a correct match
+	 */
+	public boolean hasCorrectCustomData() {
+		return hasCorrectCustomData;
 	}
 
 	/**

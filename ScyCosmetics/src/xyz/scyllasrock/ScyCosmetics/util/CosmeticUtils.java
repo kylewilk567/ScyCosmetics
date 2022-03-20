@@ -6,12 +6,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-
 import net.md_5.bungee.api.ChatColor;
 import xyz.scyllasrock.ScyCosmetics.spigot.Main;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.CosInventoryListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
+import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticTier;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.CosmeticType;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.ItemFilter;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
@@ -42,11 +41,20 @@ public class CosmeticUtils {
 			}
 			
 			//Unlocked items
-			else {
+			else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_UNLOCKED)){
 				for(String id : playerObject.getUnlockedCosmetics()) {
 					Cosmetic cos = plugin.getCosmeticFromId(id);
 					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
 				}
+			}
+			
+			//Get Items by rarity
+			else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
+				//Get all locked and unlocked cosmetics for cosmetic type and tier
+				CosmeticTier rarity = playerObject.getRarityFilterTier();
+				for(Cosmetic cos : plugin.getCosmetics().values()) {
+					if(cos.getType().equals(type) && cos.getTier().equals(rarity)) sortedList.add(cos);
+				}	
 			}
 			
 			//Sort using rarity, then using alphabetical
@@ -76,12 +84,22 @@ public class CosmeticUtils {
 			}
 			
 			//Unlocked items
-			else {
+			else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_UNLOCKED)){
 				for(String id : playerObject.getUnlockedCosmetics()) {
 					Cosmetic cos = plugin.getCosmeticFromId(id);
 					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
 				}
 			}
+			
+			//Get Items by rarity
+			else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
+				//Get all locked and unlocked cosmetics for cosmetic type and tier
+				CosmeticTier rarity = playerObject.getRarityFilterTier();
+				for(Cosmetic cos : plugin.getCosmetics().values()) {
+					if(cos.getType().equals(type) && cos.getTier().equals(rarity)) sortedList.add(cos);
+				}	
+			}
+			
 			//Sort using display names
 			Collections.sort(sortedList, new Comparator<Cosmetic>() {
 				  @Override
@@ -95,13 +113,29 @@ public class CosmeticUtils {
 			break;
 		case LEAST_RECENT:
 			//Add unlocked cosmetics
-			for(String id : playerObject.getUnlockedCosmetics()) {
-				Cosmetic cos = plugin.getCosmeticFromId(id);
-				if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
+			
+			//... for rarity
+			if(playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
+				//Get all locked and unlocked cosmetics for cosmetic type and tier
+				CosmeticTier rarity = playerObject.getRarityFilterTier();
+				for(String id : playerObject.getUnlockedCosmetics()) {
+					Cosmetic cos = plugin.getCosmeticFromId(id);
+					if(cos != null && cos.getType().equals(type) && cos.getTier().equals(rarity)) sortedList.add(cos);
+				}	
+			}
+			
+			// for others
+			else {
+				for(String id : playerObject.getUnlockedCosmetics()) {
+					Cosmetic cos = plugin.getCosmeticFromId(id);
+					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
+				}
 			}
 			
 			//If showing locked items...
-			if(playerObject.getItemFilter().equals(ItemFilter.SHOW_ALL) || playerObject.getItemFilter().equals(ItemFilter.SHOW_OBTAINABLE)) {
+			if(playerObject.getItemFilter().equals(ItemFilter.SHOW_ALL)
+					|| playerObject.getItemFilter().equals(ItemFilter.SHOW_OBTAINABLE)
+					|| playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
 				List<Cosmetic> unsortedLocked = new ArrayList<Cosmetic>();
 				if(playerObject.getItemFilter().equals(ItemFilter.SHOW_ALL)) {
 				//Add locked cosmetics
@@ -111,8 +145,15 @@ public class CosmeticUtils {
 				}
 				else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_OBTAINABLE)) {
 					for(Cosmetic cos : plugin.getCosmetics().values()) {
-						if(cos.getType().equals(type) && !sortedList.contains(cos) && !cos.isUnobtainable()) unsortedLocked.add(cos);
+						if(cos.getType().equals(type) && !cos.isUnobtainable() && !sortedList.contains(cos)) unsortedLocked.add(cos);
 					}
+				}
+				else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
+					//Get all locked and unlocked cosmetics for cosmetic type and tier
+					CosmeticTier rarity = playerObject.getRarityFilterTier();
+					for(Cosmetic cos : plugin.getCosmetics().values()) {
+						if(cos.getType().equals(type) && cos.getTier().equals(rarity) && !sortedList.contains(cos)) sortedList.add(cos);
+					}	
 				}
 				//Sort locked cosmetics alphabetically
 				Collections.sort(unsortedLocked, new Comparator<Cosmetic>() {
@@ -131,14 +172,31 @@ public class CosmeticUtils {
 			
 			//Add unlocked cosmetics in reverse order
 			List<Cosmetic> unsortedList = new ArrayList<Cosmetic>();
-			for(String id : playerObject.getUnlockedCosmetics()) {
-				Cosmetic cos = plugin.getCosmeticFromId(id);
-				if(cos != null && cos.getType().equals(type)) unsortedList.add(cos);
+			
+			//... for rarity
+			if(playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
+				//Get all locked and unlocked cosmetics for cosmetic type and tier
+				CosmeticTier rarity = playerObject.getRarityFilterTier();
+				for(String id : playerObject.getUnlockedCosmetics()) {
+					Cosmetic cos = plugin.getCosmeticFromId(id);
+					if(cos != null && cos.getType().equals(type) && cos.getTier().equals(rarity)) unsortedList.add(cos);
+				}	
 			}
+			
+			// for others
+			else {
+				for(String id : playerObject.getUnlockedCosmetics()) {
+					Cosmetic cos = plugin.getCosmeticFromId(id);
+					if(cos != null && cos.getType().equals(type)) unsortedList.add(cos);
+				}
+			}
+			
 			sortedList = reverseArrayList(unsortedList);
 			
 			//If showing all locked items
-			if(playerObject.getItemFilter().equals(ItemFilter.SHOW_ALL) || playerObject.getItemFilter().equals(ItemFilter.SHOW_OBTAINABLE)) {
+			if(playerObject.getItemFilter().equals(ItemFilter.SHOW_ALL)
+					|| playerObject.getItemFilter().equals(ItemFilter.SHOW_OBTAINABLE)
+					|| playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
 				List<Cosmetic> unsortedLocked = new ArrayList<Cosmetic>();
 				if(playerObject.getItemFilter().equals(ItemFilter.SHOW_ALL)) {
 				//Add locked cosmetics
@@ -148,8 +206,15 @@ public class CosmeticUtils {
 				}
 				else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_OBTAINABLE)) {
 					for(Cosmetic cos : plugin.getCosmetics().values()) {
-						if(cos.getType().equals(type) && !sortedList.contains(cos) && !cos.isUnobtainable()) unsortedLocked.add(cos);
+						if(cos.getType().equals(type) && !cos.isUnobtainable() && !sortedList.contains(cos)) unsortedLocked.add(cos);
 					}
+				}
+				else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
+					//Get all locked and unlocked cosmetics for cosmetic type and tier
+					CosmeticTier rarity = playerObject.getRarityFilterTier();
+					for(Cosmetic cos : plugin.getCosmetics().values()) {
+						if(cos.getType().equals(type) && cos.getTier().equals(rarity) && !sortedList.contains(cos)) unsortedLocked.add(cos);
+					}	
 				}
 				
 				//Sort locked cosmetics alphabetically
@@ -183,10 +248,19 @@ public class CosmeticUtils {
 			}
 			
 			//Unlocked items
-			else {
+			else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_UNLOCKED)){
 				for(String id : playerObject.getUnlockedCosmetics()) {
 					Cosmetic cos = plugin.getCosmeticFromId(id);
 					if(cos != null && cos.getType().equals(type)) sortedList.add(cos);
+				}
+			}
+			
+			//Get items by rarity
+			else if(playerObject.getItemFilter().equals(ItemFilter.SHOW_RARITY)) {
+				//Get all locked and unlocked cosmetics for cosmetic type and tier
+				CosmeticTier rarity = playerObject.getRarityFilterTier();
+				for(Cosmetic cos : plugin.getCosmetics().values()) {
+					if(cos.getType().equals(type) && cos.getTier().equals(rarity)) sortedList.add(cos);
 				}
 			}
 			

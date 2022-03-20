@@ -36,15 +36,18 @@ public class AfkDetectionTimer implements Runnable {
 			else afkSeconds = afkAPI.getAFKPlayer(player).getSecondsAFK();
 			
 			//If player is afk (seconds > 60) and does not have afk particles, set afk particles
-			if(afkSeconds > 60) {
+			PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
+			if(afkSeconds > 60 || playerObject.isManuallyAFK()) {
 				if(!afkParticleTracker.containsKey(player.getUniqueId())) {
 					//Check if player has afkParticles enabled
-					PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 					AFKEffect effect = (AFKEffect) playerObject.getActiveCosmetic(CosmeticType.AFK_EFFECT);
 					if(effect != null) {
 						AfkParticleTimer timer = new AfkParticleTimer(player, effect);
-						timer.scheduleTimer();
-						afkParticleTracker.put(player.getUniqueId(), timer);
+						Bukkit.getScheduler().runTaskLater(plugin, () -> {
+							timer.scheduleTimer();
+							afkParticleTracker.put(player.getUniqueId(), timer);
+						}, 5L);
+
 					}
 				}
 			}

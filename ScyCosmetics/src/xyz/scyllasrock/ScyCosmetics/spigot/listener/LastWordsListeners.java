@@ -30,7 +30,7 @@ public class LastWordsListeners implements Listener {
 		//Check if player has a lastwords active
 		PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 		LastWords lastWords = (LastWords) playerObject.getActiveCosmetic(CosmeticType.LAST_WORDS);
-		event.setDeathMessage(lastWords.getMessage());
+		if(lastWords != null) event.setDeathMessage(lastWords.getMessage());
 		}
 	}
 	

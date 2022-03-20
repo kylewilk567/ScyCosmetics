@@ -21,8 +21,11 @@ public class PlayerObject {
 	
 	private UUID uuid;
 	
+	private boolean isAFK = false; //Set to true when /scos afk run. Set back to false on player move.
+	
 	//Inventory information
 	private ItemFilter itemFilter;
+	private CosmeticTier rarityFilterTier;
 	private ItemSort itemSort;
 
 	private List<String> unlockedCosmetics = new ArrayList<String>();
@@ -33,17 +36,19 @@ public class PlayerObject {
 	PrefixColorTimer prefixTimer;
 	
 	
-	public PlayerObject(UUID uuid, ItemFilter itemFilter, ItemSort itemSort, List<String> unlockedCosmetics) {
+	public PlayerObject(UUID uuid, ItemFilter itemFilter, ItemSort itemSort, CosmeticTier rarityFilterTier, List<String> unlockedCosmetics) {
 		this.uuid = uuid;
 		this.itemFilter = itemFilter;
 		this.itemSort = itemSort;
+		this.rarityFilterTier = rarityFilterTier;
 		this.unlockedCosmetics = unlockedCosmetics;
 	}
 	
-	public PlayerObject(UUID uuid, ItemFilter itemFilter, ItemSort itemSort, List<String> unlockedCosmetics, List<String> activeCosmetics) {
+	public PlayerObject(UUID uuid, ItemFilter itemFilter, ItemSort itemSort, CosmeticTier rarityFilterTier, List<String> unlockedCosmetics, List<String> activeCosmetics) {
 		this.uuid = uuid;
 		this.itemFilter = itemFilter;
 		this.itemSort = itemSort;
+		this.rarityFilterTier = rarityFilterTier;
 		this.unlockedCosmetics = unlockedCosmetics;
 		this.activeCosmetics = activeCosmetics;
 		
@@ -64,6 +69,14 @@ public class PlayerObject {
 		return uuid;
 	}
 	
+	public boolean isManuallyAFK() {
+		return isAFK;
+	}
+	
+	public void setAFK(boolean afk) {
+		isAFK = afk;
+	}
+	
 	public List<String> getUnlockedCosmetics(){
 		return unlockedCosmetics;
 	}
@@ -74,6 +87,10 @@ public class PlayerObject {
 	
 	public ItemFilter getItemFilter() {
 		return itemFilter;
+	}
+	
+	public CosmeticTier getRarityFilterTier() {
+		return rarityFilterTier;
 	}
 	
 	public ItemSort getItemSort() {
@@ -210,6 +227,11 @@ public class PlayerObject {
 	public void toggleItemSort() {
 		itemSort = itemSort.next();
 		dirtyData.add(DirtyDataType.ITEM_SORT);
+	}
+	
+	public void toggleRarityFilterTier() {
+		rarityFilterTier = rarityFilterTier.next();
+		dirtyData.add(DirtyDataType.RARITY_FILTER_TIER);
 	}
 	
 }

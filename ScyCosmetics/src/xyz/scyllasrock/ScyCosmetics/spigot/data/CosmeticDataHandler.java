@@ -60,6 +60,9 @@ public class CosmeticDataHandler {
 		checkOrCreateFiles("last_words.yml", "arrow_trails.yml", "player_trails.yml", "prefixes.yml", "log_messages.yml",
 				"emote_equipment.yml", "titles.yml", "kill_effects.yml", "afk_effects.yml");
 		checkOrCreateEmotes("disco.yml", "sway.yml", "stabstab.yml", "starlord.yml", "t_pose.yml");
+		
+		//Temporarily removed - may be permanently removed later as too many particles cause massive lag. Directory also removed above
+//		checkOrCreateAfkFiles("youtube.txt", "combinedAlchemy.txt", "alchemy_circle#1Small.txt", "alchemy_circle#1Large.txt");
 	}
 
 
@@ -109,7 +112,7 @@ public class CosmeticDataHandler {
 	}
 	
 	/**
-	 * Creates all files in Cosmetics folder
+	 * Creates all files in Emotes folder
 	 * @param files
 	 */
 	private void checkOrCreateEmotes(String... files) {
@@ -118,6 +121,25 @@ public class CosmeticDataHandler {
 			if(newFile.exists()) continue;
 			try {
 				InputStream istream = plugin.getResource("emoteFiles" + File.separator + s);
+				OutputStream ostream = new FileOutputStream(newFile);
+				istream.transferTo(ostream);
+				ostream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Creates all files in Afk files folder
+	 * @param files
+	 */
+	private void checkOrCreateAfkFiles(String... files) {
+		for(String s : files) {
+			File newFile = new File(plugin.getDataFolder() + File.separator + "Cosmetics" +  File.separator + "AFK_Files" + File.separator + s);
+			if(newFile.exists()) continue;
+			try {
+				InputStream istream = plugin.getResource("AFK_Files" + File.separator + s);
 				OutputStream ostream = new FileOutputStream(newFile);
 				istream.transferTo(ostream);
 				ostream.close();
@@ -406,10 +428,26 @@ public class CosmeticDataHandler {
 			else {
 				String afterString = afkConfig.getString("effects." + id + ".is_purchaseable_after");
 				String beforeString = afkConfig.getString("effects." + id + ".is_purchaseable_before");
+				
+				//Get file if specified
+				List<String> fileNames = afkConfig.getStringList("effects." + id + ".files");
+				List<File> files = new ArrayList<File>();
+				for(String fileName : fileNames) {
+					files.add(new File(plugin.getDataFolder() + File.separator + "Cosmetics" + File.separator
+							+ "AFK_Files" + File.separator + fileName));
+				}
+				
+				//Get offset if specified
+				String offsetStr = afkConfig.getString("effects." + id + ".offset");
+				
+				//Get rotations if specified
+				List<Double> rotations = afkConfig.getDoubleList("effects." + id + ".rotations");
+				
+
 				cosmetics.put(id, (Cosmetic) new AFKEffect(id, tier, item, buyPrice,
 						getPurchaseableStringList(afterString), getPurchaseableStringList(beforeString),
 						afkConfig.getBoolean("effects." + id + ".is_unobtainable"),
-						AFKEffectStyle.valueOf(styleStr.toUpperCase()), particle));
+						AFKEffectStyle.valueOf(styleStr.toUpperCase()), particle, files, offsetStr, rotations));
 			}
 		}
 	
@@ -562,9 +600,6 @@ public class CosmeticDataHandler {
 			List<EmoteStep> interSteps = findInterpolatedEmoteSteps(currentStep, nextStep, numInter);
 			for(EmoteStep step : interSteps) {
 				positions.add(new Pair<Integer, EmoteStep>(ticksBetweenInter, step));
-//				for(int j = 0; j < ticksBetweenInter; ++j) {
-//					positions.add(step);
-//				}
 			}
 
 		}

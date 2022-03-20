@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import me.jet315.antiafkpro.AntiAFKProAPI;
 import me.jet315.antiafkpro.JetsAntiAFKPro;
@@ -28,6 +29,8 @@ import xyz.scyllasrock.ScyCosmetics.spigot.listener.EmoteListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.KillEffectListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.LastWordsListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.LogMessageListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.ManualAFKListeners;
+import xyz.scyllasrock.ScyCosmetics.spigot.listener.MiscAFKEffectListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.PlayerDataListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.listener.PlayerTrailListeners;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Cosmetic;
@@ -43,11 +46,26 @@ public class Main extends JavaPlugin {
 	private static Main instance;
 	private boolean premiumVanishSupportEnabled = false;
 	private List<ArmorStand> activeEmoteStands;
+	
+	private final String[] name = {
+	"   _____            ______                          __  _          ",
+	"   / ___/_______  __/ ____/___  _________ ___  ___  / /_(_)_________",
+	"   \\__ \\/ ___/ / / / /   / __ \\/ ___/ __ `__ \\/ _ \\/ __/ / ___/ ___/",
+	"  ___/ / /__/ /_/ / /___/ /_/ (__  ) / / / / /  __/ /_/ / /__(__  ) ",
+	" /____/\\___/\\__, /\\____/\\____/____/_/ /_/ /_/\\___/\\__/_/\\___/____/  ",
+	"           /____/",
+	" ",
+	"by kwilk"
+	};
 
 	@Override
 	public void onEnable() {
 		
 		instance = this;
+		
+		for(String s : name) {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + s);
+		}
 		
 		activeEmoteStands = new ArrayList<ArmorStand>();
 		
@@ -82,7 +100,8 @@ public class Main extends JavaPlugin {
 		//Placeholder API - soft
 		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new ScyCosmeticsExpansion(this).register();
-      } else {
+		} 
+		else {
     	  Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "PlaceholderAPI not found. Disabled ScyCosmetics expansion."
     	  		+ " Plugin will function without prefixes.");
       }
@@ -110,8 +129,9 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginCommand("semote").setExecutor(new Semote());
 		
 		//Set listeners
-		Bukkit.getPluginManager().registerEvents(new PlayerDataListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new ArrowTrailListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new PlayerDataListeners(), this);
+//		Bukkit.getPluginManager().registerEvents(new ArrowTrailListenersOLD(), this);
 		Bukkit.getPluginManager().registerEvents(new CosInventoryListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new LastWordsListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerTrailListeners(), this);
@@ -119,6 +139,8 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new EmoteListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new EmoteDanceInvListeners(), this);
 		Bukkit.getPluginManager().registerEvents(new KillEffectListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new ManualAFKListeners(), this);
+		Bukkit.getPluginManager().registerEvents(new MiscAFKEffectListeners(), this);
 		
 		if(afkAPI != null) Bukkit.getPluginManager().registerEvents(new AFKParticleListeners(), this);
 		
@@ -130,10 +152,10 @@ public class Main extends JavaPlugin {
 		afkDetTimer = new AfkDetectionTimer();
 		afkDetTimer.scheduleTimer();		
 	}
-
+	public static BukkitTask tasko;
 	@Override
 	public void onDisable() {
-		
+
 		//Remove all active emote armor stands
 		for(ArmorStand stand : this.activeEmoteStands) {
 			stand.remove();

@@ -36,7 +36,7 @@ public class DirtyDataTimer implements Runnable {
      */
     public void scheduleTimer() {
         // Initialize our assigned task's id, for later use so we can cancel
-        this.assignedTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 0L, Long.valueOf(20 * secondsBetweenRuns));
+        this.assignedTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 20L, Long.valueOf(20 * secondsBetweenRuns));
     }
     
     /*
@@ -59,16 +59,21 @@ public class DirtyDataTimer implements Runnable {
     			
     			case ACTIVE_COSMETICS:
     				playerHandler.updateActiveCosmetics(playerObject.getUUID());
-    				
+    				break;
     			case UNLOCKED_COSMETICS:
     				playerHandler.updateUnlockedCosmetics(playerObject.getUUID());
-    				
+    				break;
     			case LAST_LOGIN:
-    				
+    				break;
     			case ITEM_FILTER:
     				playerHandler.updateItemFilter(playerObject.getUUID());
+    				break;
+    			case RARITY_FILTER_TIER:
+    				playerHandler.updateRarityFilterTier(playerObject.getUUID());
+    				break;
     			case ITEM_SORT:
     				playerHandler.updateItemSort(playerObject.getUUID());
+    				break;
     			
     			}
     		}
