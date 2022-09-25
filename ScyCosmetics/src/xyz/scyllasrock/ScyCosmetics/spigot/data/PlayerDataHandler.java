@@ -60,6 +60,7 @@ public class PlayerDataHandler {
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
 			config.set("cosmetic_filter", "SHOW_ALL");
 			config.set("cosmetic_sort", "NAME");
+			config.set("rarity_filter_tier", "COMMON");
 			config.save(f);
 			}
 		} catch (IOException e) {

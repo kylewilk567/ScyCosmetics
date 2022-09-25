@@ -18,10 +18,9 @@ import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerObject;
 
 public class AfkDetectionTimer implements Runnable {
 	
-	Main plugin = Main.getInstance();
-	ConfigManager configMang = ConfigManager.getConfigMang();
-	PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
-	AntiAFKProAPI afkAPI = plugin.getAFKApi();
+	private Main plugin = Main.getInstance();
+	private PlayerDataHandler playerHandler = PlayerDataHandler.getPlayerHandler();
+	private AntiAFKProAPI afkAPI = plugin.getAFKApi();
 	
 	private int assignedTaskId;
 	private static Map<UUID, AfkParticleTimer> afkParticleTracker = new HashMap<UUID, AfkParticleTimer>();
@@ -79,6 +78,10 @@ public class AfkDetectionTimer implements Runnable {
      */
     public void stopTimer() {
     	Bukkit.getScheduler().cancelTask(this.assignedTaskId);
+    }
+    
+    public static AfkParticleTimer getTracker(UUID uuid){
+    	return afkParticleTracker.get(uuid);
     }
 
 }

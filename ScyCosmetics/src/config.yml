@@ -7,6 +7,7 @@ permissions:
   scycosmetics_afk: scycosmetics.afk
   scycosmetics_help: scycosmetics.help
   scycosmetics_give: scycosmetics.give
+  scycosmetics_givew: scycosmetics.givew
   scycosmetics_take: scycosmetics.take
   scycosmetics_giveall: scycosmetics.giveall
   scycosmetics_takeall: scycosmetics.takeall
@@ -98,6 +99,23 @@ cosmetics:
     artifact: 100000
     seasonal: 500
     lore: 100000
+    
+#When choosing a tier, it sums all the weights and the percent chance is the weight of that tier / sum. 
+#If no cosmetic of that tier exists, it gives the highest tier that is lower than the one chosen 
+#("lower" in ordering in config below - but don't change this order)
+#(or money if no common exists)
+give_weighted: #/scos givew command
+  weights: 
+    common: 40.01 #Can be decimals
+    uncommon: 20
+    seasonal: 40 #The odds of getting a seasonal cosmetic are high during the season.
+    rare: 15
+    epic: 8
+    special: 7 
+    legendary: 5  
+    mythic: 4
+    artifact: 1
+    lore: 0
   
 misc:
   #in seconds. Given to players if a special feature stops working so players can notify admin of the issue.

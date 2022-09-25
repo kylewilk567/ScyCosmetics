@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -46,6 +45,7 @@ import xyz.scyllasrock.ScyCosmetics.spigot.objects.PlayerTrail;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Prefix;
 import xyz.scyllasrock.ScyCosmetics.spigot.objects.Title;
 import xyz.scyllasrock.ScyCosmetics.util.ItemUtils;
+import xyz.scyllasrock.ScyCosmetics.util.MiscUtils;
 import xyz.scyllasrock.ScyUtility.objects.Pair;
 
 public class CosmeticDataHandler {
@@ -56,13 +56,13 @@ public class CosmeticDataHandler {
 	private static ConfigManager configMang = ConfigManager.getConfigMang();
 	
 	public CosmeticDataHandler() {
-		checkOrCreateDirectories("Cosmetics", "Cosmetics" + File.separator + "Emotes");
+		checkOrCreateDirectories("Cosmetics", "Cosmetics" + File.separator + "Emotes", "Cosmetics" + File.separator + "AFK_Files");
 		checkOrCreateFiles("last_words.yml", "arrow_trails.yml", "player_trails.yml", "prefixes.yml", "log_messages.yml",
 				"emote_equipment.yml", "titles.yml", "kill_effects.yml", "afk_effects.yml");
 		checkOrCreateEmotes("disco.yml", "sway.yml", "stabstab.yml", "starlord.yml", "t_pose.yml");
 		
 		//Temporarily removed - may be permanently removed later as too many particles cause massive lag. Directory also removed above
-//		checkOrCreateAfkFiles("youtube.txt", "combinedAlchemy.txt", "alchemy_circle#1Small.txt", "alchemy_circle#1Large.txt");
+		checkOrCreateAfkFiles("ytlogo.txt");
 	}
 
 
@@ -232,7 +232,7 @@ public class CosmeticDataHandler {
 			double buyPrice = prefixConfig.getDouble("prefixes." + id + ".buy_price");
 			if(buyPrice == 0) buyPrice = priceMap.get(tier.toString());
 			ItemStack itemStack = getItemStackFromConfigSectionAndKey(prefixConfig, "prefixes", id, tier);
-			String translatedPrefix = StringEscapeUtils.unescapeJava(prefixConfig.getString("prefixes." + id + ".prefix"));
+			String translatedPrefix = MiscUtils.unescape_perl_string(prefixConfig.getString("prefixes." + id + ".prefix"));
 			if(translatedPrefix == null) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "ERROR: No prefix for prefix with id " + id + "!");
 			}

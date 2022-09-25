@@ -214,7 +214,7 @@ public class AfkParticleTimer implements Runnable {
     		
     	case MOVING_COMMAND_FILE:
     	case STATIONARY_COMMAND_FILE:
-    		if(step % 2 != 0) return; //Spawn particles every 4 ticks. Code runs for both moving and stationary types
+    		//if(step % 2 != 0) return; //Spawn particles every 2 ticks. Code runs for both moving and stationary types
     		spawnPlayerParticleImage(effect, step);
     		
     		break;
@@ -233,7 +233,7 @@ public class AfkParticleTimer implements Runnable {
             if (meta.asBoolean()) return true;
         }
         return false;
-}
+	}
 	
 	private void spawnPlayerParticleImage(AFKEffect effect, int step) {
 		
@@ -263,7 +263,7 @@ public class AfkParticleTimer implements Runnable {
 				int count = Integer.parseInt(commandArgs[12]);
 				
 				DustOptions options = new DustOptions(
-						org.bukkit.Color.fromRGB((int) red, (int) green, (int) blue), size);
+						org.bukkit.Color.fromRGB((int) red, (int) green, (int) blue), size / 1.7F);
 				particleLoc.getWorld().spawnParticle(particle, particleLoc, count, 0, 0, 0, options);
 			}
 			br.close();

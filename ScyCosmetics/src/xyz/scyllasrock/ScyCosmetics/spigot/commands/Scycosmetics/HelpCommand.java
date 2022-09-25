@@ -29,6 +29,7 @@ public class HelpCommand implements CommandExecutor {
 			"\n " +
 			"\n&e/scos give <player> <cosmetic id> - &6Gives player the cosmetic." +
 			"\n&e/scos give <player> random [type] [tier] - &6Gives player a random cosmetic of specified type and/or tier. Use 'any' to specify any type or tier." +
+			"\n&e/scos givew <play> random [type] - &6Gives player random cosmetic of specified type using modified chances for tiers." +
 			"\n&e/scos take <player> <cosmetic id> - &6Takes cosmetic from player." +
 			"\n&e/scos giveall <player> [type] [tier] - &6Gives player all cosmetics for type and tier. Can use 'any' for type or tier." +
 			"\n&e/scos takeall <player> [type] [tier] - &6Takes all cosmetics of type and tier from player. Can use 'any' for type or tier."

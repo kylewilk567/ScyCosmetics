@@ -116,26 +116,34 @@ public class GiveCommand implements CommandExecutor {
 				PlayerObject playerObject = playerHandler.getPlayerObjectByUUID(player.getUniqueId());
 				if(tier.equalsIgnoreCase("any") && type.equalsIgnoreCase("any")) {
 					cosmeticOptions = plugin.getCosmetics().values().stream()
-							.filter(cos -> !playerObject.hasCosmeticUnlocked(cos) && !cos.isUnobtainable()).collect(Collectors.toList());
+							.filter(cos -> !playerObject.hasCosmeticUnlocked(cos) && !cos.isUnobtainable())
+							.filter(cos -> !(cos.getTier().equals(CosmeticTier.SEASONAL) && !cos.isPurchaseable())) //Special case - remove unpurchaseable seasonal cosmetics
+							.collect(Collectors.toList());
 				}
 				else if(tier.equalsIgnoreCase("any")) {
 					CosmeticType cosType = CosmeticType.valueOf(type);
 					cosmeticOptions = plugin.getCosmetics().values().stream()
 							.filter(cos -> !playerObject.hasCosmeticUnlocked(cos) && !cos.isUnobtainable()
-									&& cos.getType().equals(cosType)).collect(Collectors.toList());
+									&& cos.getType().equals(cosType))
+							.filter(cos -> !(cos.getTier().equals(CosmeticTier.SEASONAL) && !cos.isPurchaseable())) //Special case
+							.collect(Collectors.toList());
 				}
 				else if(type.equalsIgnoreCase("any")) {
 					CosmeticTier cosTier = CosmeticTier.valueOf(tier);
 					cosmeticOptions = plugin.getCosmetics().values().stream()
 							.filter(cos -> !playerObject.hasCosmeticUnlocked(cos) && !cos.isUnobtainable()
-									&& cos.getTier().equals(cosTier)).collect(Collectors.toList());
+									&& cos.getTier().equals(cosTier))
+							.filter(cos -> !(cos.getTier().equals(CosmeticTier.SEASONAL) && !cos.isPurchaseable())) //Special case
+							.collect(Collectors.toList());
 				}
 				else {
 					CosmeticType cosType = CosmeticType.valueOf(type);
 					CosmeticTier cosTier = CosmeticTier.valueOf(tier);
 					cosmeticOptions = plugin.getCosmetics().values().stream()
 							.filter(cos -> !playerObject.hasCosmeticUnlocked(cos) && !cos.isUnobtainable()
-									&& cos.getType().equals(cosType) && cos.getTier().equals(cosTier)).collect(Collectors.toList());
+									&& cos.getType().equals(cosType) && cos.getTier().equals(cosTier))
+							.filter(cos -> !(cos.getTier().equals(CosmeticTier.SEASONAL) && !cos.isPurchaseable())) //Special case
+							.collect(Collectors.toList());
 				}
 				//If no available cosmetic exists, check if money should be given. Else do not give anything and send message
 				if(cosmeticOptions.isEmpty()) {
